@@ -46,7 +46,9 @@ const search = function () {
   <section
     class="min-h-[100vh] md:flex flex-col items-center bg-light dark:bg-black text-text dark:text-text-dark"
   >
-    <div class="bg-[#F2F6FD] dark:bg-transparent flex flex-col items-center mb-[32px]">
+    <div
+      class="md:w-[100vw] md:bg-[#F2F6FD] dark:bg-transparent flex flex-col items-center mb-[16px] md:mb-[32px]"
+    >
       <div class="w-full md:w-page px-[16px] md:px-0">
         <header class="py-[10.5px] flex justify-between items-center">
           <div class="flex gap-[42px] items-center">

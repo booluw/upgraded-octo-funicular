@@ -44,10 +44,10 @@ const search = function () {
 </script>
 <template>
   <section
-    class="min-h-[100vh] flex flex-col items-center bg-light dark:bg-black text-text dark:text-text-dark"
+    class="min-h-[100vh] md:flex flex-col items-center bg-light dark:bg-black text-text dark:text-text-dark"
   >
     <div class="bg-[#F2F6FD] dark:bg-transparent flex flex-col items-center mb-[32px]">
-      <div class="md:w-page px-[16px] md:px-0">
+      <div class="w-full md:w-page px-[16px] md:px-0">
         <header class="py-[10.5px] flex justify-between items-center">
           <div class="flex gap-[42px] items-center">
             <router-link to="/" class="text-text dark:text-text-dark">
@@ -127,9 +127,11 @@ const search = function () {
         </form>
         <div class="mb-[16px]">
           <div class="flex justify-between items-center">
-            <div class="w-[60%]">
+            <div class="md:w-[60%]">
               <h1 class="text-[24px]">{{ query }}</h1>
-              <h2 class=""><b>“450” Reviews</b> (People are raving about the selected location)</h2>
+              <h2 class="text-[12px] md:text-[16px]">
+                <b>“450” Reviews</b> (People are raving about the selected location)
+              </h2>
             </div>
             <div class="hidden md:flex gap-[16px]">
               <AppButton type="primary" class="uppercase">Leave a review</AppButton>
@@ -227,6 +229,6 @@ const search = function () {
         </div>
       </div>
     </div>
-    <div class="md:w-page">Hi Welcome to my Youtube Tutorial</div>
+    <div class="md:w-page px-[16px] md:px-0">Hi Welcome to my Youtube Tutorial</div>
   </section>
 </template>

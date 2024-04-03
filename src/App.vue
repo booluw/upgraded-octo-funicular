@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
-import AppLogo from '@/components/AppLogo.vue'
 import { onMounted } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
+import AppLogo from '@/components/AppLogo.vue'
+
+const route = useRoute()
 
 onMounted(() => {
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  // Handle dark theme based on system preference
+  if (!window.matchMedia('(prefers-color-scheme: dark)').matches) {
     document.documentElement.classList.add('dark')
   } else {
     document.documentElement.classList.remove('dark')
@@ -15,14 +18,13 @@ onMounted(() => {
 <template>
   <section
     class="min-h-[100vh] flex justify-center bg-light dark:bg-black text-text dark:text-text-dark"
+    v-if="route.name === 'home'"
   >
-    <div class="w-page px-[16px]">
+    <div class="w-page px-[16px] md:px-0">
       <header class="py-[10.5px] flex justify-between items-center">
-        <div class="">
-          <router-link to="" class="text-text dark:text-text-dark">
-            <AppLogo />
-          </router-link>
-        </div>
+        <router-link to="/" class="text-text dark:text-text-dark">
+          <AppLogo />
+        </router-link>
         <div class="flex items-center gap-[13px]">
           <span class="hidden md:block">Welcome!</span>
           <img src="@/assets/imgs/avatar.png" class="rounded-full border-[2px] border-white" />
@@ -31,4 +33,5 @@ onMounted(() => {
       <RouterView />
     </div>
   </section>
+  <RouterView v-else />
 </template>

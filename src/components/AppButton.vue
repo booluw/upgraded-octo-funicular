@@ -5,7 +5,7 @@ defineProps<{
 </script>
 <template>
   <button
-    class="flex items-center justify-center rounded-[6px] py-[16px] px-[40px] outline-none border"
+    class="flex items-center justify-center rounded-[6px] py-[16px] px-[40px] outline-none border-[1.5px]"
     :class="
       type === 'primary'
         ? 'bg-primary border-primary text-white'

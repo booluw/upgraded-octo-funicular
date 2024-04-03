@@ -5,6 +5,7 @@ const props = defineProps<{
   type: 'text' | 'password' | 'search'
   label?: string
   placeholder?: string
+  required?: boolean
 }>()
 
 const value = defineModel()
@@ -23,6 +24,7 @@ const updateModel = function (e: any) {
       :type="type"
       :value="value"
       :placeholder="placeholder"
+      :required="required"
       @input="updateModel"
       @focus="updateModel"
     />

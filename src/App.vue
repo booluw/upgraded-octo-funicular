@@ -20,7 +20,7 @@ onMounted(() => {
     class="min-h-[100vh] flex justify-center bg-light dark:bg-black text-text dark:text-text-dark"
     v-if="route.name === 'home'"
   >
-    <div class="w-page px-[16px] md:px-0">
+    <div class="md:w-page px-[16px] md:px-0">
       <header class="py-[10.5px] flex justify-between items-center">
         <router-link to="/" class="text-text dark:text-text-dark">
           <AppLogo />

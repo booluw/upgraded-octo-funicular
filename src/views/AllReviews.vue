@@ -5,6 +5,7 @@ import { useRoute, useRouter } from 'vue-router'
 import AppLogo from '@/components/AppLogo.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
+import ReviewCard from '@/components/ReviewCard.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -22,6 +23,63 @@ const filters = reactive([
   'Public Transport',
   'Bus Station',
   'Quiet'
+])
+const reviews = reactive([
+  {
+    username: 'James T.',
+    time: '5 months ago',
+    rating: 1,
+    location: 'Ikate, Lekki',
+    isAdmin: true,
+    review: `There is no stable electricity. The roads are fairly good and there is a sense of community.
+      The drainage system is poor and most residents litter their surroundings. There are lots
+      stores and Supermarkets.`,
+    condition: 'network'
+  },
+  {
+    username: 'James T.',
+    time: '5 months ago',
+    rating: 3,
+    location: 'Ikate, Lekki',
+    isAdmin: false,
+    review: `There is no stable electricity. The roads are fairly good and there is a sense of community.
+      The drainage system is poor and most residents litter their surroundings. There are lots
+      stores and Supermarkets.`,
+    condition: 'power'
+  },
+  {
+    username: 'James T.',
+    time: '5 months ago',
+    rating: 4,
+    location: 'Ikate, Lekki',
+    isAdmin: false,
+    review: `There is no stable electricity. The roads are fairly good and there is a sense of community.
+      The drainage system is poor and most residents litter their surroundings. There are lots
+      stores and Supermarkets.`,
+    condition: 'water'
+  },
+  {
+    username: 'James T.',
+    time: '5 months ago',
+    rating: 3,
+    location: 'Ikate, Lekki',
+    isAdmin: false,
+    review: `There is no stable electricity. The roads are fairly good and there is a sense of community.
+      The drainage system is poor and most residents litter their surroundings. There are lots
+      stores and Supermarkets.`,
+    condition: 'security'
+  },
+  {
+    username: 'James T.',
+    time: '5 months ago',
+    rating: 5,
+    location: 'Ikate, Lekki',
+    isAdmin: true,
+    review: `There is no stable electricity. The roads are fairly good and there is a sense of community.
+      The drainage system is poor and most residents litter their surroundings. There are lots
+      stores and Supermarkets.`,
+    condition: 'traffic'
+  }
 ])
 
 const query = computed({
@@ -231,6 +289,10 @@ const search = function () {
         </div>
       </div>
     </div>
-    <div class="md:w-page px-[16px] md:px-0">Hi Welcome to my Youtube Tutorial</div>
+    <div class="md:w-page px-[16px] md:px-0 flex justify-between">
+      <div class="">
+        <ReviewCard :review="review" v-for="(review, i) in reviews" :key="i" />
+      </div>
+    </div>
   </section>
 </template>

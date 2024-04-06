@@ -67,7 +67,7 @@ onMounted(() => {
 </script>
 <template>
   <div
-    class="fixed md:w-1/3 h-auto p-3 rounded-[6px] text-center flex items-center justify-center gap-3"
+    class="fixed w-5/6 md:w-1/3 h-auto p-3 rounded-[6px] text-center flex items-center justify-center gap-3"
     :class="hideNotification ? 'notify' : '' + ' ' + style"
     :style="
       props.position === 'top-center'

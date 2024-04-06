@@ -2,10 +2,15 @@
 import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+import { amenities } from '@/utils/constants'
+
 import AppLogo from '@/components/AppLogo.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
+import AppSelection from '@/components/AppSelection.vue'
+import AppReviewModal from '@/components/AppReviewModal.vue'
+import AppRating from '@/components/AppRating.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -82,6 +87,13 @@ const reviews = reactive([
   }
 ])
 
+const review = reactive({
+  amenities: [] as string[],
+  rate: 0,
+  review: '',
+  annon: false
+})
+
 const query = computed({
   set(newValue: string) {
     searchQuery.value = newValue
@@ -98,6 +110,9 @@ const share = function () {
 }
 const search = function () {
   router.push(`/areas?query=${searchQuery.value}`)
+}
+
+const submitReview = function () {
 }
 </script>
 <template>
@@ -294,7 +309,10 @@ const search = function () {
     >
       <div class="md:w-[486px] md:order-2 overflow-x-auto md:overflow-hidden">
         <div class="w-[150vw] md:w-auto grid grid-cols-3 md:grid-cols-2 grid-rows-2 gap-[10px]">
-          <img src="@/assets/imgs/Placeholder-1.png" class="row-span-2 h-full w-auto rounded-[8px]" />
+          <img
+            src="@/assets/imgs/Placeholder-1.png"
+            class="row-span-2 h-full w-auto rounded-[8px]"
+          />
           <img src="@/assets/imgs/Placeholder.png" class="row-span-1 rounded-[8px]" />
           <div class="row-span-1 rounded-[8px] overflow-hidden relative">
             <div
@@ -312,5 +330,30 @@ const search = function () {
         <ReviewCard :review="review" v-for="(review, i) in reviews" :key="i" />
       </div>
     </div>
+    <AppReviewModal>
+      <h1 class="text-center">Review Location</h1>
+      <h2 class="text-[24px] font-semibold my-[24px] text-center md:text-left">{{ query }}</h2>
+      <form @submit.prevent="submitReview()">
+        <AppSelection
+          v-model="review.amenities"
+          :options="amenities"
+          placeholder="Select Amenities"
+        />
+        <AppRating v-model="review.rate" class="my-[16px]" />
+        <h3 class="mb-[4px]">Write Review</h3>
+        <AppInput type="textarea" v-model="review.review" placeholder="Write a review" />
+        <div
+          class="inline-flex gap-[8px] my-[16px] cursor-pointer"
+          @click="review.annon = !review.annon"
+        >
+          <div class="py-2 px-[10px] border rounded" :class="{ 'bg-primary': review.annon }" />
+          Post as Anonymous
+        </div>
+        <div class="flex gap-[24px]">
+          <AppButton type="primary" mode="submit" class="w-full">SUBMIT</AppButton>
+          <AppButton type="outline" class="w-full">CANCEL</AppButton>
+        </div>
+      </form>
+    </AppReviewModal>
   </section>
 </template>

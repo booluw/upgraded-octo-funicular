@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 defineProps<{
   type: 'primary' | 'outline'
+  mode?: 'submit' | undefined
 }>()
 </script>
 <template>
@@ -11,6 +12,7 @@ defineProps<{
         ? 'bg-primary border-primary text-white px-[40px]'
         : 'border-primary bg-transparent text-primary px-[16px]'
     "
+    :type="mode"
   >
     <slot></slot>
   </button>

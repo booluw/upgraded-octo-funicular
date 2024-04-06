@@ -47,7 +47,7 @@ const updateModel = function (option: string) {
       :required="required"
     >
       <div
-        class="absolute top-0 right-0 left-0 border border-grey/40 dark:border-[#F3F7FE] rounded-[6px] max-h-[200px] overflow-auto grid grid-cols-1 md:grid-cols-4 gap-[5px] p-5 bg-[#F3F7FE] dark:bg-black-light"
+        class="absolute top-0 right-0 left-0 z-20 border border-grey/40 dark:border-[#F3F7FE] rounded-[6px] max-h-[200px] overflow-auto grid grid-cols-1 md:grid-cols-4 gap-[5px] p-5 bg-[#F3F7FE] dark:bg-black-light"
         v-if="show"
       >
         <div

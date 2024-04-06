@@ -1,0 +1,1 @@
+export const amenities = ['Parking Lot', 'Free Wi-Fi', 'Nightlife', 'Adult Home', 'Schools', 'Pet Store', 'Childcare', 'Gym', 'Adult Home', 'Security', 'Train Station', 'Public Transportation', 'Bus Station', 'Quiet', 'Shopping Malls', 'Resort Park', 'Hospitals']

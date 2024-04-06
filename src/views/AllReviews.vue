@@ -16,6 +16,7 @@ import AppRating from '@/components/AppRating.vue'
 const route = useRoute()
 const router = useRouter()
 
+const scroller = ref(null) as any
 const searchQuery = ref('')
 const filters = reactive([
   'Schools',
@@ -110,6 +111,10 @@ const query = computed({
     return route.query.query
   }
 })
+
+const scroll = function () {
+  scroller.value.scrollLeft += 430;
+}
 
 const share = function () {
   navigator.clipboard.writeText(window.location.href).then(() => {
@@ -268,7 +273,7 @@ const submitReview = function () {
           </div>
         </div>
         <div class="pb-[16px] flex justify-between items-center">
-          <div class="flex gap-[10px] overflow-hidden hover:overflow-x-auto">
+          <div class="flex gap-[10px] overflow-hidden hover:overflow-x-auto" ref="scroller">
             <div
               class="flex-shrink-0 text-center text-[14px] py-[4px] px-[8px] border-[0.2px] border-black dark:border-text-dark bg-white dark:bg-black-light rounded-[4px] cursor-pointer hover:opacity-75"
               v-for="(filter, i) in filters"

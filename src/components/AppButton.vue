@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 defineProps<{
   type: 'primary' | 'outline'
-  mode?: 'submit' | undefined
+  mode?: 'submit' | 'button' | undefined
 }>()
 </script>
 <template>

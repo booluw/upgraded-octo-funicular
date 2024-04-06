@@ -3,6 +3,7 @@ import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import { amenities } from '@/utils/constants'
+import { notify } from '@/components/AppNotification.ts'
 
 import AppLogo from '@/components/AppLogo.vue'
 import AppInput from '@/components/AppInput.vue'
@@ -14,6 +15,7 @@ import AppRating from '@/components/AppRating.vue'
 
 const route = useRoute()
 const router = useRouter()
+
 const searchQuery = ref('')
 const filters = reactive([
   'Schools',
@@ -89,10 +91,16 @@ const reviews = reactive([
 
 const review = reactive({
   amenities: [] as string[],
-  rate: 0,
+  rating: 0,
+  isAdmin: false,
   review: '',
-  annon: false
+  annon: false,
+  username: 'Boluwatife Johnson',
+  time: 'just now',
+  location: 'London, UK',
+  condition: '',
 })
+const newReview = ref(false)
 
 const query = computed({
   set(newValue: string) {
@@ -105,7 +113,7 @@ const query = computed({
 
 const share = function () {
   navigator.clipboard.writeText(window.location.href).then(() => {
-    console.log('Done')
+    notify({ content: 'Link Copied to clipboard', position: 'top-center', type: 'success' })
   })
 }
 const search = function () {
@@ -113,6 +121,24 @@ const search = function () {
 }
 
 const submitReview = function () {
+  if (review.amenities.length === 0) {
+    notify({ content: 'Select Amenities relating to this review', position: 'top-center', type: 'warning' })
+    return
+  }
+
+  if (review.rating === 0) {
+    notify({ content: 'How many stars will you rate this location?', position: 'top-center', type: 'warning' })
+    return
+  }
+
+  if (review.review === '') {
+    notify({ content: 'Write something about this location', position: 'top-center', type: 'warning' })
+    return
+  }
+
+  reviews.push(review)
+  newReview.value = false
+  notify({ content: 'review Submitted', position: 'top-center', type: 'success' })
 }
 </script>
 <template>
@@ -209,7 +235,7 @@ const submitReview = function () {
               </h2>
             </div>
             <div class="hidden md:flex gap-[16px]">
-              <AppButton type="primary" class="uppercase">Leave a review</AppButton>
+              <AppButton type="primary" class="uppercase" @click="newReview = true">Leave a review</AppButton>
               <AppButton type="outline">
                 <svg
                   width="24"
@@ -272,7 +298,7 @@ const submitReview = function () {
           </div>
         </div>
         <div class="flex gap-[16px] md:hidden">
-          <AppButton type="primary" class="uppercase">Leave a review</AppButton>
+          <AppButton type="primary" class="uppercase" @click="newReview = true">Leave a review</AppButton>
           <AppButton type="outline">
             <svg
               width="24"
@@ -307,7 +333,7 @@ const submitReview = function () {
     <div
       class="md:w-page px-[16px] md:px-0 flex gap-[16px] md:gap-[32px] flex-col md:flex-row justify-between"
     >
-      <div class="md:w-[486px] md:order-2 overflow-x-auto md:overflow-hidden">
+      <div class="md:w-[486px] md:order-2 overflow-x-auto md:overflow-hidden md:!sticky top-0">
         <div class="w-[150vw] md:w-auto grid grid-cols-3 md:grid-cols-2 grid-rows-2 gap-[10px]">
           <img
             src="@/assets/imgs/Placeholder-1.png"
@@ -330,7 +356,7 @@ const submitReview = function () {
         <ReviewCard :review="review" v-for="(review, i) in reviews" :key="i" />
       </div>
     </div>
-    <AppReviewModal>
+    <AppReviewModal v-if="newReview">
       <h1 class="text-center">Review Location</h1>
       <h2 class="text-[24px] font-semibold my-[24px] text-center md:text-left">{{ query }}</h2>
       <form @submit.prevent="submitReview()">
@@ -339,7 +365,7 @@ const submitReview = function () {
           :options="amenities"
           placeholder="Select Amenities"
         />
-        <AppRating v-model="review.rate" class="my-[16px]" />
+        <AppRating v-model="review.rating" class="my-[16px]" />
         <h3 class="mb-[4px]">Write Review</h3>
         <AppInput type="textarea" v-model="review.review" placeholder="Write a review" />
         <div
@@ -351,7 +377,7 @@ const submitReview = function () {
         </div>
         <div class="flex gap-[24px]">
           <AppButton type="primary" mode="submit" class="w-full">SUBMIT</AppButton>
-          <AppButton type="outline" class="w-full">CANCEL</AppButton>
+          <AppButton type="outline" class="w-full" @click="newReview = false">CANCEL</AppButton>
         </div>
       </form>
     </AppReviewModal>

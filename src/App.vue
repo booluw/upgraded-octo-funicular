@@ -1,17 +1,26 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { RouterView, useRoute } from 'vue-router'
+import { onMounted, ref } from 'vue';
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import { useUser } from './stores/user'
 import { isEmpty } from 'lodash'
 
+import { onClickOutside } from '@vueuse/core';
+
 import AppLogo from '@/components/AppLogo.vue'
+import AppLogin from './components/AppLogin.vue';
 
 const route = useRoute()
+const router = useRouter()
 const user = useUser().user
+const target = ref(null)
+
+onClickOutside(target, () => {
+  router.replace(route.path)
+})
 
 onMounted(() => {
   // Handle dark theme based on system preference
-  if (!window.matchMedia('(prefers-color-scheme: dark)').matches) {
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
     document.documentElement.classList.add('dark')
   } else {
     document.documentElement.classList.remove('dark')
@@ -33,7 +42,7 @@ onMounted(() => {
           <span class="hidden md:block">Welcome!</span>
           <img src="@/assets/imgs/avatar.png" class="rounded-full border-[2px] border-white" />
         </div>
-        <div class="font-[700] text-primary uppercase cursor-pointer hover:opacity-75" v-else>
+        <div class="font-[700] text-primary uppercase cursor-pointer hover:opacity-75" @click="router.push('?action=login')" v-else>
           Login
         </div>
       </header>
@@ -41,4 +50,7 @@ onMounted(() => {
     </div>
   </section>
   <RouterView v-else />
+  <div class="fixed top-0 right-0 bottom-0 left-0 bg-[#1D3045]/90 dark:bg-black/90 flex justify-center items-center" v-if="route.query.action === 'login'">
+    <AppLogin ref="target" />
+  </div>
 </template>

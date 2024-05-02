@@ -6,18 +6,19 @@ export default {
     extend: {
       colors: {
         primary: '#3366FF',
-        black: '#171717',
+        black: '#212327',
         text: '#101012',
         'text-dark': '#FBFAFC',
-        'black-light': '#242428',
-        light: '#FAFCFD',
+        'black-light': '#14161A',
+        light: '#E5EDF5',
         'dark-blue': '#0D2159'
       },
       width: {
         page: '1240px'
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif']
+        sans: ['General Sans', 'sans-serif'],
+        serif: ['ClashDisplay', 'serif']
       }
     }
   },

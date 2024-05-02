@@ -16,7 +16,7 @@ const updateModel = function (e: any) {
 </script>
 <template>
   <div
-    class="flex items-center gap-[10px] rounded-[6px] py-[16px] px-[12px] bg-[#F3F7FE] dark:bg-black-light border dark:border-black focus-within:border-primary transition-all ease-out"
+    class="flex items-center gap-[10px] rounded-[6px] py-[16px] px-[12px] bg-[#F3F7FE] dark:bg-black-light border dark:border-[#383B43] focus-within:border-primary transition-all ease-out"
   >
     <slot name="icon" />
     <textarea

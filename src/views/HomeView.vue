@@ -13,7 +13,7 @@ const reviews = reactive([
     username: 'James T.',
     time: '5 months ago',
     rating: 1,
-    location: 'Ikate, Lekki',
+    location: 'Omiyale Street, Lagos.',
     review: `There is no stable electricity. The roads are fairly good and there is a sense of community.
       The drainage system is poor and most residents litter their surroundings. There are lots
       stores and Supermarkets.`,
@@ -23,7 +23,7 @@ const reviews = reactive([
     username: 'James T.',
     time: '5 months ago',
     rating: 3,
-    location: 'Ikate, Lekki',
+    location: 'Omiyale Street, Lagos.',
     review: `There is no stable electricity. The roads are fairly good and there is a sense of community.
       The drainage system is poor and most residents litter their surroundings. There are lots
       stores and Supermarkets.`,
@@ -33,7 +33,7 @@ const reviews = reactive([
     username: 'James T.',
     time: '5 months ago',
     rating: 4,
-    location: 'Ikate, Lekki',
+    location: 'Omiyale Street, Lagos.',
     review: `There is no stable electricity. The roads are fairly good and there is a sense of community.
       The drainage system is poor and most residents litter their surroundings. There are lots
       stores and Supermarkets.`,
@@ -43,7 +43,7 @@ const reviews = reactive([
     username: 'James T.',
     time: '5 months ago',
     rating: 3,
-    location: 'Ikate, Lekki',
+    location: 'Omiyale Street, Lagos.',
     review: `There is no stable electricity. The roads are fairly good and there is a sense of community.
       The drainage system is poor and most residents litter their surroundings. There are lots
       stores and Supermarkets.`,
@@ -53,7 +53,7 @@ const reviews = reactive([
     username: 'James T.',
     time: '5 months ago',
     rating: 5,
-    location: 'Ikate, Lekki',
+    location: 'Omiyale Street, Lagos.',
     review: `There is no stable electricity. The roads are fairly good and there is a sense of community.
       The drainage system is poor and most residents litter their surroundings. There are lots
       stores and Supermarkets.`,
@@ -77,7 +77,7 @@ const search = function () {
 <template>
   <section class="h-[90vh] flex gap-[100px] items-center justify-between overflow-hidden">
     <div class="md:w-1/3">
-      <h1 class="text-[40px] font-bold mb-[16px] md:mb-[40px]">
+      <h1 class="text-[52px] font-bold mb-[16px] md:mb-[40px]">
         Find a place you will love to live!
       </h1>
       <p class="mb-[24px] md:mb-[40px]">
@@ -89,7 +89,7 @@ const search = function () {
         <AppInput
           v-model="query"
           type="search"
-          placeholder="Enter Address"
+          placeholder="Enter street address"
           class="mb-[8px] md:mb-[20px]"
           required
         >
@@ -117,7 +117,7 @@ const search = function () {
             </svg>
           </template>
         </AppInput>
-        <AppButton type="primary" class="uppercase">Search</AppButton>
+        <AppButton type="primary" class="uppercase">Explore Area</AppButton>
       </form>
     </div>
     <div class="hidden h-full md:flex gap-[20px] overflow-hidden relative">

@@ -10,7 +10,7 @@ import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
 import AppSelection from '@/components/AppSelection.vue'
-import AppReviewModal from '@/components/AppReviewModal.vue'
+import AppModal from '@/components/AppModal.vue'
 import AppRating from '@/components/AppRating.vue'
 
 const route = useRoute()
@@ -148,10 +148,10 @@ const submitReview = function () {
 </script>
 <template>
   <section
-    class="min-h-[100vh] md:flex flex-col items-center bg-light dark:bg-black text-text dark:text-text-dark"
+    class="min-h-[100vh] md:flex flex-col items-center bg-[#FBFCFE] dark:bg-[#14161A] text-text dark:text-text-dark"
   >
     <div
-      class="md:w-[100vw] md:bg-[#F2F6FD] dark:bg-transparent flex flex-col items-center mb-[16px] md:mb-[32px]"
+      class="md:w-[100vw] md:bg-light dark:bg-black flex flex-col items-center mb-[16px] md:mb-[32px]"
     >
       <div class="w-full md:w-page px-[16px] md:px-0">
         <header class="py-[10.5px] flex justify-between items-center">
@@ -361,7 +361,7 @@ const submitReview = function () {
         <ReviewCard :review="review" v-for="(review, i) in reviews" :key="i" />
       </div>
     </div>
-    <AppReviewModal v-if="newReview">
+    <AppModal v-if="newReview">
       <h1 class="text-center">Review Location</h1>
       <h2 class="text-[24px] font-semibold my-[24px] text-center md:text-left">{{ query }}</h2>
       <form @submit.prevent="submitReview()">
@@ -385,6 +385,6 @@ const submitReview = function () {
           <AppButton type="outline" class="w-full" @click="newReview = false">CANCEL</AppButton>
         </div>
       </form>
-    </AppReviewModal>
+    </AppModal>
   </section>
 </template>

@@ -6,12 +6,14 @@ export default {
     extend: {
       colors: {
         primary: '#3366FF',
+        'primary-light': '#FAFCFD',
         black: '#212327',
         text: '#101012',
         'text-dark': '#FBFAFC',
         'black-light': '#14161A',
         light: '#E5EDF5',
-        'dark-blue': '#0D2159'
+        'dark-blue': '#0D2159',
+        icon: '#1e1e1e'
       },
       width: {
         page: '1240px'

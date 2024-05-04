@@ -1,5 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import { supabase } from '@/config/supabase'
+import { useUser } from '@/stores/user'
+
+const userGuard = async function (to: { fullPath: any }, from: any, next: (arg0: string | undefined) => void) {
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (user) {
+    useUser().setUserId(user.id);
+    next()
+  } else {
+    next(`/login?continue=${to.fullPath}`)
+  }
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,13 +38,14 @@ const router = createRouter({
       component: () => import('../views/auth/LoginView.vue')
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/AboutView.vue')
-    }
+      path: '/admin',
+      component: () => import('../views/admin/defaultView.vue'),
+      children: [{
+        path: '',
+        name: 'AdminHome',
+        component: () => import('../views/admin/IndexView.vue')
+      }]
+    },
   ]
 })
 

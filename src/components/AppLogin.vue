@@ -41,7 +41,11 @@ const logUserIn = async function () {
 
     useUser().setUser(profile[0] as User)
 
-    router.push('/')
+    if (profile[0].role === 'ADMIN') {
+      router.push('/admin')
+    } else {
+      router.push('/')
+    }
   } catch (error) {
     console.log(error)
     notify({ content: 'An error occurred', position: 'top-center', type: 'error' })

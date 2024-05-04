@@ -2,8 +2,8 @@
 import { computed, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
-import { amenities } from '@/utils/constants'
-import { notify } from '@/components/AppNotification.ts'
+import { AMENITIES } from '@/utils/constants'
+import { notify } from '@/components/AppNotification'
 
 import AppLogo from '@/components/AppLogo.vue'
 import AppInput from '@/components/AppInput.vue'
@@ -367,7 +367,7 @@ const submitReview = function () {
       <form @submit.prevent="submitReview()">
         <AppSelection
           v-model="review.amenities"
-          :options="amenities"
+          :options="AMENITIES"
           placeholder="Select Amenities"
         />
         <AppRating v-model="review.rating" class="my-[16px]" />

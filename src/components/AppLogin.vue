@@ -68,7 +68,7 @@ const logUserIn = async function () {
       </AppButton>
       <div class="mt-10">
         Don't have an account?
-        <router-link to="/sign-up" class="text-primary font-[500]">Sign Up</router-link>
+        <router-link to="/sign-up" class="text-primary font-[500] underline">Sign Up</router-link>
       </div>
     </form>
   </section>

@@ -5,6 +5,7 @@ import type { User } from "@/interfaces/user";
 export const useUser = defineStore('user', () => {
   const user = ref<User>({
     id: '',
+    username: '',
     role: 'USER',
     email: '',
     firstName: '',
@@ -13,7 +14,7 @@ export const useUser = defineStore('user', () => {
   // let user = user_.value
 
   const setUser = async function (userData: User) {
-    user.value = { ...userData }
+    user.value = { ...userData, username: userData.username.replace(/"/g, "") }
   }
 
   const setUserId = function (id: string) {
@@ -23,6 +24,7 @@ export const useUser = defineStore('user', () => {
   const resetUser = function () {
     user.value = {
       id: '',
+      username: '',
       role: 'USER',
       email: '',
       firstName: '',

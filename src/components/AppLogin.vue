@@ -13,8 +13,11 @@ import type { User } from '@/interfaces/user'
 const router = useRouter()
 const loading = ref(false)
 const auth = reactive({ email: '', password: '' })
+const validate = reactive({ email: false, password: false })
 
 const logUserIn = async function () {
+  if (!validate.email || !validate.password) return
+
   loading.value = true
   try {
     const { data, error } = await supabase.auth.signInWithPassword({ ...auth })
@@ -63,13 +66,23 @@ const logUserIn = async function () {
   >
     <h1 class="text-[20px] font-[500]">Welcome Back</h1>
     <form class="my-[24px]" @submit.prevent="logUserIn()">
-      <AppInput type="email" v-model="auth.email" placeholder="E-mail address" required />
+      <AppInput
+        type="email"
+        v-model="auth.email"
+        placeholder="E-mail address"
+        rules="required|email"
+        @valid="validate.email = true"
+        @invalid="validate.email = false"
+      />
       <AppInput
         type="password"
         v-model="auth.password"
         placeholder="Password"
-        required
+        rules="required"
+        regex="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{7,}$"
         class="mt-5"
+        @valid="validate.password = true"
+        @invalid="validate.password = false"
       />
       <AppButton type="primary" mode="submit" class="w-full mt-5" :loading="loading">
         LOGIN

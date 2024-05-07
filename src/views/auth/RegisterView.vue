@@ -12,8 +12,11 @@ const router = useRouter()
 
 const loading = ref(false)
 const auth = reactive({ email: '', password: '', username: '' })
+const validate = reactive({ email: false, password: false, username: false })
 
 const registerUser = async function () {
+  if (!validate.email || !validate.password || !validate.username) return
+
   loading.value = true
 
   try {
@@ -55,17 +58,30 @@ const registerUser = async function () {
           type="text"
           label="Username"
           v-model="auth.username"
+          rules="required"
+          regex="\b([A-Za-z]){1}(\w){7,29}\b"
           placeholder="Username"
           class="mb-5"
-          required
+          @valid="validate.username = true"
+          @invalid="validate.username = false"
         />
-        <AppInput type="email" v-model="auth.email" placeholder="E-mail address" required />
+        <AppInput
+          type="email"
+          v-model="auth.email"
+          rules="required|email"
+          placeholder="E-mail address"
+          @valid="validate.email = true"
+          @invalid="validate.email = false"
+        />
         <AppInput
           type="password"
           v-model="auth.password"
+          rules="required"
+          regex="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{7,}$"
           placeholder="Password"
-          required
           class="mt-5"
+          @valid="validate.password = true"
+          @invalid="validate.password = false"
         />
         <AppButton type="primary" mode="submit" class="w-full mt-5 uppercase" :loading="loading">
           Sign Up

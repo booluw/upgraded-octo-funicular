@@ -1,18 +1,55 @@
 <script lang="ts" setup>
-import { ref, useSlots } from 'vue'
+import { ref, useSlots, reactive } from 'vue'
+import { validation } from './validations'
+import { emit } from 'process'
 
+const emit = defineEmits(['valid', 'invalid'])
 const props = defineProps<{
   type: 'text' | 'textarea' | 'search' | 'email' | 'password'
   placeholder?: string
-  required?: boolean
+  rules?: string
+  regex?: string
 }>()
 
 const value = defineModel()
 const showLabel = ref(false)
+const pattern = props.regex ? new RegExp(props.regex) : ''
+const error = reactive({
+  show: false,
+  message: ''
+})
 
 const updateModel = function (e: any) {
   showLabel.value = true
   value.value = e.target.value
+
+  error.message = ''
+  error.show = false
+
+  // First validates regex
+  if (props.regex) {
+    const isValid = new RegExp(props.regex).test(e.target.value)
+
+    if (!isValid) {
+      error.show = true
+      error.message = `${props.placeholder} is not valid`
+
+      return
+    }
+  }
+
+  // Then validate rules
+
+  props.rules?.split('|').forEach((rule: string) => {
+    error.show = !validation[rule](e.target.value, props.placeholder).valid
+    error.message = validation[rule](e.target.value, props.placeholder).message
+  })
+
+  if (!error.show) {
+    emit('valid')
+  } else {
+    emit('invalid')
+  }
 }
 </script>
 <template>
@@ -38,7 +75,8 @@ const updateModel = function (e: any) {
           class="w-full bg-transparent focus-within:outline-none outline-none min-h-[100px]"
           :v-model="value"
           :placeholder="placeholder"
-          :required="required"
+          :required="rules?.includes('required')"
+          :pattern="pattern"
           @input="updateModel"
           @focus="updateModel"
         ></textarea>
@@ -55,7 +93,7 @@ const updateModel = function (e: any) {
           :type="type"
           :value="value"
           :placeholder="placeholder"
-          :required="required"
+          :required="rules?.includes('required')"
           @input="updateModel"
           @focus="updateModel"
         />
@@ -79,8 +117,6 @@ const updateModel = function (e: any) {
         </div>
       </div>
     </div>
-    <div v-if="required && showLabel">
-      <p class="text-xs text-red-400 text-left mt-1" v-if="value ===''">{{ placeholder }} is required</p>
-    </div>
+    <p class="text-xs text-red-400 text-left mt-1">{{ error.message }}</p>
   </div>
 </template>

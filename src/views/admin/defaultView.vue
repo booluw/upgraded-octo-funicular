@@ -26,7 +26,7 @@ const user = computed(() => {
     <div class="flex h-[90vh] w-full">
       <div class="w-[300px] pt-[20px]">
         <router-link
-          :to="'/admin' + link.path"
+          :to="'/admin/' + link.path"
           exact-active-class="bg-[#0B153A] text-text-dark"
           class="text-icon flex items-center gap-3 py-5 px-10 mb-1 hover:bg-[#0B153A] hover:text-text-dark transition-colors ease-in-out"
           v-for="(link, index) in ADMIN_ROUTES"

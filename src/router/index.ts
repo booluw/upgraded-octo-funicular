@@ -47,6 +47,11 @@ const router = createRouter({
       component: () => import('../views/auth/LoginView.vue')
     },
     {
+      path: '/verify',
+      name: 'verifyEmail',
+      component: () => import('../views/auth/VerifyEmailView.vue')
+    },
+    {
       path: '/admin',
       component: () => import('../views/admin/defaultView.vue'),
       beforeEnter: adminGuard,

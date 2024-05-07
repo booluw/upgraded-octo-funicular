@@ -46,9 +46,13 @@ const logUserIn = async function () {
     } else {
       router.push('/')
     }
-  } catch (error) {
+  } catch (error: any) {
     console.log(error)
-    notify({ content: 'An error occurred', position: 'top-center', type: 'error' })
+    notify({
+      content: error ?? `An error occurred, that's all we know`,
+      position: 'top-center',
+      type: 'error'
+    })
   }
   loading.value = false
 }

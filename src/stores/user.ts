@@ -33,4 +33,7 @@ export const useUser = defineStore('user', () => {
   }
 
   return { user, setUser, setUserId, resetUser }
+},
+  {
+  persist: true
 })

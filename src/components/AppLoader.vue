@@ -6,7 +6,7 @@
 .loader {
   width: 20px;
   height: 20px;
-  border: 2.5px solid #fff;
+  border: 2.5px solid currentColor;
   border-bottom-color: transparent;
   border-radius: 50%;
   display: inline-block;

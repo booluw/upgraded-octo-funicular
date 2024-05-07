@@ -14,6 +14,15 @@ const userGuard = async function (to: { fullPath: any }, from: any, next: (arg0:
   }
 }
 
+const adminGuard = async function (to: { fullPath: any }, from: any, next: (arg0: string | undefined) => void) {
+
+  if (useUser().user.role === 'ADMIN') {
+    next()
+  } else {
+    next(`/login?continue=${to.fullPath}`)
+  }
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -40,6 +49,7 @@ const router = createRouter({
     {
       path: '/admin',
       component: () => import('../views/admin/defaultView.vue'),
+      beforeEnter: adminGuard,
       children: [{
         path: '',
         name: 'AdminHome',

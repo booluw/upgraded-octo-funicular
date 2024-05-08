@@ -1,24 +1,27 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import { supabase } from '@/config/supabase'
 import { useUser } from '@/stores/user'
 
+import HomeView from '../views/HomeView.vue'
+import { notify } from '@/components/AppNotification'
+
 const userGuard = async function (to: { fullPath: any }, from: any, next: (arg0: string | undefined) => void) {
   const { data: { user } } = await supabase.auth.getUser()
-  
+
   if (user) {
     useUser().setUserId(user.id);
     next()
   } else {
+    notify({ content: 'log in to continue', position: 'top-center', type: 'info' })
     next(`/login?continue=${to.fullPath}`)
   }
 }
 
 const adminGuard = async function (to: { fullPath: any }, from: any, next: (arg0: string | undefined) => void) {
-
   if (useUser().user.role === 'ADMIN') {
     next()
   } else {
+    notify({ content: 'You need to be an admin to go here', position: 'top-center', type: 'info' })
     next(`/login?continue=${to.fullPath}`)
   }
 }

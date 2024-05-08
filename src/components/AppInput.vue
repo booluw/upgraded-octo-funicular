@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref, useSlots, reactive } from 'vue'
 import { validation } from './validations'
-import { emit } from 'process'
 
 const emit = defineEmits(['valid', 'invalid'])
 const props = defineProps<{
@@ -9,6 +8,7 @@ const props = defineProps<{
   placeholder?: string
   rules?: string
   regex?: string
+  "same-as"?: string
 }>()
 
 const value = defineModel()
@@ -36,6 +36,14 @@ const updateModel = function (e: any) {
 
       return
     }
+  }
+
+  if (props.sameAs) {
+    if (e.target.value !== props.sameAs) {
+      error.show = true;
+      error.message = 'Validation error'
+    };
+    return;
   }
 
   // Then validate rules

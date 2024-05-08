@@ -36,7 +36,7 @@ const logUserIn = async function () {
       notify({
         content: 'Sorry, we could not fetch your profile, log in again',
         position: 'top-center',
-        type: 'success'
+        type: 'error'
       })
       loading.value = false
       return
@@ -45,7 +45,7 @@ const logUserIn = async function () {
     notify({
       content: `Welcome back, ${profile[0].username}`,
       position: 'top-center',
-      type: 'error'
+      type: 'success'
     })
 
     useUser().setUser(profile[0] as User)

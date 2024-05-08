@@ -47,6 +47,16 @@ const router = createRouter({
       component: () => import('../views/auth/LoginView.vue')
     },
     {
+      path: '/recover-pw',
+      name: 'recoverPassword',
+      component: () => import('../views/auth/RecoverPasswordView.vue')
+    },
+    {
+      path: '/update-pw',
+      name: 'updatePassword',
+      component: () => import('../views/auth/UpdatePasswordView.vue')
+    },
+    {
       path: '/verify',
       name: 'verifyEmail',
       component: () => import('../views/auth/VerifyEmailView.vue')

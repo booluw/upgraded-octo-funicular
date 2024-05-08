@@ -36,11 +36,17 @@ const logUserIn = async function () {
       notify({
         content: 'Sorry, we could not fetch your profile, log in again',
         position: 'top-center',
-        type: 'error'
+        type: 'success'
       })
       loading.value = false
       return
     }
+
+    notify({
+      content: `Welcome back, ${profile[0].username}`,
+      position: 'top-center',
+      type: 'error'
+    })
 
     useUser().setUser(profile[0] as User)
 
@@ -90,6 +96,10 @@ const logUserIn = async function () {
       <div class="mt-10">
         Don't have an account?
         <router-link to="/sign-up" class="text-primary font-[500] underline">Sign Up</router-link>
+      </div>
+      <div class="mt-3">
+        Forgot your password?
+        <router-link to="recover-pw" class="text-primary font-[500] underline">Reset it</router-link>
       </div>
     </form>
   </section>

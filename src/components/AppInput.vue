@@ -8,6 +8,7 @@ const props = defineProps<{
   placeholder?: string
   rules?: string
   regex?: string
+  size?: 'small' | 'large'
   "same-as"?: string
 }>()
 
@@ -63,7 +64,8 @@ const updateModel = function (e: any) {
 <template>
   <div>
     <div
-      class="flex flex-col justify-center rounded-[6px] p-[12px] bg-[#F3F7FE] dark:bg-black-light border dark:border-[#383B43] focus-within:border-primary transition-all ease-out group"
+      class="flex flex-col justify-center rounded-[6px] bg-[#F3F7FE] dark:bg-black-light text-black-light dark:text-[#F3F7FE] border dark:border-[#383B43] focus-within:border-primary transition-all ease-out group"
+      :class="size === 'small' ? 'px-[10px] py-[5px]' : 'p-[12px]'"
     >
       <span
         v-if="!useSlots().icon"
@@ -104,6 +106,7 @@ const updateModel = function (e: any) {
           :required="rules?.includes('required')"
           @input="updateModel"
           @focus="updateModel"
+          v-lazy="value === 'search'"
         />
         <div v-if="type === 'password'">
           <svg

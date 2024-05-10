@@ -36,6 +36,11 @@ const router = createRouter({
     },
     {
       path: '/areas',
+      name: 'AreasView',
+      component: () => import('../views/AllReviews.vue')
+    },
+    {
+      path: '/areas/:name',
       name: 'AreaView',
       component: () => import('../views/AllReviews.vue')
     },
@@ -68,11 +73,18 @@ const router = createRouter({
       path: '/admin',
       component: () => import('../views/admin/defaultView.vue'),
       beforeEnter: adminGuard,
-      children: [{
-        path: '',
-        name: 'AdminHome',
-        component: () => import('../views/admin/IndexView.vue')
-      }]
+      children: [
+        {
+          path: '',
+          name: 'AdminHome',
+          component: () => import('../views/admin/IndexView.vue')
+        },
+        {
+          path: 'areas',
+          name: 'AdminArea',
+          component: () => import('../views/admin/AreaView.vue')
+        }
+      ]
     },
   ]
 })

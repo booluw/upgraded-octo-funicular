@@ -85,7 +85,6 @@ const logUserIn = async function () {
         v-model="auth.password"
         placeholder="Password"
         rules="required"
-        regex="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{7,}$"
         class="mt-5"
         @valid="validate.password = true"
         @invalid="validate.password = false"

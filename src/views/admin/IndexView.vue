@@ -70,7 +70,7 @@ onMounted(async () => {
   <AppError v-else-if="err" />
   <section class="" v-else>
     <div class="flex items-center justify-between">
-      <h1 class="text-icon font-[600] text-2xl">Admin Dashboard</h1>
+      <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">Admin Dashboard</h1>
       <div class="">{{ formatDate(Date()) }}</div>
     </div>
     <div class="flex justify-between gap-5 my-10">
@@ -81,7 +81,7 @@ onMounted(async () => {
           </div>
           <h3 class="text-black uppercase text-2xl">areas</h3>
         </div>
-        <div class="text-5xl flex justify-end font-[500]">
+        <div class="text-5xl flex justify-end font-[500] text-black">
           {{ area }}
         </div>
       </div>
@@ -93,7 +93,7 @@ onMounted(async () => {
           </div>
           <h3 class="text-black uppercase text-2xl">reviews</h3>
         </div>
-        <div class="text-5xl flex justify-end font-[500]">
+        <div class="text-5xl flex justify-end font-[500] text-black">
           {{ reviews.count }}
         </div>
       </div>
@@ -105,7 +105,7 @@ onMounted(async () => {
           </div>
           <h3 class="text-black uppercase text-2xl">users</h3>
         </div>
-        <div class="text-5xl flex justify-end font-[500]">
+        <div class="text-5xl flex justify-end font-[500] text-black">
           {{ users }}
         </div>
       </div>

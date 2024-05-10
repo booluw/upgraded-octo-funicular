@@ -11,7 +11,6 @@ import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
 import { useUser } from '@/stores/user';
 
-
 const emit = defineEmits(['close'])
 const route = useRoute()
 const user = useUser()

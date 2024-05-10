@@ -90,6 +90,11 @@ const router = createRouter({
           path: 'areas',
           name: 'AdminArea',
           component: () => import('../views/admin/AreaView.vue')
+        },
+        {
+          path: 'reviews',
+          name: 'AdminReviews',
+          component: () => import('../views/admin/ReviewView.vue')
         }
       ]
     },

@@ -56,11 +56,13 @@ const saveArea = async function () {
     Promise.all(
       area.imgs.map(async (file) => {
         try {
-          await uploadToCloudinary(file as any).then((response) => {
-            imgs.push(response)
-          }).catch((error) => {
-            throw Error(error)
-          })
+          await uploadToCloudinary(file as any)
+            .then((response) => {
+              imgs.push(response)
+            })
+            .catch((error) => {
+              throw Error(error)
+            })
         } catch (error) {
           console.log(error)
         }
@@ -69,7 +71,14 @@ const saveArea = async function () {
       // Send to supabased
       const { error } = await supabase
         .from('areas')
-        .insert({ ...area, imgs, name: area.name.toLocaleLowerCase() })
+        .insert({
+          ...area,
+          imgs,
+          name: area.name.toLocaleLowerCase(),
+          id: (area.name + '-' + area.lga + '-' + area.state)
+            .toLocaleLowerCase()
+            .replace(/[^A-z\s\d][\\\^]?/g, '-')
+        })
 
       if (error) throw Error(error as any)
 

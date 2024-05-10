@@ -35,14 +35,21 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/areas',
-      name: 'AreasView',
-      component: () => import('../views/AllReviews.vue')
-    },
-    {
-      path: '/areas/:name',
-      name: 'AreaView',
-      component: () => import('../views/AllReviews.vue')
+      path: '/areas/',
+      name: 'AreaDefaultView',
+      component: () => import('../views/areas/defaultView.vue'),
+      children: [
+        {
+          path: '',
+          name: 'AreasView',
+          component: () => import('../views/areas/AllAreasView.vue')
+        },
+        {
+          path: ':name',
+          name: 'AreaView',
+          component: () => import('../views/areas/AreaView.vue')
+        },
+      ]
     },
     {
       path: '/sign-up',

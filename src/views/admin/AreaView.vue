@@ -157,7 +157,7 @@ watch(query, () => {
       />
     </section>
     <section class="flex justify-center" v-else-if="route.query.action === 'add'">
-      <AddNewArea @back="router.push(route.path)" @done="getAllAreas()" />
+      <AddNewArea @back="router.push(route.path)" @done="router.push(route.path); getAllAreas()" />
     </section>
     <section class="" v-else-if="route.query.action === 'edit'"></section>
   </section>

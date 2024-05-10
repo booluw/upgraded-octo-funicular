@@ -18,7 +18,7 @@ const recoverPassword = async function () {
 
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email.value, {
-      redirectTo: 'http://localhost:5173/update-pw'
+      redirectTo: 'https://spotta-ng.netlify.app//update-pw'
     })
 
     if (error) {

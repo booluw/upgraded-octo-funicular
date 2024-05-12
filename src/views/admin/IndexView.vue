@@ -64,7 +64,7 @@ onMounted(async () => {
 
 </script>
 <template>
-  <section class="h-full flex items-center justify-center bg-white" v-if="loading">
+  <section class="h-full flex items-center justify-center bg-transparent text-primary" v-if="loading">
     <AppLoader />
   </section>
   <AppError v-else-if="err" />

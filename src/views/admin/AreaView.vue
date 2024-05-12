@@ -39,8 +39,13 @@ const areas = computed(() => {
   })
 })
 
+const savedArea = function () {
+  router.push(route.path)
+  area.pagination = { start: area.pagination.start - 21, end: area.pagination.end - 20 }
+  getAllAreas()
+}
+
 const action = function (e) {
-  console.log(e)
   if (e.action === 'view') {
     router.push(`/areas/${e.data.area_id}`)
   }
@@ -157,7 +162,7 @@ watch(query, () => {
       />
     </section>
     <section class="flex justify-center" v-else-if="route.query.action === 'add'">
-      <AddNewArea @back="router.push(route.path)" @done="router.push(route.path); getAllAreas()" />
+      <AddNewArea @back="router.push(route.path)" @done="savedArea()" />
     </section>
     <section class="" v-else-if="route.query.action === 'edit'"></section>
   </section>

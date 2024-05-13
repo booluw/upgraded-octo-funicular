@@ -4,22 +4,49 @@ import AppDropdown from '@/components/AppDropdown.vue'
 const emits = defineEmits(['action'])
 const props = defineProps<{
   row: any
-  columns: { title: string; field: string }[] | string[]
+  columns: { title: string; field: string; status: boolean }[] | string[]
   action?: string[]
 }>()
 
-const emitClick = function(action) {
-  emits('action', {action, data: props.row})
+const emitClick = function (action) {
+  emits('action', { action, data: props.row })
 }
 </script>
 <template>
   <tr>
-    <td class="border border-slate-50/25 p-3 capitalize" v-for="(col, index) in columns" :key="index">
-      {{ row[typeof col === 'string' ? col : col.field] }}
+    <td
+      class="border border-slate-50/25 p-3 capitalize max-w-[30%]"
+      v-for="(col, index) in columns"
+      :key="index"
+    >
+      <template v-if="col.status">
+        <span
+          class="block text-xs !capitalize"
+          :class="
+            row[typeof col === 'string' ? col : col.field] === 'APPROVED'
+              ? 'text-[#52BD94]'
+              : row[typeof col === 'string' ? col : col.field] === 'DECLINED'
+                ? 'text-red-500'
+                : 'text-orange-500'
+          "
+        >
+          {{ row[typeof col === 'string' ? col : col.field] }}
+        </span>
+      </template>
+      <p class="line-clamp-3" v-else>
+        {{ row[typeof col === 'string' ? col : col.field] }}
+      </p>
     </td>
-    <td v-if="action" class="border border-slate-50/25 p-3">
+    <td v-if="action" class="border border-slate-50/25 p-3 w-[50px]">
       <AppDropdown :menu="action" @action="emitClick">
-        <svg width="5" height="16" class="block my-0 mx-auto" viewBox="0 0 5 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width="5"
+          height="16"
+          class="block my-0 mx-auto"
+          viewBox="0 0 5 16"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <path
             fill-rule="evenodd"
             clip-rule="evenodd"

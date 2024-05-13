@@ -10,6 +10,7 @@ import AppError from '@/components/AppError.vue'
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppTable from '@/components/AppTable/Index.vue'
+import { notify } from '@/components/AppNotification'
 
 const route = useRoute()
 const router = useRouter()
@@ -25,7 +26,9 @@ const reviews = computed(() => {
   return review.items.map((item) => {
     item.created_at = formatDate(item.created_at)
     item.area_name = item.area.name
-    item.user_name = item.profile.username.replace(/"/g, "")
+    item.user_name = item.profile.username.replace(/"/g, '')
+    item.short_text = item.review.slice(0, 30)
+    item.short_text += '...'
 
     return item
   })
@@ -43,10 +46,43 @@ const getReviews = async function () {
 
     if (error) throw Error(error)
     review.items = data
-
   } catch (err) {
     console.log(err)
     error.value = true
+  }
+
+  loading.value = false
+}
+
+const action = async function (option: { action: ['approve', 'decline', 'delete']; data: any }) {
+  try {
+    loading.value = true
+
+    switch (option.action) {
+      case 'approve':
+        await supabase.from('reviews').update({ approved: 'APPROVED' }).eq('id', option.data.id)
+        notify({ content: 'Review approved', type: 'success', position: 'top-center' })
+        break
+
+      case 'decline':
+        await supabase.from('reviews').update({ approved: 'DECLINED' }).eq('id', option.data.id)
+        notify({ content: 'Review declinded', type: 'success', position: 'top-center' })
+        break
+
+      case 'delete':
+        await supabase.from('reviews').delete().eq('id', option.data.id)
+        notify({ content: 'Review deleted', type: 'success', position: 'top-center' })
+        break
+    }
+
+    await getReviews()
+  } catch (err) {
+    console.log(err)
+    notify({
+      content: err ?? 'An Error occurred, try again',
+      type: 'error',
+      position: 'top-center'
+    })
   }
 
   loading.value = false
@@ -71,7 +107,7 @@ watch(query, () => {
             CREATE REVIEW
           </AppButton>
           <form class="flex items-center gap-[5px]" @submit.prevent="searchReview()">
-            <AppInput v-model="query" type="search" placeholder="Area Name" size="small" required>
+            <AppInput v-model="query" type="search" placeholder="User Name" size="small" required>
               <template #icon>
                 <svg
                   width="16"
@@ -106,17 +142,18 @@ watch(query, () => {
       <section class="h-[50vh] flex items-center justify-center text-primary" v-if="loading">
         <AppLoader />
       </section>
-      
+
       <AppTable
         v-else
         :columns="[
           { title: 'Date Created', field: 'created_at' },
           { title: 'Area Name', field: 'area_name' },
           { title: 'User Name', field: 'user_name' },
-          { title: 'Approved', field: 'approved' }
+          { title: 'Review', field: 'short_text' },
+          { title: 'Approved', field: 'approved', status: true }
         ]"
         :data="reviews"
-        :actions="['view', 'edit']"
+        :actions="['approve', 'decline', 'delete']"
         @on="action"
       />
     </section>

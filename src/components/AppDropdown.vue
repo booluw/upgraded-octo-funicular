@@ -21,7 +21,7 @@ onClickOutside(target, () => {
     </div>
     <div
       ref="target"
-      class="absolute top-0 -left-28 overflow-hidden shadow-xl flex flex-col gap-[2px] bg-slate-200 dark:bg-slate-700"
+      class="absolute z-[10] top-0 -left-28 overflow-hidden shadow-xl flex flex-col gap-[2px] bg-slate-200 dark:bg-slate-700"
       v-if="show"
     >
       <div

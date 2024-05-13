@@ -4,7 +4,7 @@ import Rows from './Rows.vue'
 const emit = defineEmits(['on'])
 
 defineProps<{
-  columns: { title: string; field: string }[] | string[]
+  columns: { title: string; field: string, status: boolean }[] | string[]
   data: any[]
   actions?: string[]
 }>()
@@ -23,7 +23,7 @@ const emitAction = function(data) {
         <th v-if="actions" class="border border-slate-50/25 p-3"></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody v-if="columns.length !== 0">
       <Rows
         :columns="columns"
         :row="row"
@@ -34,5 +34,6 @@ const emitAction = function(data) {
         @action="emitAction"
       />
     </tbody>
+    <div class=""  v-else></div>
   </table>
 </template>

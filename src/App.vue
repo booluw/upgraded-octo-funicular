@@ -25,7 +25,7 @@ onClickOutside(target, () => {
 onMounted(() => {
   // Handle dark theme based on system preference
   if (!window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.classList.add('dark')
+    document.documentElement.classList.remove('dark') // fix: when ready for prod
   } else {
     document.documentElement.classList.remove('dark')
   }

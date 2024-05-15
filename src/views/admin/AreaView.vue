@@ -9,6 +9,7 @@ import AppLoader from '@/components/AppLoader.vue'
 import AppError from '@/components/AppError.vue'
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
+import AppPagination from '@/components/AppPagination.vue'
 
 import AppTable from '@/components/AppTable/Index.vue'
 import AddNewArea from './components/AddNewArea.vue'
@@ -20,12 +21,9 @@ const loading = ref(false)
 const error = ref(false)
 const area = reactive({
   items: [] as any[],
-  page: 0,
-  count: 0 as number | null,
-  pagination: {
-    start: 0,
-    end: 20
-  }
+  currentPage: 0,
+  itemsPerPage: 20,
+  count: 0 as number | null
 })
 
 const query = ref('')
@@ -39,9 +37,13 @@ const areas = computed(() => {
   })
 })
 
+const goToPage = async function (pageNumber: number) {
+  area.currentPage = pageNumber
+  getAllAreas()
+}
+
 const savedArea = function () {
   router.push(route.path)
-  area.pagination = { start: area.pagination.start - 21, end: area.pagination.end - 20 }
   getAllAreas()
 }
 
@@ -78,14 +80,17 @@ const getAllAreas = async function () {
     const { data, error } = await supabase
       .rpc('get_areas_with_review_count')
       .order('area_created_at', { ascending: true })
-      .range(area.pagination.start, area.pagination.end)
+      .range(
+        area.currentPage === 0 ? 0 : area.currentPage * area.itemsPerPage,
+        area.itemsPerPage + area.currentPage * area.itemsPerPage
+      )
+      .limit(area.itemsPerPage)
 
     const { count } = await supabase.from('areas').select('*', { count: 'exact', head: true })
 
     if (error) throw Error(error as any)
     area.items = data
     area.count = count
-    area.pagination = { start: area.pagination.start + 21, end: area.pagination.end + 20 }
   } catch (err) {
     console.log(err)
     error.value = true
@@ -148,18 +153,25 @@ watch(query, () => {
       <section class="h-[50vh] flex items-center justify-center text-primary" v-if="loading">
         <AppLoader />
       </section>
-      <AppTable
-        v-else
-        :columns="[
-          { title: 'Date Created', field: 'area_created_at' },
-          { title: 'Area Name', field: 'area_name' },
-          { title: 'Views', field: 'area_views' },
-          { title: 'Reviews Count', field: 'review_count' }
-        ]"
-        :data="areas"
-        :actions="['view', 'edit']"
-        @on="action"
-      />
+      <template v-else>
+        <AppTable
+          :columns="[
+            { title: 'Date Created', field: 'area_created_at' },
+            { title: 'Area Name', field: 'area_name' },
+            { title: 'Views', field: 'area_views' },
+            { title: 'Reviews Count', field: 'review_count' }
+          ]"
+          :data="areas"
+          :actions="['view', 'edit']"
+          @on="action"
+        />
+        <AppPagination
+          :totalItems="area.count"
+          :currentPage="area.currentPage"
+          :itemsPerPage="area.itemsPerPage"
+          @next="goToPage"
+        />
+      </template>
     </section>
     <section class="flex justify-center" v-else-if="route.query.action === 'add'">
       <AddNewArea @back="router.push(route.path)" @done="savedArea()" />

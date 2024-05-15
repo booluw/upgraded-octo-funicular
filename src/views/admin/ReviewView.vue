@@ -5,12 +5,14 @@ import { isEmpty } from 'lodash'
 import { supabase } from '@/config/supabase'
 import { formatDate } from '@/utils/functions'
 
+import { notify } from '@/components/AppNotification'
+
 import AppLoader from '@/components/AppLoader.vue'
 import AppError from '@/components/AppError.vue'
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppTable from '@/components/AppTable/Index.vue'
-import { notify } from '@/components/AppNotification'
+import AppPagination from '@/components/AppPagination.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -18,7 +20,7 @@ const router = useRouter()
 const loading = ref(false)
 const error = ref(false)
 const query = ref('')
-const review = reactive({ items: [] })
+const review = reactive({ items: [], count: 0, currentPage: 0, itemsPerPage: 20 })
 
 const reviews = computed(() => {
   if (review.items.length === 0) return []
@@ -34,6 +36,11 @@ const reviews = computed(() => {
   })
 })
 
+const goToPage = async function (pageNumber: number) {
+  review.currentPage = pageNumber
+  getReviews()
+}
+
 const getReviews = async function () {
   loading.value = true
   error.value = false
@@ -43,6 +50,11 @@ const getReviews = async function () {
       .from('reviews')
       .select('*, profile(*), area(*)')
       .order('created_at', { ascending: true })
+      .range(
+        review.currentPage === 0 ? 0 : review.currentPage * review.itemsPerPage,
+        review.itemsPerPage + (review.currentPage * review.itemsPerPage)
+      )
+      .limit(review.itemsPerPage)
 
     if (error) throw Error(error)
     review.items = data
@@ -142,20 +154,27 @@ watch(query, () => {
       <section class="h-[50vh] flex items-center justify-center text-primary" v-if="loading">
         <AppLoader />
       </section>
+      <template v-else>
+        <AppTable
+          :columns="[
+            { title: 'Date Created', field: 'created_at' },
+            { title: 'Area Name', field: 'area_name' },
+            { title: 'User Name', field: 'user_name' },
+            { title: 'Review', field: 'short_text' },
+            { title: 'Approved', field: 'approved', status: true }
+          ]"
+          :data="reviews"
+          :actions="['approve', 'decline', 'delete']"
+          @on="action"
+        />
 
-      <AppTable
-        v-else
-        :columns="[
-          { title: 'Date Created', field: 'created_at' },
-          { title: 'Area Name', field: 'area_name' },
-          { title: 'User Name', field: 'user_name' },
-          { title: 'Review', field: 'short_text' },
-          { title: 'Approved', field: 'approved', status: true }
-        ]"
-        :data="reviews"
-        :actions="['approve', 'decline', 'delete']"
-        @on="action"
-      />
+        <AppPagination
+          :totalItems="review.count"
+          :currentPage="review.currentPage"
+          :itemsPerPage="review.itemsPerPage"
+          @next="goToPage"
+        />
+      </template>
     </section>
   </section>
 </template>

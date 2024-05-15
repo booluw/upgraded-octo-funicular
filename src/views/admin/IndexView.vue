@@ -12,6 +12,7 @@ import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppError from '@/components/AppError.vue'
 import AppTable from '@/components/AppTable/Index.vue'
+import AppPagination from '@/components/AppPagination.vue'
 
 const loading = ref(false)
 const err = ref(false)
@@ -21,8 +22,15 @@ const area = ref(0)
 const users = ref(0)
 const reviews = reactive({
   count: 0,
+  currentPage: 0,
+  itemsPerPage: 20,
   items: []
 })
+
+const goToPage = async function (pageNumber: number) {
+  reviews.currentPage = pageNumber
+  getReviews()
+}
 
 const fetchAreaCount = async function () {
   try {
@@ -71,6 +79,11 @@ const getReviews = async function () {
       .from('reviews')
       .select('*, profile(*), area(*)')
       .order('created_at', { ascending: true })
+      .range(
+        reviews.currentPage === 0 ? 0 : reviews.currentPage * reviews.itemsPerPage,
+        reviews.itemsPerPage + (reviews.currentPage * reviews.itemsPerPage)
+      )
+      .limit(reviews.itemsPerPage)
 
     if (error) throw Error(error)
     reviews.items = data
@@ -231,6 +244,12 @@ onMounted(async () => {
       :data="review"
       :actions="['approve', 'decline', 'delete']"
       @on="action"
+    />
+    <AppPagination
+      :totalItems="reviews.count"
+      :currentPage="reviews.currentPage"
+      :itemsPerPage="reviews.itemsPerPage"
+      @next="goToPage"
     />
   </section>
 </template>

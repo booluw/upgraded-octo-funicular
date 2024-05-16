@@ -4,12 +4,13 @@ import { useRoute } from 'vue-router'
 import { AMENITIES } from '@/utils/constants'
 import { supabase } from '@/config/supabase'
 
+import { useUser } from '@/stores/user'
+
 import AppSelection from '@/components/AppSelection.vue'
 import AppModal from '@/components/AppModal.vue'
 import AppRating from '@/components/AppRating.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
-import { useUser } from '@/stores/user';
 
 const emit = defineEmits(['close'])
 const route = useRoute()

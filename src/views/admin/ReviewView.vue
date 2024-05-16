@@ -14,6 +14,8 @@ import AppInput from '@/components/AppInput.vue'
 import AppTable from '@/components/AppTable/Index.vue'
 import AppPagination from '@/components/AppPagination.vue'
 
+import AddNewReview from './components/AddNewReview.vue'
+
 const route = useRoute()
 const router = useRouter()
 
@@ -112,69 +114,74 @@ watch(query, () => {
   <AppError v-if="error" />
   <section class="" v-else>
     <section class="" v-if="isEmpty(route.query)">
-      <div class="flex items-center justify-between">
-        <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">All Reviews Created</h1>
-        <div class="flex items-center gap-[20px]">
-          <AppButton type="primary" size="small" @click="router.push('?action=add')">
-            CREATE REVIEW
-          </AppButton>
-          <form class="flex items-center gap-[5px]" @submit.prevent="searchReview()">
-            <AppInput v-model="query" type="search" placeholder="User Name" size="small" required>
-              <template #icon>
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  class="fill-none text-[#0D2159] dark:text-[#BACAF5]"
-                >
-                  <path
-                    d="M7.4074 12.1482C10.0256 12.1482 12.1481 10.0257 12.1481 7.40749C12.1481 4.78925 10.0256 2.66675 7.4074 2.66675C4.78916 2.66675 2.66666 4.78925 2.66666 7.40749C2.66666 10.0257 4.78916 12.1482 7.4074 12.1482Z"
-                    stroke="currentColor"
-                    stroke-width="1.18519"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                  <path
-                    d="M13.333 13.3331L10.7552 10.7554"
-                    stroke="currentColor"
-                    stroke-width="1.18519"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </template>
-            </AppInput>
-            <AppButton type="outline" mode="submit" size="small" class="uppercase"
-              >Search</AppButton
-            >
-          </form>
+      <section class="" v-if="isEmpty(route.query)">
+        <div class="flex items-center justify-between">
+          <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">All Reviews Created</h1>
+          <div class="flex items-center gap-[20px]">
+            <AppButton type="primary" size="small" @click="router.push('?action=add')">
+              CREATE REVIEW
+            </AppButton>
+            <form class="flex items-center gap-[5px]" @submit.prevent="searchReview()">
+              <AppInput v-model="query" type="search" placeholder="User Name" size="small" required>
+                <template #icon>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                    class="fill-none text-[#0D2159] dark:text-[#BACAF5]"
+                  >
+                    <path
+                      d="M7.4074 12.1482C10.0256 12.1482 12.1481 10.0257 12.1481 7.40749C12.1481 4.78925 10.0256 2.66675 7.4074 2.66675C4.78916 2.66675 2.66666 4.78925 2.66666 7.40749C2.66666 10.0257 4.78916 12.1482 7.4074 12.1482Z"
+                      stroke="currentColor"
+                      stroke-width="1.18519"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M13.333 13.3331L10.7552 10.7554"
+                      stroke="currentColor"
+                      stroke-width="1.18519"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </template>
+              </AppInput>
+              <AppButton type="outline" mode="submit" size="small" class="uppercase"
+                >Search</AppButton
+              >
+            </form>
+          </div>
         </div>
-      </div>
 
-      <section class="h-[50vh] flex items-center justify-center text-primary" v-if="loading">
-        <AppLoader />
+        <section class="h-[50vh] flex items-center justify-center text-primary" v-if="loading">
+          <AppLoader />
+        </section>
+        <template v-else>
+          <AppTable
+            :columns="[
+              { title: 'Date Created', field: 'created_at' },
+              { title: 'Area Name', field: 'area_name' },
+              { title: 'User Name', field: 'user_name' },
+              { title: 'Review', field: 'short_text' },
+              { title: 'Approved', field: 'approved', status: true }
+            ]"
+            :data="reviews"
+            :actions="['approve', 'decline', 'delete']"
+            @on="action"
+          />
+
+          <AppPagination
+            :totalItems="review.count"
+            :currentPage="review.currentPage"
+            :itemsPerPage="review.itemsPerPage"
+            @next="goToPage"
+          />
+        </template>
       </section>
-      <template v-else>
-        <AppTable
-          :columns="[
-            { title: 'Date Created', field: 'created_at' },
-            { title: 'Area Name', field: 'area_name' },
-            { title: 'User Name', field: 'user_name' },
-            { title: 'Review', field: 'short_text' },
-            { title: 'Approved', field: 'approved', status: true }
-          ]"
-          :data="reviews"
-          :actions="['approve', 'decline', 'delete']"
-          @on="action"
-        />
-
-        <AppPagination
-          :totalItems="review.count"
-          :currentPage="review.currentPage"
-          :itemsPerPage="review.itemsPerPage"
-          @next="goToPage"
-        />
-      </template>
+    </section>
+    <section class="flex justify-center" v-else-if="route.query.action === 'add'">
+      <AddNewReview @back="router.push(route.path)" />
     </section>
   </section>
 </template>

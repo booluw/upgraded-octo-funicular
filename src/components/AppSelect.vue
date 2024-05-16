@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { reactive, ref, computed } from 'vue';
 import { onClickOutside } from '@vueuse/core'
+import { isEmpty } from 'lodash';
 
 const target = ref(null)
 
 onClickOutside(target, () => (show.value = false))
 
 const props = defineProps<{
-  options: string[]
-  label?: string
+  options: string[] | { label: string, val: string }[]
   placeholder?: string
 }>()
 
@@ -24,21 +24,21 @@ const updateModel = function (option: string) {
 <template>
   <div class="" ref="target">
     <div
-      class="flex flex-col justify-center rounded-[6px] bg-[#F3F7FE] dark:bg-black-light text-black-light dark:text-[#F3F7FE] border dark:border-[#383B43] focus-within:border-primary transition-all ease-out group p-[12px] pb-[16px] cursor-pointer"
+      class="flex flex-col justify-center rounded-[6px] bg-[#F3F7FE] dark:bg-black-light text-black-light dark:text-[#F3F7FE] border dark:border-[#383B43] focus-within:border-primary transition-all ease-out group p-[12px] pb-[16px] cursor-pointer capitalize"
       @click="show = true"
     >
       <span
         class="text-[10px] !text-left"
         :class="
-          value !== ''
+          !isEmpty(value)
             ? 'opacity-55'
-            : 'opacity-0 translate-y-[15px] group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-all ease-in-out'
+            : 'hidden opacity-0 translate-y-[15px] group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-all ease-in-out'
         "
       >
         {{ placeholder }}
       </span>
-      <div class="opacity-50" v-if="value === ''" @click="show = true">{{ placeholder }}</div>
-      <span>{{ value }}</span>
+      <div class="opacity-50" v-if="isEmpty(value)" @click="show = true">{{ placeholder }}</div>
+      <span>{{ typeof value === 'string' ? value : value?.label }}</span>
     </div>
 
     <div
@@ -51,13 +51,13 @@ const updateModel = function (option: string) {
         v-if="show"
       >
         <div
-          class="text-sm cursor-pointer hover:opacity-75 p-2 rounded-sm"
+          class="text-sm cursor-pointer hover:opacity-75 p-2 rounded-sm capitalize"
           :class="{ 'bg-primary': value === option }"
           v-for="(option, index) in options"
           :key="index"
           @click="updateModel(option)"
         >
-          {{ option }}
+          {{ typeof option === 'string' ? option : option.label }}
         </div>
       </div>
     </div>

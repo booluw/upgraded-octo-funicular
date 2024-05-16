@@ -6,7 +6,7 @@ const target = ref(null)
 
 onClickOutside(target, () => show.value = false)
 
-const props = defineProps<{
+defineProps<{
   options: string[]
   label?: string
   placeholder?: string
@@ -29,15 +29,26 @@ const updateModel = function (option: string) {
 <template>
   <div class="" ref="target">
     <div
-      class="flex items-center gap-[10px] rounded-[6px] py-[16px] px-[12px] bg-[#F3F7FE] dark:bg-black-light border dark:border-black transition-all ease-out cursor-pointer"
+      class="flex flex-col gap-[10px] rounded-[6px] py-[16px] px-[12px] bg-[#F3F7FE] dark:bg-black-light border dark:border-[#383b43] transition-all ease-out cursor-pointer"
       :class="{ 'border-primary dark:border-black': show }"
       @click="show = !show"
     >
-      <template v-if="selected.item.length == 0">
+      <span
+        class="text-[10px] !text-left"
+        :class="
+          selected.item.length !== 0
+            ? 'opacity-55'
+            : 'hidden opacity-0 translate-y-[15px] group-focus-within:opacity-100 group-focus-within:translate-y-0 transition-all ease-in-out'
+        "
+      >
         {{ placeholder }}
-      </template>
-      <div class="flex gap-2 overflow-hidden" v-else>
-        <span class="flex-shrink-0 bg-primary/5 text-sm p-1 rounded" v-for="(item, index) in selected.item" :key="index">{{ item }}</span>
+      </span>
+      <div class="opacity-55" v-if="selected.item.length == 0">
+        {{ placeholder }}
+      </div>
+      <div class="flex justify-start gap-2 overflow-hidden relative" v-else>
+        <span class="flex-shrink-0 bg-primary/5 text-sm p-1 rounded" v-for="(item, index) in selected.item.slice(0, 4)" :key="index">{{ item }}</span>
+        <span class="flex-shrink-0 bg-primary/5 text-sm py-1 px-2 rounded absolute top-auto right-5" v-if="selected.item.length > 4">+{{ selected.item.length - 4 }}</span>
       </div>
     </div>
     <div
@@ -47,7 +58,7 @@ const updateModel = function (option: string) {
       :required="required"
     >
       <div
-        class="absolute top-0 right-0 left-0 z-20 border border-grey/40 dark:border-[#F3F7FE] rounded-[6px] max-h-[200px] overflow-auto grid grid-cols-1 md:grid-cols-4 gap-[5px] p-5 bg-[#F3F7FE] dark:bg-black-light"
+        class="absolute top-0 right-0 left-0 z-20 border border-grey/40 dark:border-[#F3F7FE] rounded-[6px] max-h-[200px] overflow-auto grid grid-cols-1 md:grid-cols-3 gap-[5px] p-5 bg-[#F3F7FE] dark:bg-black-light"
         v-if="show"
       >
         <div

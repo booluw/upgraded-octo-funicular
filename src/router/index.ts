@@ -43,7 +43,6 @@ const router = createRouter({
           path: '',
           name: 'AreasView',
           redirect: { name: 'home' }
-          // component: () => import('../views/areas/AllAreasView.vue')
         },
         {
           path: ':name',

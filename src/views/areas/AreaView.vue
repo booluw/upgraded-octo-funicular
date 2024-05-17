@@ -92,6 +92,7 @@ const search = async function () {
 }
 
 const addReview = function (newReview: any) {
+  newReview.value = false
   reviews.value.reviews.push(newReview)
 }
 

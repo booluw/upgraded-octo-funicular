@@ -162,7 +162,7 @@ watch(query, () => {
             { title: 'Reviews', field: 'review_count' }
           ]"
           :data="areas"
-          :actions="['view', 'edit']"
+          :actions="['view']"
           @on="action"
         />
         <AppPagination

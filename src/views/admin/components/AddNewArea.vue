@@ -160,18 +160,22 @@ watch(
         v-model="area.lga"
         class="mb-5"
       />
-
-      <div class="flex gap-[10px] overflow-auto mb-5 pb-3" v-if="images.length !== 0">
-        <img
-          :src="file"
+      <AppUpload accept="image/*" @file="addImage" />
+      <div class="flex gap-[10px] overflow-auto mt-5 pb-3" v-if="images.length !== 0">
+        <div
+          class="w-[80px] flex-shrink-0 group relative"
           v-for="(file, index) in images"
           :key="index"
-          class="w-[80px] h-auto rounded border-[2px] border-primary/30 flex-shrink-0"
           @click="removeImage(index)"
-        />
+        >
+          <img :src="file" class="w-full h-auto rounded" />
+          <div
+            class="absolute top-0 right-0 left-0 bottom-0 text-sm hidden group-hover:flex items-center justify-center bg-black/30 rounded text-white cursor-pointer"
+          >
+            Remove
+          </div>
+        </div>
       </div>
-      <div class="opacity-60 mb-5" v-else>Select an image to see the preview here</div>
-      <AppUpload accept="image/*" @file="addImage" />
       <AppButton type="primary" mode="submit" class="mt-5 w-full" :loading="loading"
         >SAVE</AppButton
       >

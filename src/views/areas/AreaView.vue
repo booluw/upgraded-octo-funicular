@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import { computed, reactive, ref, onMounted } from 'vue'
+import { computed, reactive, ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUser } from '@/stores/user'
 import { isEmpty } from 'lodash'
+
+import { useShare } from '@vueuse/core'
 
 import { notify } from '@/components/AppNotification'
 import { supabase } from '@/config/supabase'
@@ -21,9 +23,10 @@ const router = useRouter()
 const user = useUser().user
 
 const loading = ref(false)
+const searchLoading = ref(false)
 const error = ref(false)
 const scroller = ref(null) as any
-const searchQuery = ref('')
+
 const filters = reactive([
   'Schools',
   'Hospitals',
@@ -40,18 +43,53 @@ const filters = reactive([
 ])
 
 const area = ref({})
+const areas = reactive({ items: [] })
 const newReview = ref(false)
 const reviews = ref(null)
 const reviewCount = ref(0)
 
-const query = computed({
-  set(newValue: string) {
-    searchQuery.value = newValue
+const query = ref({ query: '', name: '', id: '' })
+
+const param = computed({
+  set(newVal) {
+    query.value.query = newVal
   },
   get() {
-    return route.query.query
+    return query.value.name || query.value.query
   }
 })
+
+const setPath = function (item) {
+  query.value.id = item.area_id
+  query.value.name = item.area_name
+  query.value.query = ''
+
+  router.push(`/areas/${query.value.id}`)
+}
+
+const search = async function () {
+  error.value = false
+  if (param.value === '') {
+    areas.items = []
+    error.value = true
+    return
+  }
+
+  searchLoading.value = true
+
+  try {
+    const { data, error } = await supabase
+      .rpc('search_areas', { search_name: query.value.query })
+      .order('area_created_at', { ascendeing: true })
+
+    if (error) throw Error(error.message ?? error)
+    areas.items = data
+  } catch (error) {
+    console.log(error)
+  }
+
+  searchLoading.value = false
+}
 
 const addReview = function (newReview: any) {
   reviews.value.reviews.push(newReview)
@@ -62,12 +100,20 @@ const scroll = function () {
 }
 
 const share = function () {
+  const { share, isSupported } = useShare()
+
+  if (isSupported) {
+    share({
+      title: `See ${area.value.name} on Area Finder`,
+      url: location.href
+    })
+
+    return
+  }
+  
   navigator.clipboard.writeText(window.location.href).then(() => {
     notify({ content: 'Link Copied to clipboard', position: 'top-center', type: 'success' })
   })
-}
-const search = function () {
-  router.push(`/areas?query=${searchQuery.value}`)
 }
 
 const getArea = async function () {
@@ -104,13 +150,25 @@ const getArea = async function () {
   loading.value = false
 }
 
+watch(
+  query,
+  async () => {
+    await search()
+  },
+  { deep: true }
+)
+
+watch(route, async () => {
+  getArea()
+})
+
 onMounted(() => {
   getArea()
 })
 </script>
 <template>
   <section
-    class="h-[100vh] flex items-center justify-center bg-primary-light text-primary"
+    class="h-[100vh] flex items-center justify-center bg-primary-light dark:bg-[#14161A] text-primary"
     v-if="loading"
   >
     <AppLoader />
@@ -129,38 +187,68 @@ onMounted(() => {
             <router-link to="/" class="text-text dark:text-text-dark">
               <AppLogo />
             </router-link>
-            <form @submit.prevent="search" class="w-[670px] hidden md:block">
-              <AppInput
-                v-model="query"
-                type="search"
-                placeholder="Search for a place"
-                class="!bg-white dark:!bg-black-light"
-                required
-              >
-                <template #icon>
-                  <svg
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                    class="fill-none text-[#0D2159] dark:text-[#BACAF5]"
-                  >
-                    <path
-                      d="M7.4074 12.1482C10.0256 12.1482 12.1481 10.0257 12.1481 7.40749C12.1481 4.78925 10.0256 2.66675 7.4074 2.66675C4.78916 2.66675 2.66666 4.78925 2.66666 7.40749C2.66666 10.0257 4.78916 12.1482 7.4074 12.1482Z"
-                      stroke="currentColor"
-                      stroke-width="1.18519"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                    <path
-                      d="M13.333 13.3331L10.7552 10.7554"
-                      stroke="currentColor"
-                      stroke-width="1.18519"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                </template>
-              </AppInput>
+            <form @submit.prevent class="w-[670px] hidden md:block">
+              <div class="group relative">
+                <AppInput
+                  v-model="param"
+                  type="search"
+                  placeholder="Search for a place"
+                  class="!bg-white dark:!bg-black-light"
+                  required
+                >
+                  <template #icon>
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 16 16"
+                      class="fill-none text-[#0D2159] dark:text-[#BACAF5]"
+                    >
+                      <path
+                        d="M7.4074 12.1482C10.0256 12.1482 12.1481 10.0257 12.1481 7.40749C12.1481 4.78925 10.0256 2.66675 7.4074 2.66675C4.78916 2.66675 2.66666 4.78925 2.66666 7.40749C2.66666 10.0257 4.78916 12.1482 7.4074 12.1482Z"
+                        stroke="currentColor"
+                        stroke-width="1.18519"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                      <path
+                        d="M13.333 13.3331L10.7552 10.7554"
+                        stroke="currentColor"
+                        stroke-width="1.18519"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                      />
+                    </svg>
+                  </template>
+                </AppInput>
+
+                <div
+                  class="hidden group-focus-within:block absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto"
+                >
+                  <template v-if="areas.items.length !== 0">
+                    <button
+                      type="none"
+                      class="block w-full text-left p-3 cursor-pointer hover:opacity-75 capitalize"
+                      :class="item.area_name === query.name ? 'bg-primary rounded' : ''"
+                      v-for="(item, index) in areas.items"
+                      :key="index"
+                      @click.prevent="setPath(item)"
+                    >
+                      {{ item.area_name }} {{ item.area_lga }}, {{ item.area_state }} state
+                    </button>
+                  </template>
+                  <template v-else>
+                    <div
+                      class="h-full w-full flex items-center justify-center"
+                      v-if="searchLoading"
+                    >
+                      <AppLoader />
+                    </div>
+                    <div class="w-full text-center text-sm mt-5" v-else>
+                      Your query did not return any result
+                    </div>
+                  </template>
+                </div>
+              </div>
             </form>
             <div class="hidden md:flex items-center gap-[16px]">
               <div
@@ -218,44 +306,73 @@ onMounted(() => {
             <img src="@/assets/imgs/avatar.png" class="rounded-full border-[2px] w-[40px]" />
           </div>
         </header>
-        <form @submit.prevent="search" class="block md:hidden">
-          <AppInput
-            v-model="query"
-            type="search"
-            placeholder="Search for a place"
-            class="!bg-white dark:!bg-black-light"
-            required
-          >
-            <template #icon>
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                class="fill-none text-[#0D2159] dark:text-[#BACAF5]"
-              >
-                <path
-                  d="M7.4074 12.1482C10.0256 12.1482 12.1481 10.0257 12.1481 7.40749C12.1481 4.78925 10.0256 2.66675 7.4074 2.66675C4.78916 2.66675 2.66666 4.78925 2.66666 7.40749C2.66666 10.0257 4.78916 12.1482 7.4074 12.1482Z"
-                  stroke="currentColor"
-                  stroke-width="1.18519"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path
-                  d="M13.333 13.3331L10.7552 10.7554"
-                  stroke="currentColor"
-                  stroke-width="1.18519"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </template>
-          </AppInput>
+
+        <form @submit.prevent class="block md:hidden">
+          <div class="group relative">
+            <AppInput
+              v-model="param"
+              type="search"
+              placeholder="Search for a place"
+              class="!bg-white dark:!bg-black-light"
+              required
+            >
+              <template #icon>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  class="fill-none text-[#0D2159] dark:text-[#BACAF5]"
+                >
+                  <path
+                    d="M7.4074 12.1482C10.0256 12.1482 12.1481 10.0257 12.1481 7.40749C12.1481 4.78925 10.0256 2.66675 7.4074 2.66675C4.78916 2.66675 2.66666 4.78925 2.66666 7.40749C2.66666 10.0257 4.78916 12.1482 7.4074 12.1482Z"
+                    stroke="currentColor"
+                    stroke-width="1.18519"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                  <path
+                    d="M13.333 13.3331L10.7552 10.7554"
+                    stroke="currentColor"
+                    stroke-width="1.18519"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </template>
+            </AppInput>
+
+            <div
+              class="hidden group-focus-within:block absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto"
+            >
+              <template v-if="areas.items.length !== 0">
+                <button
+                  type="none"
+                  class="block w-full text-left p-3 cursor-pointer hover:opacity-75 capitalize"
+                  :class="item.area_name === query.name ? 'bg-primary rounded' : ''"
+                  v-for="(item, index) in areas.items"
+                  :key="index"
+                  @click.prevent="setPath(item)"
+                >
+                  {{ item.area_name }} {{ item.area_lga }}, {{ item.area_state }} state
+                </button>
+              </template>
+              <template v-else>
+                <div class="h-full w-full flex items-center justify-center" v-if="searchLoading">
+                  <AppLoader />
+                </div>
+                <div class="w-full text-center text-sm mt-5" v-else>
+                  Your query did not return any result
+                </div>
+              </template>
+            </div>
+          </div>
         </form>
+
         <div class="mb-[16px]">
           <div class="flex justify-between items-center">
             <div class="md:w-[60%]">
               <h1 class="text-[24px] capitalize">
-                {{ area.name }}, {{ area.lga }}, {{ area.state }} state
+                {{ area.name }}, {{ area.lga }}, {{ area.state }}
               </h1>
               <h2 class="text-[12px] md:text-[16px]">
                 <b>“{{ reviewCount }}” Review{{ reviewCount > 1 ? 's' : '' }}</b>
@@ -348,22 +465,34 @@ onMounted(() => {
         class="md:w-page px-[16px] md:px-0 flex gap-[16px] md:gap-[32px] flex-col md:flex-row justify-between"
       >
         <div class="md:w-[486px] md:order-2 overflow-x-auto md:overflow-hidden md:!sticky top-0">
-          <div class="w-[150vw] md:w-auto grid grid-cols-3 md:grid-cols-2 grid-rows-2 gap-[10px]">
-            <img
-              src="@/assets/imgs/Placeholder-1.png"
-              class="row-span-2 h-full w-auto rounded-[8px]"
-            />
-            <img src="@/assets/imgs/Placeholder.png" class="row-span-1 rounded-[8px]" />
+          <div
+            class="w-[150vw] md:w-auto grid grid-cols-3 md:grid-cols-2 grid-rows-2 gap-[10px]"
+            v-if="area.imgs.length !== 0"
+          >
+            <img :src="area.imgs[0]" class="row-span-2 h-full w-auto rounded-[8px]" />
+            <img :src="area.imgs[1]" class="row-span-1 rounded-[8px]" v-if="area.imgs[1]" />
             <div class="row-span-1 rounded-[8px] overflow-hidden relative">
               <div
                 class="absolute top-0 right-0 bottom-0 left-0 bg-black/30 text-white md:flex items-center justify-center hidden"
               >
                 VIEW MORE
               </div>
-              <img src="@/assets/imgs/Placeholder-2.png" />
+              <img :src="area.imgs[2]" v-if="area.imgs[2]" />
             </div>
-            <img src="@/assets/imgs/Placeholder-2.png" class="row-span-1 rounded-[8px] md:hidden" />
-            <img src="@/assets/imgs/Placeholder.png" class="row-span-1 rounded-[8px] md:hidden" />
+            <img
+              :src="area.imgs[3]"
+              class="row-span-1 rounded-[8px] md:hidden"
+              v-if="area.imgs[3]"
+            />
+            <img
+              :src="area.imgs[4]"
+              class="row-span-1 rounded-[8px] md:hidden"
+              v-if="area.imgs[4]"
+            />
+          </div>
+          <div class="text-xl opacity-50" v-else>
+            No images uploaded for "<span class="capitalize">{{ area.name }}</span
+            >" yet.
           </div>
         </div>
         <div class="md:order-1 w-full overflow-y-auto scrollbar-none">

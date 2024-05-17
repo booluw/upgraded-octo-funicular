@@ -42,7 +42,7 @@ onMounted(() => {
 <template>
   <div class="md:w-full">
     <section
-      class="h-[100vh] flex items-center justify-center bg-primary-light text-primary"
+      class="h-[100vh] flex items-center justify-center bg-primary-light dark:bg-[#14161A] text-primary"
       v-if="loading"
     >
       <AppLoader />

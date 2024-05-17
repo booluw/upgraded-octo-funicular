@@ -157,9 +157,9 @@ watch(query, () => {
         <AppTable
           :columns="[
             { title: 'Date Created', field: 'area_created_at' },
-            { title: 'Area Name', field: 'area_name' },
+            { title: 'Areas', field: 'area_name' },
             { title: 'Views', field: 'area_views' },
-            { title: 'Reviews Count', field: 'review_count' }
+            { title: 'Reviews', field: 'review_count' }
           ]"
           :data="areas"
           :actions="['view', 'edit']"

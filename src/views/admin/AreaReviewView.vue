@@ -22,6 +22,7 @@ const area = ref({})
 
 const getArea = async function () {
   loading.value = true
+  error.value = false
   try {
     const { data, error } = await supabase.from('areas').select('*').eq('id', route.params.name)
 
@@ -30,6 +31,7 @@ const getArea = async function () {
     area.value = data[0]
   } catch (err) {
     console.log(err)
+    error.value = true
     notify({ content: err, type: 'error', position: 'top-center' })
   }
   loading.value = false

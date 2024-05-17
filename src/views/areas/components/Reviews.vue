@@ -29,6 +29,7 @@ const getAllReviews = async function () {
       .from('reviews')
       .select('*, profile(*)')
       .eq('area', route.params.name)
+      .order('id', { ascending: true })
 
     if (error) throw Error(error.message ?? error)
     reviews.value = data
@@ -57,7 +58,7 @@ onMounted(() => {
       <AppLoader />
     </section>
     <AppError v-else-if="error" />
-    <div class="md:w-full">
+    <div class="md:w-full" v-else>
       <template v-if="reviews.length !== 0">
         <ReviewCard
           :type="type"
@@ -65,6 +66,7 @@ onMounted(() => {
           v-for="(review, i) in reviews.flat()"
           :key="i"
           @clicked="handleClick"
+          @reload="getAllReviews()"
         />
       </template>
       <div class="text-xl opacity-75" v-else>No reviews yet, add one.</div>

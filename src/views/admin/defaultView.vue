@@ -1,19 +1,22 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-
+import { useRoute } from 'vue-router'
 import { ADMIN_ROUTES } from '@/utils/constants'
 import { useUser } from '@/stores/user'
 
 import AppLogo from '@/components/AppLogo.vue'
 
 const userStore = useUser()
+const route = useRoute()
 
 const user = computed(() => {
   return userStore.user
 })
 </script>
 <template>
-  <section class="bg-light dark:bg-dark-blue text-text dark:text-text-dark overflow-hidden h-screen">
+  <section
+    class="bg-light dark:bg-black text-text dark:text-text-dark overflow-hidden h-screen"
+  >
     <header class="flex justify-between items-center h-[10vh] px-10">
       <router-link to="/" class="text-text dark:text-text-dark">
         <AppLogo class="text-black dark:text-primary-light" />
@@ -27,8 +30,15 @@ const user = computed(() => {
       <div class="w-[300px] pt-[20px]">
         <router-link
           :to="'/admin/' + link.path"
-          exact-active-class="bg-[#0B153A] text-text-dark"
-          class="text-icon dark:text-primary-light flex items-center gap-3 py-5 px-10 mb-1 hover:bg-[#0B153A] hover:text-text-dark transition-colors ease-in-out"
+          exact-active-class="bg-[#0B153A] dark:bg-black-light text-text-dark"
+          :class="
+            route.path.includes(link.path) 
+              ? link.path === ''
+                ? ''
+                : 'bg-[#0B153A] dark:bg-black-light text-text-dark'
+              : ''
+          "
+          class="text-icon dark:text-primary-light flex items-center gap-3 py-5 px-10 mb-1 hover:bg-[#0B153A] dark:hover:bg-black-light hover:text-text-dark transition-colors ease-in-out"
           v-for="(link, index) in ADMIN_ROUTES"
           :key="index"
         >
@@ -36,7 +46,7 @@ const user = computed(() => {
           {{ link.title }}
         </router-link>
       </div>
-      <div class="w-full bg-white dark:bg-black py-5 px-10 overflow-auto">
+      <div class="w-full bg-white dark:bg-[#14161A] py-5 px-10 overflow-auto">
         <router-view />
       </div>
     </div>

@@ -49,7 +49,7 @@ const savedArea = function () {
 
 const action = function (e) {
   if (e.action === 'view') {
-    router.push(`/areas/${e.data.area_id}`)
+    router.push(`/admin/areas/${e.data.area_id}`)
   }
 }
 

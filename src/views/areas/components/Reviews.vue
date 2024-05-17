@@ -7,6 +7,11 @@ import AppError from '@/components/AppError.vue'
 import AppLoader from '@/components/AppLoader.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
 
+defineProps<{
+  type?: 'full' | 'minimized'
+}>()
+const emit = defineEmits(['clicked'])
+
 const route = useRoute()
 
 const loading = ref(false)
@@ -35,6 +40,10 @@ const getAllReviews = async function () {
   loading.value = false
 }
 
+const handleClick = function (id) {
+  emit('clicked', id)
+}
+
 onMounted(() => {
   getAllReviews()
 })
@@ -50,7 +59,13 @@ onMounted(() => {
     <AppError v-else-if="error" />
     <div class="md:w-full">
       <template v-if="reviews.length !== 0">
-        <ReviewCard :review="review" v-for="(review, i) in reviews.flat()" :key="i" />
+        <ReviewCard
+          :type="type"
+          :review="review"
+          v-for="(review, i) in reviews.flat()"
+          :key="i"
+          @clicked="handleClick"
+        />
       </template>
       <div class="text-xl opacity-75" v-else>No reviews yet, add one.</div>
     </div>

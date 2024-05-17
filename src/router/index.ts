@@ -42,7 +42,8 @@ const router = createRouter({
         {
           path: '',
           name: 'AreasView',
-          component: () => import('../views/areas/AllAreasView.vue')
+          redirect: { name: 'home' }
+          // component: () => import('../views/areas/AllAreasView.vue')
         },
         {
           path: ':name',
@@ -90,6 +91,11 @@ const router = createRouter({
           path: 'areas',
           name: 'AdminArea',
           component: () => import('../views/admin/AreaView.vue')
+        },
+        {
+          path: 'areas/:name',
+          name: 'AdminAreaView',
+          component: () => import('../views/admin/AreaReviewView.vue')
         },
         {
           path: 'reviews',

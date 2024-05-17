@@ -46,7 +46,7 @@ const user = computed(() => {
           {{ link.title }}
         </router-link>
       </div>
-      <div class="w-full bg-white dark:bg-[#14161A] py-5 px-10 overflow-auto">
+      <div class="w-full bg-white dark:bg-[#14161A] py-5 px-10 overflow-auto scrollbar dark:!scrollbar-track-text dark:scrollbar-thumb-black">
         <router-view />
       </div>
     </div>

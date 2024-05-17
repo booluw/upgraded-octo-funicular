@@ -4,14 +4,16 @@ import { useRoute } from 'vue-router'
 import { AMENITIES } from '@/utils/constants'
 import { supabase } from '@/config/supabase'
 
+import { useUser } from '@/stores/user'
+import { notify } from '@/components/AppNotification'
+
 import AppSelection from '@/components/AppSelection.vue'
 import AppModal from '@/components/AppModal.vue'
 import AppRating from '@/components/AppRating.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
-import { useUser } from '@/stores/user';
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close'], 'done')
 const route = useRoute()
 const user = useUser()
 
@@ -58,13 +60,13 @@ const submitReview = async function () {
       .insert({ ...review })
       .select('*, profile(*)')
 
-    if (error) throw Error(error)
+    if (error) throw Error(error.message ?? error)
 
     emit('done', data)
     notify({ content: 'review Submitted', position: 'top-center', type: 'success' })
   } catch (error) {
     console.log(error)
-    notify({ content: error, position: 'top-center', type: 'success' })
+    notify({ content: error, position: 'top-center', type: 'error' })
   }
 }
 </script>
@@ -83,9 +85,9 @@ const submitReview = async function () {
       <AppInput type="textarea" v-model="review.review" placeholder="Write a review" />
       <div
         class="inline-flex gap-[8px] my-[16px] cursor-pointer"
-        @click="review.annon = !review.annon"
+        @click="review.anon = !review.anon"
       >
-        <div class="py-2 px-[10px] border rounded" :class="{ 'bg-primary': review.annon }" />
+        <div class="py-2 px-[10px] border rounded" :class="{ 'bg-primary': review.anon }" />
         Post as Anonymous
       </div>
       <div class="flex gap-[24px]">

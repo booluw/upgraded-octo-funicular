@@ -1,8 +1,8 @@
 <script lang="" setup>
-import { ref, reactive } from 'vue';
-import { useRouter } from 'vue-router';
-import { supabase } from '@/config/supabase';
-import { notify } from '@/components/AppNotification';
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { supabase } from '@/config/supabase'
+import { notify } from '@/components/AppNotification'
 
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
@@ -18,7 +18,7 @@ const validate = reactive({
   password2: false
 })
 
-const resetPassword = async function() {
+const resetPassword = async function () {
   if (!validate.password || !validate.password2) return
 
   loading.value = true
@@ -29,7 +29,7 @@ const resetPassword = async function() {
     })
 
     if (error) {
-      throw Error(error)
+      throw Error(error.message ?? error)
     }
 
     notify({

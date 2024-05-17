@@ -7,7 +7,7 @@ const props = defineProps<{
   type?: any
   position?: any
   animate?: boolean
-  content: string
+  content: string | object
 }>()
 
 const style = computed(() => {
@@ -67,12 +67,12 @@ onMounted(() => {
 </script>
 <template>
   <div
-    class="fixed w-5/6 md:w-1/3 h-auto p-3 rounded-[6px] text-center flex items-center justify-center gap-3"
+    class="fixed w-5/6 md:w-1/3 h-auto p-3 rounded-[6px] text-center flex items-center justify-center gap-3 capitalize"
     :class="hideNotification ? 'notify' : '' + ' ' + style"
     :style="
-      props.position === 'top-center'
+      position === 'top-center'
         ? 'transform: translate(-50%, 0)'
-        : props.position === 'bottom-center'
+        : position === 'bottom-center'
           ? 'transform: translate(-50%, 0)'
           : ''
     "
@@ -94,7 +94,7 @@ onMounted(() => {
       />
     </svg>
 
-    {{ props.content || 'Hello Notificiation' }}
+    {{ typeof content === 'string' ? content : content.message || 'Hello Notificiation' }}
   </div>
 </template>
 

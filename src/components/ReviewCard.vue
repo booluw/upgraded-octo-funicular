@@ -6,11 +6,11 @@ const props = defineProps<{
 }>()
 </script>
 <template>
-  <div class="border-b border-[#D9D9D9]/5 mb-[16px] pb-[16px]">
+  <div class="mb-[10px] p-[16px] hover:bg-[#E5EDF5] dark:hover:bg-[#212327] rounded cursor-pointer">
     <div class="flex justify-between">
-      <div class="flex items-center gap-[4px]">
+      <div class="flex items-center gap-[8px]">
         <img src="@/assets/imgs/card_avatar.png" class="w-[25px] h-[25px]" />
-        <div class="flex gap-[5px] text-[14px]">
+        <div class="flex gap-[8px] text-[14px]">
           {{ review.anon ? 'Annon User' : review.profile.username.replace(/"/g, "") }}
           <b v-if="review.isAdmin">(Admin)</b>
           <span class="opacity-60">{{ useTimeAgo(review.created_at) }}</span>
@@ -28,6 +28,6 @@ const props = defineProps<{
         {{ review.rating }}.0
       </div>
     </div>
-    <p class="text-justify my-[8px]">{{ review.review }}</p>
+    <p class="text-justify my-[8px] line-clamp-4">{{ review.review }}</p>
   </div>
 </template>

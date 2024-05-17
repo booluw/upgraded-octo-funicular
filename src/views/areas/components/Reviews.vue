@@ -25,7 +25,7 @@ const getAllReviews = async function () {
       .select('*, profile(*)')
       .eq('area', route.params.name)
 
-    if (error) throw Error(error)
+    if (error) throw Error(error.message ?? error)
     reviews.value = data
   } catch (err) {
     error.value = true

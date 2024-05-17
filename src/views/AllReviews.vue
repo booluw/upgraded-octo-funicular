@@ -99,7 +99,7 @@ const review = reactive({
   username: 'Boluwatife Johnson',
   time: 'just now',
   location: 'London, UK',
-  condition: '',
+  condition: ''
 })
 const newReview = ref(false)
 
@@ -113,7 +113,7 @@ const query = computed({
 })
 
 const scroll = function () {
-  scroller.value.scrollLeft += 430;
+  scroller.value.scrollLeft += 430
 }
 
 const share = function () {
@@ -127,17 +127,29 @@ const search = function () {
 
 const submitReview = function () {
   if (review.amenities.length === 0) {
-    notify({ content: 'Select Amenities relating to this review', position: 'top-center', type: 'warning' })
+    notify({
+      content: 'Select Amenities relating to this review',
+      position: 'top-center',
+      type: 'warning'
+    })
     return
   }
 
   if (review.rating === 0) {
-    notify({ content: 'How many stars will you rate this location?', position: 'top-center', type: 'warning' })
+    notify({
+      content: 'How many stars will you rate this location?',
+      position: 'top-center',
+      type: 'warning'
+    })
     return
   }
 
   if (review.review === '') {
-    notify({ content: 'Write something about this location', position: 'top-center', type: 'warning' })
+    notify({
+      content: 'Write something about this location',
+      position: 'top-center',
+      type: 'warning'
+    })
     return
   }
 
@@ -240,7 +252,9 @@ const submitReview = function () {
               </h2>
             </div>
             <div class="hidden md:flex gap-[16px]">
-              <AppButton type="primary" class="uppercase" @click="newReview = true">Leave a review</AppButton>
+              <AppButton type="primary" class="uppercase" @click="newReview = true"
+                >Leave a review</AppButton
+              >
               <AppButton type="outline">
                 <svg
                   width="24"
@@ -303,7 +317,9 @@ const submitReview = function () {
           </div>
         </div>
         <div class="flex gap-[16px] md:hidden">
-          <AppButton type="primary" class="uppercase" @click="newReview = true">Leave a review</AppButton>
+          <AppButton type="primary" class="uppercase" @click="newReview = true"
+            >Leave a review</AppButton
+          >
           <AppButton type="outline">
             <svg
               width="24"

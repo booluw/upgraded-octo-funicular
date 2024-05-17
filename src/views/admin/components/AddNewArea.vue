@@ -61,7 +61,7 @@ const saveArea = async function () {
               imgs.push(response)
             })
             .catch((error) => {
-              throw Error(error)
+              throw Error(error.message ?? error)
             })
         } catch (error) {
           console.log(error)
@@ -69,16 +69,14 @@ const saveArea = async function () {
       })
     ).finally(async () => {
       // Send to supabased
-      const { error } = await supabase
-        .from('areas')
-        .insert({
-          ...area,
-          imgs,
-          name: area.name.toLocaleLowerCase(),
-          id: (area.name + '-' + area.lga + '-' + area.state)
-            .toLocaleLowerCase()
-            .replace(/[^A-z\s\d][\\\^]?/g, '-')
-        })
+      const { error } = await supabase.from('areas').insert({
+        ...area,
+        imgs,
+        name: area.name.toLocaleLowerCase(),
+        id: (area.name + '-' + area.lga + '-' + area.state)
+          .toLocaleLowerCase()
+          .replace(/[^A-z\s\d][\\\^]?/g, '-')
+      })
 
       if (error) throw Error(error as any)
 

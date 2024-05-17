@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, watch } from 'vue'
 import { isEmpty } from 'lodash'
+import { useRouter } from 'vue-router';
 
 import { STATES_AND_LGA } from '@/utils/constants'
 
@@ -9,10 +10,11 @@ import AppInput from '@/components/AppInput.vue'
 import AppSelect from '@/components/AppSelect.vue'
 import AppUpload from '@/components/AppUpload.vue'
 import { notify } from '@/components/AppNotification'
-import { supabase } from '../../../config/supabase'
+import { supabase } from '@/config/supabase'
 import { uploadToCloudinary } from '@/utils/functions'
 
 const emits = defineEmits(['back', 'done'])
+const router = useRouter()
 
 const loading = ref(false)
 const area = reactive({
@@ -109,7 +111,7 @@ watch(
 </script>
 <template>
   <div class="md:w-2/3 text-left">
-    <a href="#back" class="inline-flex gap-[5px] items-center" @click.prevent="emits('back')">
+    <a href="#back" class="inline-flex gap-[5px] items-center" @click.prevent="router.go(-1)">
       <svg
         width="15"
         height="15"

@@ -15,7 +15,7 @@ const emitClick = function (action) {
 <template>
   <tr>
     <td
-      class="border border-slate-50/25 p-3 capitalize max-w-[30%]"
+      class="border dark:border-slate-50/25 px-[16px] py-[13px] capitalize max-w-[30%] text-[16px]"
       v-for="(col, index) in columns"
       :key="index"
     >

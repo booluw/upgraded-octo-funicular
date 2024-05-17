@@ -102,7 +102,7 @@ const review = computed(() => {
     item.created_at = formatDate(item.created_at)
     item.area_name = item.area.name
     item.user_name = item.profile.username.replace(/"/g, '')
-    item.short_text = item.review.slice(0, 30)
+    item.short_text = item.review.slice(0, 20)
     item.short_text += '...'
 
     return item
@@ -236,10 +236,11 @@ onMounted(async () => {
     <AppTable
       :columns="[
         { title: 'Date Created', field: 'created_at' },
-        { title: 'Area Name', field: 'area_name' },
-        { title: 'User Name', field: 'user_name' },
+        { title: 'Area', field: 'area_name' },
+        { title: 'Name', field: 'user_name' },
         { title: 'Review', field: 'short_text' },
-        { title: 'Approved', field: 'approved', status: true }
+        { title: 'Views', field: 'views' },
+        { title: 'Status', field: 'approved', status: true }
       ]"
       :data="review"
       :actions="['approve', 'decline', 'delete']"

@@ -91,6 +91,10 @@ const search = async function () {
   searchLoading.value = false
 }
 
+const handleClick = function (id: string) {
+  console.log('Review clicked', id)
+}
+
 const addReview = function (newReview: any) {
   newReview.value = false
   reviews.value.reviews.push(newReview)
@@ -497,7 +501,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="md:order-1 w-full overflow-y-auto scrollbar-none">
-          <Reviews ref="reviews" />
+          <Reviews ref="reviews" @clicked="handleClick" />
         </div>
       </div>
     </template>

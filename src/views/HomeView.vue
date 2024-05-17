@@ -99,7 +99,7 @@ const search = async function () {
   try {
     const { data, error } = await supabase
       .rpc('search_areas', { search_name: query.value.query })
-      .order('area_created_at', { ascendeing: true })
+      .order('area_created_at', { ascending: true })
 
     if (error) throw Error(error.message ?? error)
     area.items = data

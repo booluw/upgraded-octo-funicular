@@ -25,7 +25,8 @@ const review = reactive({
   area: '',
   amenities: [],
   review: '',
-  rating: 0
+  rating: 0,
+  profile_id: user.user.id
 })
 
 const areas = computed(() => {
@@ -35,11 +36,55 @@ const areas = computed(() => {
   })
 })
 
+const saveArea = async function () {
+  if (review.amenities.length === 0) {
+    notify({
+      content: 'Select Amenities relating to this review',
+      position: 'top-center',
+      type: 'warning'
+    })
+    return
+  }
+
+  if (review.rating === 0) {
+    notify({
+      content: 'How many stars will you rate this location?',
+      position: 'top-center',
+      type: 'warning'
+    })
+    return
+  }
+
+  if (review.review === '') {
+    notify({
+      content: 'Write something about this location',
+      position: 'top-center',
+      type: 'warning'
+    })
+    return
+  }
+
+  try {
+    const { error } = await supabase
+      .from('reviews')
+      .insert({ ...review, area: review.area.val })
+      .select('*, profile(*)')
+
+    if (error) throw Error(error.message ?? error)
+
+    emit('done')
+    notify({ content: 'review Submitted', position: 'top-center', type: 'success' })
+  } catch (error) {
+    console.log(error.message)
+    notify({ content: error, position: 'top-center', type: 'error' })
+  }
+}
+
 const getAllArea = async function () {
   try {
     const { data, error } = await supabase.from('areas').select('*')
 
-    if (error) throw Error(error)
+    if (error) throw Error(error.message ?? error)
     area.items = data
   } catch (err) {
     error.value = true
@@ -99,7 +144,10 @@ onMounted(async () => {
         v-model="review.review"
         placeholder="Write a review for this Area"
       />
-      <AppButton type="primary" mode="submit" class="w-full mt-5" :loading="loading">SAVE</AppButton>
+      <AppButton type="primary" mode="submit" class="w-full mt-5" :loading="loading"
+        >SAVE</AppButton
+      >
     </form>
+    {{ user.user }}
   </div>
 </template>

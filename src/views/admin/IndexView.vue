@@ -81,11 +81,11 @@ const getReviews = async function () {
       .order('created_at', { ascending: true })
       .range(
         reviews.currentPage === 0 ? 0 : reviews.currentPage * reviews.itemsPerPage,
-        reviews.itemsPerPage + (reviews.currentPage * reviews.itemsPerPage)
+        reviews.itemsPerPage + reviews.currentPage * reviews.itemsPerPage
       )
       .limit(reviews.itemsPerPage)
 
-    if (error) throw Error(error)
+    if (error) throw Error(error.message ?? error)
     reviews.items = data
   } catch (err) {
     console.log(err)

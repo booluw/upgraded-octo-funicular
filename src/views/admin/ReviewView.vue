@@ -54,11 +54,11 @@ const getReviews = async function () {
       .order('created_at', { ascending: true })
       .range(
         review.currentPage === 0 ? 0 : review.currentPage * review.itemsPerPage,
-        review.itemsPerPage + (review.currentPage * review.itemsPerPage)
+        review.itemsPerPage + review.currentPage * review.itemsPerPage
       )
       .limit(review.itemsPerPage)
 
-    if (error) throw Error(error)
+    if (error) throw Error(error.message ?? error)
     review.items = data
   } catch (err) {
     console.log(err)
@@ -66,6 +66,11 @@ const getReviews = async function () {
   }
 
   loading.value = false
+}
+
+const savedReview = function () {
+  router.push(route.path)
+  getReviews()
 }
 
 const action = async function (option: { action: ['approve', 'decline', 'delete']; data: any }) {
@@ -181,7 +186,7 @@ watch(query, () => {
       </section>
     </section>
     <section class="flex justify-center" v-else-if="route.query.action === 'add'">
-      <AddNewReview @back="router.push(route.path)" />
+      <AddNewReview @back="router.push(route.path)" @done="savedReview()" />
     </section>
   </section>
 </template>

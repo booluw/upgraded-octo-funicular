@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 import AppButton from '@/components/AppButton.vue'
 import AppCard from '@/components/AppCard.vue'
 import AppInput from '@/components/AppInput.vue'
+import { supabase } from '../config/supabase'
+import { isEmpty } from 'lodash'
+import AppLoader from '@/components/AppLoader.vue'
 
 const router = useRouter()
 
@@ -61,17 +64,69 @@ const reviews = reactive([
   }
 ])
 
-const query = ref('')
-const error = ref(false)
+const area = reactive({ items: [] as any[] })
 
-const search = function () {
+const query = ref({ query: '', name: '', id: '' })
+const areaPath = reactive({ id: '', name: '' })
+const error = ref(false)
+const loading = ref(false)
+
+const param = computed({
+  set(newVal) {
+    query.value.query = newVal
+  },
+  get() {
+    return query.value.name || query.value.query
+  }
+})
+
+const setPath = function (item) {
+  query.value.id = item.area_id
+  query.value.name = item.area_name
+  query.value.query = ''
+}
+
+const search = async function () {
   error.value = false
-  if (query.value === '') {
+  if (param.value === '') {
+    area.items = []
     error.value = true
     return
   }
-  router.push(`/areas?query=${query.value}`)
+
+  loading.value = true
+
+  try {
+    const { data, error } = await supabase
+      .rpc('search_areas', { search_name: query.value.query })
+      .order('area_created_at', { ascendeing: true })
+
+    if (error) throw Error(error.message ?? error)
+    area.items = data
+  } catch (error) {
+    console.log(error)
+  }
+
+  loading.value = false
+  // router.push(`/areas?query=${query.value}`)
 }
+
+const gotoArea = function () {
+  if (query.value.id === '') {
+    error.value = true
+    return
+  }
+
+  router.push(`/areas/${query.value.id}`)
+}
+
+watch(
+  query,
+  async () => {
+    await search()
+  },
+  { deep: true }
+)
 </script>
 
 <template>
@@ -84,39 +139,68 @@ const search = function () {
         See through the lenses of people who have lived or visited the neighbourhood you might have
         in mind.
       </p>
-      <form @submit.prevent="search">
-        <div class="text-sm text-red-500 mb-[2px] md:mb-[5px]" v-if="error">Please add a search query</div>
-        <AppInput
-          v-model="query"
-          type="search"
-          placeholder="Enter street address"
-          class="mb-[8px] md:mb-[20px]"
-          required
-        >
-          <template #icon>
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              class="fill-none text-[#0D2159] dark:text-[#BACAF5]"
-            >
-              <path
-                d="M7.4074 12.1482C10.0256 12.1482 12.1481 10.0257 12.1481 7.40749C12.1481 4.78925 10.0256 2.66675 7.4074 2.66675C4.78916 2.66675 2.66666 4.78925 2.66666 7.40749C2.66666 10.0257 4.78916 12.1482 7.4074 12.1482Z"
-                stroke="currentColor"
-                stroke-width="1.18519"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-              <path
-                d="M13.333 13.3331L10.7552 10.7554"
-                stroke="currentColor"
-                stroke-width="1.18519"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </template>
-        </AppInput>
+      <form @submit.prevent="gotoArea()">
+        <div class="text-sm text-red-500 mb-[2px] md:mb-[5px]" v-if="error">
+          Please add a search query
+        </div>
+        <div class="group relative">
+          <AppInput
+            v-model="param"
+            type="search"
+            placeholder="Enter street address"
+            class="mb-[8px] md:mb-[20px] !capitalize"
+            remote
+            required
+          >
+            <template #icon>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                class="fill-none text-[#0D2159] dark:text-[#BACAF5]"
+              >
+                <path
+                  d="M7.4074 12.1482C10.0256 12.1482 12.1481 10.0257 12.1481 7.40749C12.1481 4.78925 10.0256 2.66675 7.4074 2.66675C4.78916 2.66675 2.66666 4.78925 2.66666 7.40749C2.66666 10.0257 4.78916 12.1482 7.4074 12.1482Z"
+                  stroke="currentColor"
+                  stroke-width="1.18519"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M13.333 13.3331L10.7552 10.7554"
+                  stroke="currentColor"
+                  stroke-width="1.18519"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </template>
+          </AppInput>
+          <div
+            class="hidden group-focus-within:block absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto"
+          >
+            <template v-if="area.items.length !== 0">
+              <button
+                type="none"
+                class="block w-full text-left p-3 cursor-pointer hover:opacity-75 capitalize"
+                :class="item.area_name === query.name ? 'bg-primary rounded' : ''"
+                v-for="(item, index) in area.items"
+                :key="index"
+                @click.prevent="setPath(item)"
+              >
+                {{ item.area_name }} {{ item.area_lga }}, {{ item.area_state }} state
+              </button>
+            </template>
+            <template v-else>
+              <div class="h-full w-full flex items-center justify-center" v-if="loading">
+                <AppLoader />
+              </div>
+              <div class="w-full text-center text-sm mt-5" v-else>
+                Your query did not return any result
+              </div>
+            </template>
+          </div>
+        </div>
         <AppButton type="primary" class="uppercase">Explore Area</AppButton>
       </form>
     </div>

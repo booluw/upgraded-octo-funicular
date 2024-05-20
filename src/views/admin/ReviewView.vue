@@ -73,7 +73,7 @@ const savedReview = function () {
   getReviews()
 }
 
-const action = async function (option: { action: 'approve'|'decline'|'delete'; data: any }) {
+const action = async function (option: { action: 'approve' | 'decline' | 'delete'; data: any }) {
   try {
     loading.value = true
 

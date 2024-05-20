@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { isEmpty } from 'lodash'
 import { supabase } from '@/config/supabase'
 import { formatDate } from '@/utils/functions'
 
@@ -10,9 +9,10 @@ import AppError from '@/components/AppError.vue'
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppPagination from '@/components/AppPagination.vue'
-
 import AppTable from '@/components/AppTable/Index.vue'
+
 import AddNewArea from './components/AddNewArea.vue'
+import ViewArea from './components/ViewArea.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -47,9 +47,9 @@ const savedArea = function () {
   getAllAreas()
 }
 
-const action = function (e) {
+const action = function (e: any) {
   if (e.action === 'view') {
-    router.push(`/admin/areas/${e.data.area_id}`)
+    router.push(`/admin/areas?view=${e.data.area_id}`)
   }
 }
 
@@ -110,7 +110,11 @@ watch(query, () => {
 <template>
   <AppError v-if="error" />
   <section class="" v-else>
-    <section class="" v-if="isEmpty(route.query)">
+    <section class="flex justify-center" v-if="route.query.action === 'add'">
+      <AddNewArea @back="router.push(route.path)" @done="savedArea()" />
+    </section>
+    <section class="" v-else-if="route.query.action === 'edit'"></section>
+    <section class="" v-else>
       <div class="flex items-center justify-between">
         <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">All Areas Created</h1>
         <div class="flex items-center gap-[20px]">
@@ -173,10 +177,6 @@ watch(query, () => {
         />
       </template>
     </section>
-    <section class="flex justify-center" v-else-if="route.query.action === 'add'">
-      <AddNewArea @back="router.push(route.path)" @done="savedArea()" />
-    </section>
-    <section class="" v-else-if="route.query.action === 'edit'"></section>
   </section>
-  <section class=""></section>
+  <ViewArea v-if="route.query.view" @close="router.push(route.path)" />
 </template>

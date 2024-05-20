@@ -26,7 +26,7 @@ const getArea = async function () {
   try {
     const { data, error } = await supabase.from('areas').select('*').eq('id', route.params.name)
 
-    if (error) throw Error(error)
+    if (error) throw Error(error as unknown as string)
 
     area.value = data[0]
   } catch (err) {
@@ -37,7 +37,7 @@ const getArea = async function () {
   loading.value = false
 }
 
-const handleClick = function (id) {
+const handleClick = function (id: string) {
   console.log('Review Clicked', id)
 }
 

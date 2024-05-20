@@ -73,18 +73,16 @@ onMounted(async () => {
         <AppLoader />
       </div>
       <template v-else>
-        <div class="flex justify-between items-center">
-          <div class="flex items-end gap-3">
+        <div class="flex justify-between items-center mb-2">
+          <div class="flex items-end gap-x-3 flex-wrap">
             <h2 class="capitalize text-2xl">{{ area.name }}, {{ area.state }}</h2>
             <h3 class="text-sm">({{ area.lga }})</h3>
           </div>
           <svg
-            width="16"
-            height="16"
             viewBox="0 0 16 16"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            class="cursor-pointer"
+            class="cursor-pointer w-[16px] flex-shrink-0"
             @click="emits('close')"
           >
             <path
@@ -120,7 +118,7 @@ onMounted(async () => {
         </div>
         <div class="flex gap-[10px] overflow-auto mt-5 pb-3" v-if="area?.imgs?.length !== 0">
           <div
-            class="w-[80px] flex-shrink-0 relative"
+            class="w-[70px] flex-shrink-0 relative"
             v-for="(img, index) in area.imgs"
             :key="index"
           >

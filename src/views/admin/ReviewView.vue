@@ -187,7 +187,7 @@ watch(query, () => {
       </section>
     </section>
     <section class="flex justify-center" v-else-if="route.query.action === 'add'">
-      <AddNewReview @back="router.push(route.path)" @done="savedReview()" />
+      <AddNewReview @close="router.push(route.path)" @done="savedReview()" />
     </section>
   </section>
 </template>

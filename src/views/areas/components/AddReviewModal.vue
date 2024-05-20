@@ -29,15 +29,6 @@ const review = reactive({
 })
 
 const submitReview = async function () {
-  if (review.amenities.length === 0) {
-    notify({
-      content: 'Select Amenities relating to this review',
-      position: 'top-center',
-      type: 'warning'
-    })
-    return
-  }
-
   if (review.rating === 0) {
     notify({
       content: 'How many stars will you rate this location?',

@@ -514,7 +514,7 @@ onMounted(() => {
         size="small"
         @click="newReview = true"
         :disabled="isEmpty(user.username)"
-        >submit review</AppButton
+        >leave a review</AppButton
       >
     </div>
     <AddReview v-if="newReview" @close="newReview = false" @done="addReview" />

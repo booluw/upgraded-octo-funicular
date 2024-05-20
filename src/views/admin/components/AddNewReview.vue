@@ -37,15 +37,6 @@ const areas = computed(() => {
 })
 
 const saveArea = async function () {
-  if (review.amenities.length === 0) {
-    notify({
-      content: 'Select Amenities relating to this review',
-      position: 'top-center',
-      type: 'warning'
-    })
-    return
-  }
-
   if (review.rating === 0) {
     notify({
       content: 'How many stars will you rate this location?',
@@ -103,7 +94,7 @@ onMounted(async () => {
 </script>
 <template>
   <div class="md:w-2/3 text-left">
-    <a href="#back" class="inline-flex gap-[5px] items-center" @click.prevent="emit('back')">
+    <a href="#back" class="inline-flex gap-[5px] items-center" @click.prevent="emit('close')">
       <svg
         width="15"
         height="15"
@@ -148,6 +139,5 @@ onMounted(async () => {
         >SAVE</AppButton
       >
     </form>
-    {{ user.user }}
   </div>
 </template>

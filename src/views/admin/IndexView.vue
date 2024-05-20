@@ -78,7 +78,7 @@ const getReviews = async function () {
     const { data, error } = await supabase
       .from('reviews')
       .select('*, profile(*), area(*)')
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: false })
       .range(
         reviews.currentPage === 0 ? 0 : reviews.currentPage * reviews.itemsPerPage,
         reviews.itemsPerPage + reviews.currentPage * reviews.itemsPerPage
@@ -98,7 +98,7 @@ const getReviews = async function () {
 const review = computed(() => {
   if (reviews.items.length === 0) return []
 
-  return reviews.items.map((item) => {
+  return reviews.items.map((item: any) => {
     item.created_at = formatDate(item.created_at)
     item.area_name = item.area.name
     item.user_name = item.profile.username.replace(/"/g, '')

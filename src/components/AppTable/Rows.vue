@@ -8,7 +8,7 @@ const props = defineProps<{
   action?: string[]
 }>()
 
-const emitClick = function (action) {
+const emitClick = function (action: string) {
   emits('action', { action, data: props.row })
 }
 </script>

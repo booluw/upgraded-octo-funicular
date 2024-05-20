@@ -59,7 +59,7 @@ const searchArea = async function () {
   try {
     const { data, error } = await supabase
       .rpc('search_areas', { search_name: query.value })
-      .order('area_created_at', { ascending: true })
+      .order('area_created_at', { ascending: false })
 
     const { count } = await supabase.from('areas').select('*', { count: 'exact', head: true })
 
@@ -79,7 +79,7 @@ const getAllAreas = async function () {
   try {
     const { data, error } = await supabase
       .rpc('get_areas_with_review_count')
-      .order('area_created_at', { ascending: true })
+      .order('area_created_at', { ascending: false })
       .range(
         area.currentPage === 0 ? 0 : area.currentPage * area.itemsPerPage,
         area.itemsPerPage + area.currentPage * area.itemsPerPage
@@ -156,17 +156,17 @@ watch(query, () => {
       <template v-else>
         <AppTable
           :columns="[
-            { title: 'Date Created', field: 'area_created_at' },
-            { title: 'Areas', field: 'area_name' },
-            { title: 'Views', field: 'area_views' },
-            { title: 'Reviews', field: 'review_count' }
+            { title: 'Date Created', field: 'area_created_at', status: false },
+            { title: 'Areas', field: 'area_name', status: false },
+            { title: 'Views', field: 'area_views', status: false },
+            { title: 'Reviews', field: 'review_count', status: false }
           ]"
           :data="areas"
           :actions="['view']"
           @on="action"
         />
         <AppPagination
-          :totalItems="area.count"
+          :totalItems="area.count!"
           :currentPage="area.currentPage"
           :itemsPerPage="area.itemsPerPage"
           @next="goToPage"
@@ -178,4 +178,5 @@ watch(query, () => {
     </section>
     <section class="" v-else-if="route.query.action === 'edit'"></section>
   </section>
+  <section class=""></section>
 </template>

@@ -3,13 +3,13 @@ import Rows from './Rows.vue'
 
 const emit = defineEmits(['on'])
 
-defineProps<{
+const props = defineProps<{
   columns: { title: string; field: string, status: boolean }[] | string[]
   data: any[]
   actions?: string[]
 }>()
 
-const emitAction = function(data) {
+const emitAction = function(data: typeof props.columns) {
   emit('on', data)
 }
 </script>

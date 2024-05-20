@@ -22,7 +22,7 @@ const router = useRouter()
 const loading = ref(false)
 const error = ref(false)
 const query = ref('')
-const review = reactive({ items: [], count: 0, currentPage: 0, itemsPerPage: 20 })
+const review = reactive({ items: [] as any[], count: 0, currentPage: 0, itemsPerPage: 20 })
 
 const reviews = computed(() => {
   if (review.items.length === 0) return []
@@ -51,7 +51,7 @@ const getReviews = async function () {
     const { data, error } = await supabase
       .from('reviews')
       .select('*, profile(*), area(*)')
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: false })
       .range(
         review.currentPage === 0 ? 0 : review.currentPage * review.itemsPerPage,
         review.itemsPerPage + review.currentPage * review.itemsPerPage
@@ -73,7 +73,7 @@ const savedReview = function () {
   getReviews()
 }
 
-const action = async function (option: { action: ['approve', 'decline', 'delete']; data: any }) {
+const action = async function (option: { action: 'approve' | 'decline' | 'delete'; data: any }) {
   try {
     loading.value = true
 
@@ -165,11 +165,11 @@ watch(query, () => {
         <template v-else>
           <AppTable
             :columns="[
-              { title: 'Date Created', field: 'created_at' },
-              { title: 'Areas', field: 'area_name' },
-              { title: 'Name', field: 'user_name' },
-              { title: 'Review', field: 'short_text' },
-              { title: 'Views', field: 'views' },
+              { title: 'Date Created', field: 'created_at', status: false },
+              { title: 'Areas', field: 'area_name', status: false },
+              { title: 'Name', field: 'user_name', status: false },
+              { title: 'Review', field: 'short_text', status: false },
+              { title: 'Views', field: 'views', status: false },
               { title: 'Status', field: 'approved', status: true }
             ]"
             :data="reviews"
@@ -187,7 +187,7 @@ watch(query, () => {
       </section>
     </section>
     <section class="flex justify-center" v-else-if="route.query.action === 'add'">
-      <AddNewReview @back="router.push(route.path)" @done="savedReview()" />
+      <AddNewReview @close="router.push(route.path)" @done="savedReview()" />
     </section>
   </section>
 </template>

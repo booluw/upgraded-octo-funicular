@@ -82,7 +82,7 @@ onClickOutside(target, event => {
       id="modal"
     >
       <h1 class="text-center">Review Location</h1>
-      <h2 class="text-[24px] font-semibold my-[24px] text-center md:text-left">{{ query }}</h2>
+      <!-- <h2 class="text-[24px] font-semibold my-[24px] text-center md:text-left">{{ query }}</h2> -->
       <form @submit.prevent="submitReview()">
         <AppSelection
           v-model="review.amenities"

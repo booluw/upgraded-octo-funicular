@@ -59,7 +59,16 @@ const dislike = async function (review) {
   >
     <div class="flex justify-between" @click="emit('clicked', review.id)">
       <div class="flex items-center gap-[8px]">
-        <img src="@/assets/imgs/card_avatar.png" class="w-[25px] h-[25px]" />
+        <img
+          :src="review.profile.img"
+          class="w-[32px] h-[32px] rounded-full border-[2px] border-white dark:border-text"
+          v-if="review.profile.img && !review.anon"
+        />
+        <img
+          src="@/assets/imgs/avataaars.png"
+          class="rounded-full w-[32px] h-[32px] border-[2px] border-white dark:border-text"
+          v-else
+        />
         <div class="flex gap-[8px] text-[14px]">
           {{ review.anon ? 'Annon User' : review.profile.username.replace(/"/g, '') }}
           <b v-if="review.isAdmin">(Admin)</b>

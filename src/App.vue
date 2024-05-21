@@ -68,8 +68,8 @@ onMounted(() => {
           <AppDropdown :menu="['profile', 'reviews', 'logout']" position="bottom" @action="handleAction" v-if="!isEmpty(user.id)">
           <div class="flex items-center gap-[13px]">
             <span class="hidden md:block">{{ user.username ?? user.email }}</span>
-          <img :src="user.img" class="w-[32px] rounded-full border-[2px] border-white" v-if="user.img" />
-          <img src="@/assets/imgs/avataaars.png" class="rounded-full w-[32px] border-[2px] border-white" v-else />
+            <img :src="user.img" class="w-[32px] rounded-full border-[2px] border-white dark:border-text" v-if="user.img" />
+            <img src="@/assets/imgs/avataaars.png" class="rounded-full w-[32px] border-[2px] border-white dark:border-text" v-else />
           </div>
           </AppDropdown>
           <div

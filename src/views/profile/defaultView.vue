@@ -34,8 +34,8 @@ const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
   <section
     class="bg-light dark:bg-black text-text dark:text-text-dark overflow-hidden h-screen"
   >
-    <header class="flex justify-between items-center h-[10vh] px-10 shadow-xl">
-      <router-link to="/" class="text-text dark:text-text-dark">
+    <header class="flex justify-between items-center h-[10vh] px-10">
+      <router-link :to="user.role === 'ADMIN' ? '/admin' : '/'" class="text-text dark:text-text-dark">
         <AppLogo class="text-black dark:text-primary-light" />
       </router-link>
       <AppDropdown :menu="['profiles', 'reviews', 'logout']" position="bottom" @action="handleAction">

@@ -39,7 +39,8 @@ const handleAction = async function (action: 'logout' | 'profile') {
       <AppDropdown :menu="['profiles', 'logout']" position="bottom" @action="handleAction">
         <div class="flex items-center gap-[13px]">
           <span class="hidden md:block">{{ user.username ?? user.email }}</span>
-          <img src="@/assets/imgs/avatar.png" class="rounded-full border-[2px] border-white" />
+          <img :src="user.img" class="w-[32px] rounded-full border-[2px] border-white dark:border-text" v-if="user.img" />
+          <img src="@/assets/imgs/avataaars.png" class="rounded-full w-[32px] border-[2px] border-white dark:border-text" v-else />
         </div>
       </AppDropdown>
     </header>

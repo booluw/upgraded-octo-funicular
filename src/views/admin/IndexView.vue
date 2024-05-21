@@ -24,7 +24,7 @@ const reviews = reactive({
   count: 0,
   currentPage: 0,
   itemsPerPage: 20,
-  items: []
+  items: [] as any
 })
 
 const goToPage = async function (pageNumber: number) {

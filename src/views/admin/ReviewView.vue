@@ -43,6 +43,20 @@ const goToPage = async function (pageNumber: number) {
   getReviews()
 }
 
+const fetchReviews = async function () {
+  try {
+    const { count, error } = await supabase
+      .from('reviews')
+      .select('*', { count: 'exact', head: true })
+    if (error as any) throw Error(error as any)
+    review.count = count as number
+    // reviews.items = data as any
+  } catch (err) {
+    error.value = true
+    console.log(err)
+  }
+}
+
 const getReviews = async function () {
   loading.value = true
   error.value = false
@@ -108,6 +122,7 @@ const action = async function (option: { action: 'approve' | 'decline' | 'delete
 }
 
 onMounted(() => {
+  fetchReviews()
   getReviews()
 })
 

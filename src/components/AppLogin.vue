@@ -29,7 +29,7 @@ const logUserIn = async function () {
     useUser().setUserId(data.user.id)
     const { data: profile, error: err } = await supabase
       .from('profile')
-      .select()
+      .select('*')
       .eq('id', data.user.id)
 
     if (err) {

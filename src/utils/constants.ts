@@ -3,15 +3,26 @@ import IconAmenities from "@/components/icons/IconAmenities.vue"
 import IconArea from "@/components/icons/IconArea.vue"
 import IconReviews from "@/components/icons/IconReviews.vue"
 import IconSettings from "@/components/icons/IconSettings.vue"
+import IconUser from "@/components/icons/IconUser.vue"
 
 
 export const AMENITIES = ['Parking Lot', 'Free Wi-Fi', 'Nightlife', 'Adult Home', 'Schools', 'Pet Store', 'Childcare', 'Gym', 'Adult Home', 'Security', 'Train Station', 'Public Transportation', 'Bus Station', 'Quiet', 'Shopping Malls', 'Resort Park', 'Hospitals']
 
 export const USER_ROUTES = [
   {
-    icon: '',
+    icon: IconUser,
     path: '',
-    title: ''
+    title: 'Profile'
+  },
+  {
+    icon: IconReviews,
+    path: 'reviews',
+    title: 'Reviews'
+  },
+  {
+    icon: IconSettings,
+    path: 'settings',
+    title: 'Settings'
   }
 ]
 
@@ -38,8 +49,8 @@ export const ADMIN_ROUTES = [
   },
   {
     icon: IconSettings,
-    path: 'settings',
-    title: 'Settings'
+    path: 'sub-admin',
+    title: 'Sub-Admin'
   }
 ]
 

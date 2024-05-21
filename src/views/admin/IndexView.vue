@@ -109,7 +109,7 @@ const review = computed(() => {
   })
 })
 
-const action = async function (option: { action: ['approve', 'decline', 'delete']; data: any }) {
+const action = async function (option: { action: 'approve' | 'decline' | 'delete'; data: any }) {
   try {
     loading.value = true
 
@@ -235,11 +235,11 @@ onMounted(async () => {
     </div>
     <AppTable
       :columns="[
-        { title: 'Date Created', field: 'created_at' },
-        { title: 'Area', field: 'area_name' },
-        { title: 'Name', field: 'user_name' },
-        { title: 'Review', field: 'short_text' },
-        { title: 'Views', field: 'views' },
+        { title: 'Date Created', field: 'created_at', status: false },
+        { title: 'Area', field: 'area_name', status: false },
+        { title: 'Name', field: 'user_name', status: false },
+        { title: 'Review', field: 'short_text', status: false },
+        { title: 'Views', field: 'views', status: false },
         { title: 'Status', field: 'approved', status: true }
       ]"
       :data="review"

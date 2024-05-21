@@ -35,6 +35,29 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/profile/',
+      name: 'UserProfile',
+      component: () => import('../views/profile/defaultView.vue'),
+      beforeEnter: userGuard,
+      children: [
+        {
+          path: '',
+          name: 'ProfileDefault',
+          component: () => import('../views/profile/IndexView.vue')
+        },
+        {
+          path: 'reviews',
+          name: 'ProfileReviews',
+          component: () => import('../views/profile/ReviewsView.vue')
+        },
+        {
+          path: 'settings',
+          name: 'ProfileSettings',
+          component: () => import('../views/profile/SettingsView.vue')
+        }
+      ]
+    },
+    {
       path: '/areas/',
       name: 'AreaDefaultView',
       component: () => import('../views/areas/defaultView.vue'),

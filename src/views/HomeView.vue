@@ -67,23 +67,25 @@ const reviews = reactive([
 const area = reactive({ items: [] as any[] })
 
 const query = ref({ query: '', name: '', id: '' })
-const areaPath = reactive({ id: '', name: '' })
+const closeSuggestion = ref(true)
 const error = ref(false)
 const loading = ref(false)
 
 const param = computed({
   set(newVal) {
     query.value.query = newVal
+    closeSuggestion.value = true
   },
   get() {
     return query.value.name || query.value.query
   }
 })
 
-const setPath = function (item) {
+const setPath = function (item: any) {
   query.value.id = item.area_id
   query.value.name = item.area_name
   query.value.query = ''
+  closeSuggestion.value = false
 }
 
 const search = async function () {
@@ -178,6 +180,7 @@ watch(
           </AppInput>
           <div
             class="hidden group-focus-within:block absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto"
+            v-if="closeSuggestion"
           >
             <template v-if="area.items.length !== 0">
               <button

@@ -14,6 +14,7 @@ import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
 import AppError from '@/components/AppError.vue'
 import AppLoader from '@/components/AppLoader.vue'
+import AppDropdown from '@/components/AppDropdown.vue'
 
 import AddReview from './components/AddReviewModal.vue'
 import Reviews from './components/Reviews.vue'
@@ -21,6 +22,7 @@ import Reviews from './components/Reviews.vue'
 const route = useRoute()
 const router = useRouter()
 const user = useUser().user
+const userStore = useUser()
 
 const loading = ref(false)
 const searchLoading = ref(false)
@@ -51,7 +53,7 @@ const reviewCount = ref(0)
 const query = ref({ query: '', name: '', id: '' })
 
 const param = computed({
-  set(newVal) {
+  set(newVal: string) {
     query.value.query = newVal
   },
   get() {
@@ -59,7 +61,7 @@ const param = computed({
   }
 })
 
-const setPath = function (item) {
+const setPath = function (item: any) {
   query.value.id = item.area_id
   query.value.name = item.area_name
   query.value.query = ''
@@ -80,7 +82,7 @@ const search = async function () {
   try {
     const { data, error } = await supabase
       .rpc('search_areas', { search_name: query.value.query })
-      .order('area_created_at', { ascendeing: true })
+      .order('area_created_at', { ascending: false })
 
     if (error) throw Error(error.message ?? error)
     areas.items = data
@@ -95,9 +97,27 @@ const handleClick = function (id: string) {
   console.log('Review clicked', id)
 }
 
-const addReview = function (newReview: any) {
+const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
+  if (action === 'logout') {
+
+    await supabase.auth.signOut()
+    userStore.resetUser()
+    router.push('/')
+
+  } else if (action === 'profile') {
+
+    router.push('/profile')
+
+  } else {
+
+    router.push('/profile/reviews')
+    
+  }
+}
+
+const addReview = function (review: any) {
   newReview.value = false
-  reviews.value.reviews.push(newReview)
+  reviews.value!.reviews.unshift(review)
 }
 
 const scroll = function () {
@@ -132,7 +152,6 @@ const getArea = async function () {
       .limit(1)
 
     const {
-      data: dat,
       count,
       error: review_error
     } = await supabase
@@ -140,10 +159,9 @@ const getArea = async function () {
       .select('*, area(id)', { count: 'exact' })
       .eq('area', route.params.name)
 
-    console.log(dat)
-    reviewCount.value = count
+    reviewCount.value = count as unknown as number
 
-    if (review_error) throw Error(error.message ?? error)
+    if (review_error) throw Error(error!.message ?? error)
     if (error) throw Error(error.message ?? error)
 
     area.value = data[0]
@@ -165,7 +183,7 @@ watch(
 
 watch(route, async () => {
   getArea()
-})
+}, { deep: true })
 
 onMounted(() => {
   getArea()
@@ -307,9 +325,21 @@ onMounted(() => {
               >
             </div>
           </div>
-          <div class="flex items-center gap-[13px]">
-            <img src="@/assets/imgs/avatar.png" class="rounded-full border-[2px] w-[40px]" />
-          </div>
+          <AppDropdown :menu="['profile', 'reviews', 'logout']" position="bottom" @action="handleAction" v-if="!isEmpty(user.id)">
+            <div class="flex items-center gap-[13px]">
+              <img :src="user.img" class="w-[32px] h-[32px] rounded-full border-[2px] border-white dark:border-text" v-if="user.img" />
+              <img src="@/assets/imgs/avataaars.png" class="rounded-full w-[32px] h-[32px] border-[2px] border-white dark:border-text" v-else />
+            </div>
+          </AppDropdown>
+          <AppButton
+            type="outline"
+            size="small"
+            class="font-[700] uppercase"
+            @click="router.push('?action=login')"
+            v-else
+          >
+            Login
+          </AppButton>
         </header>
 
         <form @submit.prevent class="block md:hidden">

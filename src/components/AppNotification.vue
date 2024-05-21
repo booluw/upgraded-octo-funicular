@@ -4,10 +4,10 @@ import { computed, onMounted, ref } from 'vue'
 const hideNotification = ref(false)
 
 const props = defineProps<{
-  type?: any
-  position?: any
+  type?: 'error' | 'warning' | 'info' | 'success' | string
+  position?: 'top-left' | 'top-center' | 'top-right' | 'bottom-right' | 'bottom-center' | 'bottom-left' | string
   animate?: boolean
-  content: string | object
+  content: string | { message: string, [otherOptions: string]: unknown }
 }>()
 
 const style = computed(() => {

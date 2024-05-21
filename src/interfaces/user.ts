@@ -3,7 +3,10 @@ export interface User {
   role: 'ADMIN' | 'USER'
   username: string
   email: string
-  firstName: string,
+  firstName: string
   lastName: string
+  location: string
+  phone_number: string
+  img: string
   createdAt?: string
 }

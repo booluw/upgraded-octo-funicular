@@ -23,7 +23,7 @@ const emitAction = function(data: typeof props.columns) {
         <th v-if="actions" class="border border-slate-50/25 p-3"></th>
       </tr>
     </thead>
-    <tbody v-if="columns.length !== 0">
+    <tbody v-if="data.length !== 0">
       <Rows
         :columns="columns"
         :row="row"
@@ -34,6 +34,8 @@ const emitAction = function(data: typeof props.columns) {
         @action="emitAction"
       />
     </tbody>
-    <div class=""  v-else></div>
+    <div class="text-center absolute right-0 left-0 p-5 opacity-45 text-sm" v-else>
+      No data
+    </div>
   </table>
 </template>

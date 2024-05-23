@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, reactive, ref, onMounted, watch } from 'vue'
+import { computed, reactive, ref, onMounted, watch, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUser } from '@/stores/user'
 import { isEmpty } from 'lodash'
@@ -29,20 +29,8 @@ const searchLoading = ref(false)
 const error = ref(false)
 const scroller = ref(null) as any
 
-const filters = reactive([
-  'Schools',
-  'Hospitals',
-  'Resort Park',
-  'Shopping Malls',
-  'Airports',
-  'Train Station',
-  'Nightlife',
-  'Public Wifi',
-  'Security',
-  'Public Transport',
-  'Bus Station',
-  'Quiet'
-])
+const amenity: Ref<{ title: string }[]> = ref([])
+const filter = ref('')
 
 const area = ref({})
 const areas = reactive({ items: [] })
@@ -50,7 +38,20 @@ const newReview = ref(false)
 const reviews = ref(null)
 const reviewCount = ref(0)
 
+const comments = ref({
+  id: '',
+  comments: [] as any[]
+})
+
 const query = ref({ query: '', name: '', id: '' })
+
+const amenities = computed(() => {
+  if (amenity.value.length === 0) return []
+
+  return amenity.value.map((item) => {
+    return item.title
+  })
+})
 
 const param = computed({
   set(newVal: string) {
@@ -60,6 +61,22 @@ const param = computed({
     return query.value.name || query.value.query
   }
 })
+
+const getAllAmenities = async function () {
+  try {
+    const { data, error } = await supabase.from('amenities').select('title')
+
+    if (error) throw Error(error.message ?? error)
+    amenity.value = data
+  } catch (err) {
+    console.log(err)
+    notify({
+      content: err ?? `We couldn't fetch Amenities, please reload`,
+      type: 'error',
+      position: 'top-center'
+    })
+  }
+}
 
 const setPath = function (item: any) {
   query.value.id = item.area_id
@@ -94,7 +111,7 @@ const search = async function () {
 }
 
 const handleClick = function (id: string) {
-  console.log('Review clicked', id)
+  comments.value.id = id
 }
 
 const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
@@ -116,8 +133,8 @@ const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
 }
 
 const addReview = function (review: any) {
+  router.go()
   newReview.value = false
-  reviews.value!.reviews.unshift(review)
 }
 
 const scroll = function () {
@@ -165,6 +182,7 @@ const getArea = async function () {
     if (error) throw Error(error.message ?? error)
 
     area.value = data[0]
+    await getAllAmenities()
   } catch (err) {
     notify({ content: err, position: 'top-center', type: 'error' })
     error.value = true
@@ -419,11 +437,13 @@ onMounted(() => {
         <div class="pb-[16px] flex justify-between items-center">
           <div class="flex gap-[10px] overflow-x-auto scrollbar-none" ref="scroller">
             <div
-              class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
-              v-for="(filter, i) in filters"
+              class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black/20 dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
+              :class="{'!bg-primary/40 !border-primary' : filter === item }"
+              v-for="(item, i) in amenities"
+              @click="filter === item ? filter = '' : filter = item"
               :key="i"
             >
-              {{ filter }}
+              {{ item }}
             </div>
           </div>
           <div
@@ -497,9 +517,9 @@ onMounted(() => {
     </div>
     <template v-if="reviewCount > 0">
       <div
-        class="md:w-page px-[16px] md:px-0 flex gap-[16px] md:gap-[32px] flex-col md:flex-row justify-between"
+        class="md:w-page px-[16px] md:px-0 flex gap-[16px] md:gap-[100px] flex-col md:flex-row justify-between"
       >
-        <div class="md:w-[486px] md:order-2 overflow-x-auto md:overflow-hidden md:!sticky top-0">
+        <div class="md:w-[686px] md:order-2 overflow-x-auto md:overflow-hidden md:!sticky top-0">
           <div
             class="w-[150vw] md:w-auto grid grid-cols-3 md:grid-cols-2 grid-rows-2 gap-[10px]"
             v-if="area.imgs.length !== 0"
@@ -531,7 +551,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="md:order-1 w-full overflow-y-auto scrollbar-none">
-          <Reviews ref="reviews" @clicked="handleClick" />
+          <Reviews :filter="filter" type="full" ref="reviews" @clicked="handleClick" />
         </div>
       </div>
     </template>

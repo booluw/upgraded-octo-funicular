@@ -1,19 +1,52 @@
 <script lang="ts" setup>
+import { ref } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
 import { useUser } from '@/stores/user'
+
+import { onClickOutside } from '@vueuse/core'
 
 import { notify } from '@/components/AppNotification'
 import { supabase } from '@/config/supabase'
 
-defineProps<{
+import AppButton from '@/components/AppButton.vue'
+
+const props = defineProps<{
   review: any
   type?: 'full' | 'minimized'
 }>()
 
 const emit = defineEmits(['clicked', 'reload'])
 const user = useUser().user
+const comment = ref(false)
+const newComment = ref('')
+const loading = ref(false)
 
-const like = async function (review) {
+const target = ref(null)
+
+const addNewComment = async function () {
+  loading.value = true
+
+  try {
+    const { error } = await supabase
+      .from('comments')
+      .insert({ profile_id: user.id, text: newComment.value, reviews_id: props.review.id })
+
+    if (error) throw Error(error as any)
+
+    emit('reload')
+  } catch (error) {
+    console.log(error)
+    notify({
+      content: `We could not add your comment, please try again`,
+      type: 'error',
+      position: 'top-center'
+    })
+  }
+
+  loading.value = false
+}
+
+const like = async function (review: typeof props.review) {
   if (review.likes.includes(user.id)) return
 
   try {
@@ -22,7 +55,7 @@ const like = async function (review) {
       .update({ likes: [...review.likes, user.id] })
       .eq('id', review.id)
 
-    if (error) throw Error(error)
+    if (error) throw Error(error as any)
 
     notify({ content: 'Comment liked', type: 'success', position: 'top-center' })
 
@@ -32,7 +65,7 @@ const like = async function (review) {
     notify({ content: 'Please try again', type: 'error', position: 'top-center' })
   }
 }
-const dislike = async function (review) {
+const dislike = async function (review: typeof props.review) {
   if (review.dislikes.includes(user.id)) return
 
   try {
@@ -41,7 +74,7 @@ const dislike = async function (review) {
       .update({ dislikes: [...review.dislikes, user.id] })
       .eq('id', review.id)
 
-    if (error) throw Error(error)
+    if (error) throw Error(error as any)
 
     notify({ content: 'Comment disliked', type: 'success', position: 'top-center' })
 
@@ -51,6 +84,10 @@ const dislike = async function (review) {
     notify({ content: 'Please try again', type: 'error', position: 'top-center' })
   }
 }
+
+onClickOutside(target, () => {
+  comment.value = false
+})
 </script>
 <template>
   <div
@@ -143,7 +180,7 @@ const dislike = async function (review) {
           </svg>
           {{ review.dislikes.length }}
         </div>
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-1" @click="comment = !comment">
           <svg
             width="24"
             height="25"
@@ -159,6 +196,18 @@ const dislike = async function (review) {
           {{ review.comments }}
         </div>
       </div>
+    </div>
+    <div class="w-full" v-if="comment" ref="target">
+      <form @submit.prevent="addNewComment()" class="flex gap-5 pt-5 w-full">
+        <input
+          class="text-black dark:text-white bg-primary-light/5 focus:outline-none rounded px-5 w-2/3"
+          type="text"
+          v-model="newComment"
+          placeholder="Add a comment"
+          required
+        />
+        <AppButton type="primary" size="small" :loading="loading">Post</AppButton>
+      </form>
     </div>
   </div>
 </template>

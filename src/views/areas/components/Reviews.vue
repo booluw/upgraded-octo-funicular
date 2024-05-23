@@ -1,14 +1,17 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, toRef, computed } from 'vue'
 import { supabase } from '@/config/supabase'
 import { useRoute } from 'vue-router'
+
+import { isEmpty } from 'lodash'
 
 import AppError from '@/components/AppError.vue'
 import AppLoader from '@/components/AppLoader.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
 
-defineProps<{
-  type?: 'full' | 'minimized'
+const props = defineProps<{
+  type?: 'full' | 'minimized',
+  filter?: any
 }>()
 const emit = defineEmits(['clicked'])
 
@@ -19,6 +22,16 @@ const error = ref(false)
 const reviews = ref([])
 
 defineExpose({ reviews })
+
+const _review = computed(() => {
+  if (reviews.value.length === 0) return []
+  else if (toRef(props.filter).value === '') return reviews.value
+  return reviews.value.filter((item: any) => {
+    if (item.amenities.includes(toRef(props.filter).value)) {
+      return item
+    }
+  })
+})
 
 const getAllReviews = async function () {
   loading.value = true
@@ -52,24 +65,29 @@ onMounted(() => {
 <template>
   <div class="md:w-full">
     <section
-      class="h-[100vh] flex items-center justify-center bg-primary-light dark:bg-[#14161A] text-primary"
+      class="h-[100%] overflow-y-auto flex items-center justify-center bg-primary-light dark:bg-[#14161A] text-primary"
       v-if="loading"
     >
       <AppLoader />
     </section>
     <AppError v-else-if="error" />
-    <div class="md:w-full" v-else>
-      <template v-if="reviews.length !== 0">
+    <div class="md:w-full md:h-[380px] overflow-y-auto scrollbar pr-5" v-else>
+      <template v-if="_review.length !== 0">
         <ReviewCard
           :type="type"
           :review="review"
-          v-for="(review, i) in reviews.flat()"
+          v-for="(review, i) in _review.flat()"
           :key="i"
           @clicked="handleClick"
           @reload="getAllReviews()"
         />
       </template>
-      <div class="text-xl opacity-75" v-else>No reviews yet, add one.</div>
+      <template v-else>
+        <div class="text-xl opacity-75" v-if="!isEmpty(toRef(filter))">
+          No reviews under {{ toRef(filter) }} yet.
+        </div>
+        <div class="text-xl opacity-75" v-else>No reviews yet, add one.</div>
+      </template>
     </div>
   </div>
 </template>

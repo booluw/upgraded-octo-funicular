@@ -18,6 +18,7 @@ import AppDropdown from '@/components/AppDropdown.vue'
 
 import AddReview from './components/AddReviewModal.vue'
 import Reviews from './components/Reviews.vue'
+import ViewComment from './components/ViewComment.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -116,19 +117,13 @@ const handleClick = function (id: string) {
 
 const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
   if (action === 'logout') {
-
     await supabase.auth.signOut()
     userStore.resetUser()
     router.push('/')
-
   } else if (action === 'profile') {
-
     router.push('/profile')
-
   } else {
-
     router.push('/profile/reviews')
-    
   }
 }
 
@@ -152,7 +147,7 @@ const share = function () {
 
     return
   }
-  
+
   navigator.clipboard.writeText(window.location.href).then(() => {
     notify({ content: 'Link Copied to clipboard', position: 'top-center', type: 'success' })
   })
@@ -168,10 +163,7 @@ const getArea = async function () {
       .eq('id', route.params.name)
       .limit(1)
 
-    const {
-      count,
-      error: review_error
-    } = await supabase
+    const { count, error: review_error } = await supabase
       .from('reviews')
       .select('*, area(id)', { count: 'exact' })
       .eq('area', route.params.name)
@@ -199,9 +191,13 @@ watch(
   { deep: true }
 )
 
-watch(route, async () => {
-  getArea()
-}, { deep: true })
+watch(
+  route,
+  async () => {
+    getArea()
+  },
+  { deep: true }
+)
 
 onMounted(() => {
   getArea()
@@ -343,10 +339,23 @@ onMounted(() => {
               >
             </div>
           </div>
-          <AppDropdown :menu="['profile', 'reviews', 'logout']" position="bottom" @action="handleAction" v-if="!isEmpty(user.id)">
+          <AppDropdown
+            :menu="['profile', 'reviews', 'logout']"
+            position="bottom"
+            @action="handleAction"
+            v-if="!isEmpty(user.id)"
+          >
             <div class="flex items-center gap-[13px]">
-              <img :src="user.img" class="w-[32px] h-[32px] rounded-full border-[2px] border-white dark:border-text" v-if="user.img" />
-              <img src="@/assets/imgs/avataaars.png" class="rounded-full w-[32px] h-[32px] border-[2px] border-white dark:border-text" v-else />
+              <img
+                :src="user.img"
+                class="w-[32px] h-[32px] rounded-full border-[2px] border-white dark:border-text"
+                v-if="user.img"
+              />
+              <img
+                src="@/assets/imgs/avataaars.png"
+                class="rounded-full w-[32px] h-[32px] border-[2px] border-white dark:border-text"
+                v-else
+              />
             </div>
           </AppDropdown>
           <AppButton
@@ -438,9 +447,9 @@ onMounted(() => {
           <div class="flex gap-[10px] overflow-x-auto scrollbar-none" ref="scroller">
             <div
               class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black/20 dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
-              :class="{'!bg-primary/40 !border-primary' : filter === item }"
+              :class="{ '!bg-primary/40 !border-primary': filter === item }"
               v-for="(item, i) in amenities"
-              @click="filter === item ? filter = '' : filter = item"
+              @click="filter === item ? (filter = '') : (filter = item)"
               :key="i"
             >
               {{ item }}
@@ -551,7 +560,8 @@ onMounted(() => {
           </div>
         </div>
         <div class="md:order-1 w-full overflow-y-auto scrollbar-none">
-          <Reviews :filter="filter" type="full" ref="reviews" @clicked="handleClick" />
+          <ViewComment :id="comments.id" v-if="comments.id !== ''" @close="comments.id = ''" />
+          <Reviews :filter="filter" type="full" ref="reviews" @clicked="handleClick" v-else />
         </div>
       </div>
     </template>

@@ -14,7 +14,6 @@ import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
 
 const emit = defineEmits(['close', 'done'])
-const route = useRoute()
 const user = useUser()
 
 const error = ref(false)
@@ -65,9 +64,9 @@ const saveArea = async function () {
 
     emit('done')
     notify({ content: 'review Submitted', position: 'top-center', type: 'success' })
-  } catch (error) {
-    console.log(error.message)
-    notify({ content: error, position: 'top-center', type: 'error' })
+  } catch (err: any) {
+    console.log(err.message)
+    notify({ content: err, position: 'top-center', type: 'error' })
   }
 }
 

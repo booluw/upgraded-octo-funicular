@@ -7,6 +7,8 @@ import IconUser from "@/components/icons/IconUser.vue"
 
 
 export const AMENITIES = ['Parking Lot', 'Free Wi-Fi', 'Nightlife', 'Adult Home', 'Schools', 'Pet Store', 'Childcare', 'Gym', 'Adult Home', 'Security', 'Train Station', 'Public Transportation', 'Bus Station', 'Quiet', 'Shopping Malls', 'Resort Park', 'Hospitals']
+export const AMENITY_CATEGORY = ['Recreational Favilities', 'Educational Facilities', 'Healthcare Facilities', 'Utility Services', 'Public Services & Safety', 'Transportation Services']
+
 
 export const USER_ROUTES = [
   {

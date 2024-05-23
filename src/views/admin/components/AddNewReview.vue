@@ -1,10 +1,8 @@
 <script lang="ts" setup>
 import { reactive, onMounted, ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
 import { supabase } from '@/config/supabase'
 import { useUser } from '@/stores/user'
 
-import { AMENITIES } from '@/utils/constants'
 import { notify } from '@/components/AppNotification'
 
 import AppSelection from '@/components/AppSelection.vue'
@@ -20,12 +18,21 @@ const error = ref(false)
 const loading = ref(false)
 
 const area = reactive({ items: [] })
+const amenity = ref([])
 const review = reactive({
   area: '',
   amenities: [],
   review: '',
   rating: 0,
   profile_id: user.user.id
+})
+
+const amenities = computed(() => {
+  if (amenity.value.length === 0) return []
+
+  return amenity.value.map((item) => {
+    return item.title
+  })
 })
 
 const areas = computed(() => {
@@ -87,8 +94,25 @@ const getAllArea = async function () {
   }
 }
 
+const getAllAmenities = async function () {
+  try {
+    const { data, error } = await supabase.from('amenities').select('title')
+
+    if (error) throw Error(error.message ?? error)
+    amenity.value = data
+  } catch (err) {
+    console.log(err)
+    notify({
+      content: err ?? `We couldn't fetch Amenities, please reload`,
+      type: 'error',
+      position: 'top-center'
+    })
+  }
+}
+
 onMounted(async () => {
   await getAllArea()
+  await getAllAmenities()
 })
 </script>
 <template>
@@ -124,7 +148,7 @@ onMounted(async () => {
       <AppSelect :options="areas" placeholder="Area Name" v-model="review.area" class="mb-5" />
       <AppSelection
         v-model="review.amenities"
-        :options="AMENITIES"
+        :options="amenities"
         placeholder="Select Amenities"
         class="mb-5"
       />

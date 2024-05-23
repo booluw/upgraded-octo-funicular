@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, reactive, ref, onMounted, watch } from 'vue'
+import { computed, reactive, ref, onMounted, watch, type Ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUser } from '@/stores/user'
 import { isEmpty } from 'lodash'
@@ -29,20 +29,7 @@ const searchLoading = ref(false)
 const error = ref(false)
 const scroller = ref(null) as any
 
-const filters = reactive([
-  'Schools',
-  'Hospitals',
-  'Resort Park',
-  'Shopping Malls',
-  'Airports',
-  'Train Station',
-  'Nightlife',
-  'Public Wifi',
-  'Security',
-  'Public Transport',
-  'Bus Station',
-  'Quiet'
-])
+const amenity: Ref<{ title: string }[]> = ref([])
 
 const area = ref({})
 const areas = reactive({ items: [] })
@@ -52,6 +39,14 @@ const reviewCount = ref(0)
 
 const query = ref({ query: '', name: '', id: '' })
 
+const amenities = computed(() => {
+  if (amenity.value.length === 0) return []
+
+  return amenity.value.map((item) => {
+    return item.title
+  })
+})
+
 const param = computed({
   set(newVal: string) {
     query.value.query = newVal
@@ -60,6 +55,22 @@ const param = computed({
     return query.value.name || query.value.query
   }
 })
+
+const getAllAmenities = async function () {
+  try {
+    const { data, error } = await supabase.from('amenities').select('title')
+
+    if (error) throw Error(error.message ?? error)
+    amenity.value = data
+  } catch (err) {
+    console.log(err)
+    notify({
+      content: err ?? `We couldn't fetch Amenities, please reload`,
+      type: 'error',
+      position: 'top-center'
+    })
+  }
+}
 
 const setPath = function (item: any) {
   query.value.id = item.area_id
@@ -165,6 +176,7 @@ const getArea = async function () {
     if (error) throw Error(error.message ?? error)
 
     area.value = data[0]
+    await getAllAmenities()
   } catch (err) {
     notify({ content: err, position: 'top-center', type: 'error' })
     error.value = true
@@ -419,8 +431,8 @@ onMounted(() => {
         <div class="pb-[16px] flex justify-between items-center">
           <div class="flex gap-[10px] overflow-x-auto scrollbar-none" ref="scroller">
             <div
-              class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
-              v-for="(filter, i) in filters"
+              class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black/20 dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
+              v-for="(filter, i) in amenities"
               :key="i"
             >
               {{ filter }}

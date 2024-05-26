@@ -31,7 +31,7 @@ const error = ref(false)
 const scroller = ref(null) as any
 
 const amenity: Ref<{ title: string }[]> = ref([])
-const filter = ref('')
+const filter: Ref<null|string> = ref(null)
 
 const area = ref({})
 const areas = reactive({ items: [] })
@@ -449,7 +449,7 @@ onMounted(() => {
               class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black/20 dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
               :class="{ '!bg-primary/40 !border-primary': filter === item }"
               v-for="(item, i) in amenities"
-              @click="filter === item ? (filter = '') : (filter = item)"
+              @click="filter === item ? (filter = null) : (filter = item)"
               :key="i"
             >
               {{ item }}

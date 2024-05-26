@@ -25,7 +25,7 @@ defineExpose({ reviews })
 
 const _review = computed(() => {
   if (reviews.value.length === 0) return []
-  else if (toRef(props.filter).value === '') return reviews.value
+  else if (toRef(props.filter).value === null) return reviews.value
   return reviews.value.filter((item: any) => {
     if (item.amenities.includes(toRef(props.filter).value)) {
       return item
@@ -83,7 +83,7 @@ onMounted(() => {
         />
       </template>
       <template v-else>
-        <div class="text-xl opacity-75" v-if="!isEmpty(toRef(filter))">
+        <div class="text-xl opacity-75" v-if="toRef(filter) !== null">
           No reviews under {{ toRef(filter) }} yet.
         </div>
         <div class="text-xl opacity-75" v-else>No reviews yet, add one.</div>

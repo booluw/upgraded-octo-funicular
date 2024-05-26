@@ -17,8 +17,12 @@ const route = useRoute()
 
 const loading = ref(false)
 const error = ref(false)
+const comment = ref({
+  id: '',
+  comments: []
+})
 
-const area = ref({})
+const area = ref({}) as any
 
 const getArea = async function () {
   loading.value = true
@@ -37,8 +41,13 @@ const getArea = async function () {
   loading.value = false
 }
 
+const getComments = async function () {
+
+}
+
 const handleClick = function (id: string) {
-  console.log('Review Clicked', id)
+  comment.value.id = id
+  router.push(`?review=${id}`)
 }
 
 onMounted(() => {
@@ -53,45 +62,50 @@ onMounted(() => {
     <AppLoader />
   </section>
   <AppError v-else-if="error" />
-  <section class="md:w-2/3 text-left" v-else>
-    <a href="#back" class="inline-flex gap-[5px] items-center" @click.prevent="router.go(-1)">
-      <svg
-        width="15"
-        height="15"
-        viewBox="0 0 15 15"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <g clip-path="url(#clip0_6405_25616)">
-          <path
-            d="M1.25 7.5L3.75 10V8.125H13.125V6.875H3.75V5L1.25 7.5Z"
-            fill="#636366"
-            fill-opacity="0.8"
-          />
-        </g>
-        <defs>
-          <clipPath id="clip0_6405_25616">
-            <rect width="15" height="15" fill="white" transform="matrix(-1 0 0 -1 15 15)" />
-          </clipPath>
-        </defs>
-      </svg>
-      <span class="underline">Back</span>
-    </a>
-    <div class="flex justify-between items-center mt-5">
-      <h1 class="text-icon dark:text-primary-light font-[500] text-2xl capitalize">
-        {{ area.name }}, {{ area.lga }}
-      </h1>
-      <AppButton
-        type="primary"
-        class="uppercase text-sm"
-        size="small"
-        @click.prevent="router.push('/admin/reviews?action=add')"
-      >
-        leave a review
-      </AppButton>
-    </div>
-    <div class="mt-10 w-full overflow-y-auto scrollbar-none">
-      <Reviews ref="reviews" type="full" @clicked="handleClick" />
-    </div>
+  <section class="flex" v-else>
+    <section class="md:w-2/3 text-left">
+      <a href="#back" class="inline-flex gap-[5px] items-center" @click.prevent="router.go(-1)">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 15 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g clip-path="url(#clip0_6405_25616)">
+            <path
+              d="M1.25 7.5L3.75 10V8.125H13.125V6.875H3.75V5L1.25 7.5Z"
+              fill="#636366"
+              fill-opacity="0.8"
+            />
+          </g>
+          <defs>
+            <clipPath id="clip0_6405_25616">
+              <rect width="15" height="15" fill="white" transform="matrix(-1 0 0 -1 15 15)" />
+            </clipPath>
+          </defs>
+        </svg>
+        <span class="underline">Back</span>
+      </a>
+      <div class="flex justify-between items-center mt-5">
+        <h1 class="text-icon dark:text-primary-light font-[500] text-2xl capitalize">
+          {{ area.name }}, {{ area.lga }}
+        </h1>
+        <AppButton
+          type="primary"
+          class="uppercase text-sm"
+          size="small"
+          @click.prevent="router.push('/admin/reviews?action=add')"
+        >
+          leave a review
+        </AppButton>
+      </div>
+      <div class="mt-10 w-full overflow-y-auto scrollbar-none">
+        <Reviews ref="reviews" :filter="null" type="full" @clicked="handleClick" />
+      </div>
+    </section>
+    <section class="">
+      {{ comment }}
+    </section>
   </section>
 </template>

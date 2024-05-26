@@ -10,6 +10,7 @@ import { notify } from '@/components/AppNotification'
 import { supabase } from '@/config/supabase'
 
 import AppButton from '@/components/AppButton.vue'
+import { useRoute } from 'vue-router';
 
 const props = defineProps<{
   review: any
@@ -18,6 +19,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['clicked', 'reload'])
 const user = useUser().user
+const route = useRoute()
+
 const comment = ref(false)
 const newComment = ref('')
 const loading = ref(false)
@@ -103,7 +106,7 @@ onClickOutside(target, () => {
 <template>
   <div
     class="mb-[10px] p-[16px] hover:bg-[#E5EDF5] dark:hover:bg-[#212327] rounded cursor-pointer"
-    :class="{ 'border-b border-primary/20 dark:border-[#212327] rounded-none': type === 'full' }"
+    :class="{ 'border-b border-primary/20 dark:border-[#212327] rounded-none': type === 'full' }, { 'bg-[#212327]' : Number(route.query.review) === review.id }"
   >
     <div class="flex justify-between" @click="emit('clicked', review.id)">
       <div class="flex items-center gap-[8px]">

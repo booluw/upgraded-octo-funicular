@@ -91,7 +91,7 @@ const search = async function () {
   error.value = false
   if (param.value === '') {
     areas.items = []
-    error.value = true
+    // error.value = true
     return
   }
 
@@ -447,6 +447,12 @@ onMounted(() => {
           <div class="flex gap-[10px] overflow-x-auto scrollbar-none" ref="scroller">
             <div
               class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black/20 dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
+              :class="{ '!bg-primary/40 !border-primary': filter === null }"
+            >
+              All
+            </div>
+            <div
+              class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black/20 dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
               :class="{ '!bg-primary/40 !border-primary': filter === item }"
               v-for="(item, i) in amenities"
               @click="filter === item ? (filter = null) : (filter = item)"
@@ -533,7 +539,7 @@ onMounted(() => {
             class="w-[150vw] md:w-auto grid grid-cols-3 md:grid-cols-2 grid-rows-2 gap-[10px]"
             v-if="area.imgs.length !== 0"
           >
-            <img :src="area.imgs[0]" class="row-span-2 h-full w-auto rounded-[8px]" />
+            <img :src="area.imgs[0]" class="row-span-1 h-full w-auto rounded-[8px]" />
             <img :src="area.imgs[1]" class="row-span-1 rounded-[8px]" v-if="area.imgs[1]" />
             <div class="row-span-1 rounded-[8px] overflow-hidden relative">
               <div

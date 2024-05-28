@@ -34,13 +34,13 @@ const style = computed(() => {
   // Styling to handle notification position
   switch (props.position) {
     case 'top-left':
-      response = response + 'top-32 left-0'
+      response = response + 'top-4 left-0'
       break
     case 'top-center':
-      response = response + 'top-32 left-[50%]'
+      response = response + 'top-4 left-[50%]'
       break
     case 'top-right':
-      response = response + 'top-32 right-0'
+      response = response + 'top-4 right-0'
       break
     case 'bottom-right':
       response = response + 'bottom-5 right-0'
@@ -52,7 +52,7 @@ const style = computed(() => {
       response = response + 'bottom-5 left-0'
       break
     default:
-      response = response + 'top-32 right-0'
+      response = response + 'top-4 right-0'
       break
   }
 

@@ -42,7 +42,7 @@ const getAllReviews = async function () {
       .from('reviews')
       .select('*, profile(*)')
       .eq('area', route.params.name)
-      .order('id', { ascending: false })
+      .order('likes', { ascending: false })
 
     if (error) throw Error(error.message ?? error)
     reviews.value = data

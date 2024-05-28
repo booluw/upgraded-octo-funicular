@@ -244,9 +244,9 @@ onMounted(async () => {
                 v-else
               />
               <div class="flex gap-[8px] text-[14px]">
-              {{ comment.anon ? 'Annon User' : comment.profile.username.replace(/"/g, '') }}
-              <span class="opacity-60">{{ useTimeAgo(comment.created_at) }}</span>
-            </div>
+                {{ comment.anon ? 'Annon User' : comment.profile.username.replace(/"/g, '') }}
+                <span class="opacity-60">{{ useTimeAgo(comment.created_at) }}</span>
+              </div>
             </div>
           </div>
           <p class="text-justify my-[8px] line-clamp-4">

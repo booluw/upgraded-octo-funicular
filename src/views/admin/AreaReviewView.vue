@@ -9,18 +9,15 @@ import { supabase } from '@/config/supabase'
 import AppError from '@/components/AppError.vue'
 import AppLoader from '@/components/AppLoader.vue'
 import AppButton from '@/components/AppButton.vue'
-
 import Reviews from '@/views/areas/components/Reviews.vue'
+
+import ViewComments from './components/ViewComments.vue'
 
 const router = useRouter()
 const route = useRoute()
 
 const loading = ref(false)
 const error = ref(false)
-const comment = ref({
-  id: '',
-  comments: []
-})
 
 const area = ref({}) as any
 
@@ -41,12 +38,7 @@ const getArea = async function () {
   loading.value = false
 }
 
-const getComments = async function () {
-
-}
-
 const handleClick = function (id: string) {
-  comment.value.id = id
   router.push(`?review=${id}`)
 }
 
@@ -62,7 +54,7 @@ onMounted(() => {
     <AppLoader />
   </section>
   <AppError v-else-if="error" />
-  <section class="flex" v-else>
+  <section class="flex gap-5 h-[83vh]" v-else>
     <section class="md:w-2/3 text-left">
       <a href="#back" class="inline-flex gap-[5px] items-center" @click.prevent="router.go(-1)">
         <svg
@@ -104,8 +96,8 @@ onMounted(() => {
         <Reviews ref="reviews" :filter="null" type="full" @clicked="handleClick" />
       </div>
     </section>
-    <section class="">
-      {{ comment }}
+    <section class="md:w-1/2">
+      <ViewComments v-if="route.query.review" />
     </section>
   </section>
 </template>

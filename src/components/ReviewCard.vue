@@ -10,7 +10,7 @@ import { notify } from '@/components/AppNotification'
 import { supabase } from '@/config/supabase'
 
 import AppButton from '@/components/AppButton.vue'
-import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router'
 
 const props = defineProps<{
   review: any
@@ -56,19 +56,67 @@ const like = async function (review: typeof props.review) {
     return
   }
 
-  if (review.likes.includes(user.id)) return
+  if (review.dislikes.includes(user.id)) {
+    try {
+      const { data, error } = await supabase
+        .from('reviews')
+        .update({
+          dislikes: review.dislikes.filter((id: string) => {
+            if (id !== user.id) {
+              return id
+            }
+          })
+        })
+        .eq('id', review.id)
+        .select('dislikes')
+
+      if (error) throw Error(error.message as any)
+
+      review.dislikes = [...data[0].dislikes]
+    } catch (error) {
+      console.log(error)
+      notify({ content: 'Please try again', type: 'error', position: 'top-center' })
+      return
+    }
+  }
+
+  if (review.likes.includes(user.id)) {
+    try {
+      const { data, error } = await supabase
+        .from('reviews')
+        .update({
+          likes: review.likes.filter((id: string) => {
+            if (id !== user.id) {
+              return id
+            }
+          })
+        })
+        .eq('id', review.id)
+        .select('likes')
+
+      if (error) throw Error(error.message as any)
+
+      notify({ content: 'Comment unliked', type: 'success', position: 'top-center' })
+      review.likes = [...data[0].likes]
+    } catch (error) {
+      console.log(error)
+      notify({ content: 'Please try again', type: 'error', position: 'top-center' })
+    }
+    return
+  }
 
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('reviews')
       .update({ likes: [...review.likes, user.id] })
       .eq('id', review.id)
+      .select('likes')
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     notify({ content: 'Comment liked', type: 'success', position: 'top-center' })
 
-    emit('reload')
+    review.likes = [...data[0].likes]
   } catch (error) {
     console.log(error)
     notify({ content: 'Please try again', type: 'error', position: 'top-center' })
@@ -79,20 +127,68 @@ const dislike = async function (review: typeof props.review) {
     notify({ content: 'You need to login', type: 'info', position: 'top-center' })
     return
   }
-  
-  if (review.dislikes.includes(user.id)) return
+
+  if (review.likes.includes(user.id)) {
+    try {
+      const { data, error } = await supabase
+        .from('reviews')
+        .update({
+          likes: review.likes.filter((id: string) => {
+            if (id !== user.id) {
+              return id
+            }
+          })
+        })
+        .eq('id', review.id)
+        .select('likes')
+
+      if (error) throw Error(error.message as any)
+
+      review.likes = [...data[0].likes]
+    } catch (error) {
+      console.log(error)
+      notify({ content: 'Please try again', type: 'error', position: 'top-center' })
+      return
+    }
+  }
+
+  if (review.dislikes.includes(user.id)) {
+    try {
+      const { data, error } = await supabase
+        .from('reviews')
+        .update({
+          dislikes: review.dislikes.filter((id: string) => {
+            if (id !== user.id) {
+              return id
+            }
+          })
+        })
+        .eq('id', review.id)
+        .select('dislikes')
+
+      if (error) throw Error(error.message as any)
+
+      notify({ content: 'Comment undisliked', type: 'success', position: 'top-center' })
+      review.dislikes = [...data[0].dislikes]
+    } catch (error) {
+      console.log(error)
+      notify({ content: 'Please try again', type: 'error', position: 'top-center' })
+    }
+    return
+  }
 
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('reviews')
       .update({ dislikes: [...review.dislikes, user.id] })
       .eq('id', review.id)
+      .select('dislikes')
 
     if (error) throw Error(error as any)
 
     notify({ content: 'Comment disliked', type: 'success', position: 'top-center' })
 
-    emit('reload')
+    review.dislikes = [...data[0].dislikes]
   } catch (error) {
     console.log(error)
     notify({ content: 'Please try again', type: 'error', position: 'top-center' })
@@ -106,7 +202,10 @@ onClickOutside(target, () => {
 <template>
   <div
     class="mb-[10px] p-[16px] hover:bg-[#E5EDF5] dark:hover:bg-[#212327] rounded cursor-pointer"
-    :class="{ 'border-b border-primary/20 dark:border-[#212327] rounded-none': type === 'full' }, { 'bg-[#212327]' : Number(route.query.review) === review.id }"
+    :class="
+      ({ 'border-b border-primary/20 dark:border-[#212327] rounded-none': type === 'full' },
+      { 'bg-[#212327]': Number(route.query.review) === review.id })
+    "
   >
     <div class="flex justify-between" @click="emit('clicked', review.id)">
       <div class="flex items-center gap-[8px]">
@@ -142,7 +241,7 @@ onClickOutside(target, () => {
       {{ review.review }}
     </p>
     <div class="mt-4" v-if="type === 'full'">
-      <div class="flex gap-[10px] overflow-x-auto scrollbar-none">
+      <div class="flex gap-[10px] overflow-x-auto scrollbar-none" @click="emit('clicked', review.id)">
         <div
           class="flex-shrink-0 text-center text-[10px] py-[3px] px-[10px] border-[1.5px] border-black dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
           v-for="(amenities, index) in review.amenities"
@@ -212,7 +311,11 @@ onClickOutside(target, () => {
       </div>
     </div>
     <div class="w-full" v-if="comment" ref="target">
-      <form @submit.prevent="addNewComment()" class="flex gap-5 pt-5 w-full" v-if="!isEmpty(user.id)">
+      <form
+        @submit.prevent="addNewComment()"
+        class="flex gap-5 pt-5 w-full"
+        v-if="!isEmpty(user.id)"
+      >
         <input
           class="text-black dark:text-white bg-primary-light/5 focus:outline-none rounded px-5 w-2/3"
           type="text"

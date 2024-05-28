@@ -24,6 +24,20 @@ export default {
       },
       borderRadius: {
         DEFAULT: '8px'
+      },
+      keyframes: {
+        marquee: {
+          '0%': { transform: 'translateY(0%)' },
+          '100%': { transform: 'translateY(-50%)' }
+        },
+        marqueen: {
+          '0%': { transform: 'translateY(-50%)' },
+          '100%': { transform: 'translateY(0%)' }
+        }
+      },
+      animation: {
+        'marquee-infinite': 'marquee 25s linear infinite',
+        'marqueen-infinite': 'marqueen 25s linear infinite'
       }
     }
   },

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, reactive, computed, watch } from 'vue'
 import { isEmpty } from 'lodash'
-import { useRouter } from 'vue-router';
+import { useRouter } from 'vue-router'
 
 import { STATES_AND_LGA } from '@/utils/constants'
 
@@ -80,7 +80,7 @@ const saveArea = async function () {
           .replace(/[^A-z\s\d][\\\^]?/g, '-')
       })
 
-      if (error) throw Error(error as any)
+      if (error) throw Error(error.message as any)
 
       notify({ content: 'New area added', position: 'top-center', type: 'success' })
       emits('done')

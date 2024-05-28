@@ -43,7 +43,7 @@ const getArea = async function () {
       .select('*')
       .eq('area', route.query.view)
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
     if (reviewError) throw Error(reviewError as any)
 
     area.value = data[0]

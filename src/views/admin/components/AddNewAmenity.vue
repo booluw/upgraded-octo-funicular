@@ -10,7 +10,6 @@ import AppSelection from '@/components/AppSelection.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppButton from '@/components/AppButton.vue'
 
-
 const emits = defineEmits(['back', 'done'])
 const router = useRouter()
 
@@ -23,7 +22,7 @@ const saveAmenity = async function () {
   try {
     const { error } = await supabase.from('amenities').insert({ ...amenity })
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     emits('done')
     notify({ content: 'Amenity created', type: 'success', position: 'top-center' })

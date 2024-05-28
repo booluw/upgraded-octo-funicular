@@ -23,7 +23,7 @@ const logUserIn = async function () {
     const { data, error } = await supabase.auth.signInWithPassword({ ...auth })
 
     if (error) {
-      throw Error(error as any)
+      throw Error(error.message as any)
     }
 
     useUser().setUserId(data.user.id)
@@ -98,7 +98,9 @@ const logUserIn = async function () {
       </div>
       <div class="mt-3">
         Forgot your password?
-        <router-link to="recover-pw" class="text-primary font-[500] underline">Reset it</router-link>
+        <router-link to="recover-pw" class="text-primary font-[500] underline"
+          >Reset it</router-link
+        >
       </div>
     </form>
   </section>

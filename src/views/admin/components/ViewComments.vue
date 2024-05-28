@@ -28,7 +28,7 @@ const addNewComment = async function () {
       .from('comments')
       .insert({ profile_id: user.id, text: newComment.value, reviews_id: route.query.review })
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     newComment.value = ''
     await getComments()
@@ -54,7 +54,7 @@ const getComments = async function () {
       .select('*, profile(*)')
       .eq('reviews_id', route.query.review)
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
     comments.value = data
   } catch (err) {
     console.log(err)
@@ -86,8 +86,8 @@ watch(
     </section>
     <AppError v-else-if="error" />
     <section class="h-full relative" v-else>
-      <div class="h-[85%] overflow-auto scrollbar pr-3">
-        <h2 class="mb-3 text-xl">Comments</h2>
+      <h2 class="mb-3 text-xl">Comments</h2>
+      <div class="h-[78%] overflow-auto scrollbar pr-3">
         <template v-if="comments.length !== 0">
           <div
             class="mb-4 py-2 border-y border-y-primary-light dark:border-y-black"

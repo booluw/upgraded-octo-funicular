@@ -61,7 +61,7 @@ const searchArea = async function () {
       .rpc('search_areas', { search_name: query.value })
       .order('area_created_at', { ascending: false })
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
     area.items = data
     area.count = data.length
   } catch (err) {
@@ -86,7 +86,7 @@ const getAllAreas = async function () {
 
     const { count } = await supabase.from('areas').select('*', { count: 'exact', head: true })
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
     area.items = data
     area.count = count
   } catch (err) {

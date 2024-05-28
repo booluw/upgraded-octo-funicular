@@ -64,7 +64,7 @@ const getAllAmenities = async function () {
       .limit(amenity.itemsPerPage)
 
     const { count } = await supabase.from('amenities').select('', { count: 'exact', head: true })
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     amenity.items = data
     amenity.count = count
@@ -85,7 +85,7 @@ const searchAmenity = async function () {
       .rpc('search_amenities', { search_text: query.value })
       .order('created_at', { ascending: false })
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     amenity.items = data
   } catch (err) {

@@ -26,7 +26,7 @@ const saveAmenity = async function () {
       .update({ ...amenity })
       .eq('id', route.query.id)
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     emits('done')
     notify({ content: 'Amenity updated', type: 'success', position: 'top-center' })
@@ -48,7 +48,7 @@ const getAmenity = async function () {
   try {
     const { data, error } = await supabase.from('amenities').select('*').eq('id', route.query.id)
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     amenity.title = data[0].title
     amenity.category = data[0].category

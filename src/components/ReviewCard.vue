@@ -35,7 +35,7 @@ const addNewComment = async function () {
       .from('comments')
       .insert({ profile_id: user.id, text: newComment.value, reviews_id: props.review.id })
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     emit('reload')
   } catch (error) {
@@ -184,7 +184,7 @@ const dislike = async function (review: typeof props.review) {
       .eq('id', review.id)
       .select('dislikes')
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     notify({ content: 'Comment disliked', type: 'success', position: 'top-center' })
 
@@ -241,7 +241,10 @@ onClickOutside(target, () => {
       {{ review.review }}
     </p>
     <div class="mt-4" v-if="type === 'full'">
-      <div class="flex gap-[10px] overflow-x-auto scrollbar-none" @click="emit('clicked', review.id)">
+      <div
+        class="flex gap-[10px] overflow-x-auto scrollbar-none"
+        @click="emit('clicked', review.id)"
+      >
         <div
           class="flex-shrink-0 text-center text-[10px] py-[3px] px-[10px] border-[1.5px] border-black dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
           v-for="(amenities, index) in review.amenities"

@@ -41,7 +41,7 @@ const getAllReviews = async function () {
     const { data, error } = await supabase
       .from('reviews')
       .select('*, profile(*)')
-      .eq('area', route.params.name)
+      .or(`and(area.eq.${route.params.name}, approved.eq.APPROVED)`)
       .order('likes', { ascending: false })
 
     if (error) throw Error(error.message ?? error)

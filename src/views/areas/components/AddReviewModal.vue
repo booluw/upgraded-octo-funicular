@@ -81,8 +81,8 @@ const submitReview = async function () {
 
     if (error) throw Error(error.message ?? error)
 
-    emit('done', data)
     notify({ content: 'review Submitted', position: 'top-center', type: 'success' })
+    emit('done', data)
   } catch (error) {
     console.log(error)
     notify({ content: error, position: 'top-center', type: 'error' })

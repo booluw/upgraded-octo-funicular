@@ -29,13 +29,17 @@ const registerUser = async function () {
     })
 
     if (error) {
-      throw Error(error as any)
+      throw Error(error.message as any)
     }
 
     registered.value = true
   } catch (error: any) {
     console.log(error)
-    notify({ content: error?.message ?? 'An error occurred', position: 'top-center', type: 'error' })
+    notify({
+      content: error?.message ?? 'An error occurred',
+      position: 'top-center',
+      type: 'error'
+    })
   }
 
   loading.value = false
@@ -87,7 +91,9 @@ const registerUser = async function () {
         </div>
         <div class="mt-3">
           Forgot your password?
-          <router-link to="recover-pw" class="text-primary font-[500] underline">Reset it</router-link>
+          <router-link to="recover-pw" class="text-primary font-[500] underline"
+            >Reset it</router-link
+          >
         </div>
       </form>
     </section>

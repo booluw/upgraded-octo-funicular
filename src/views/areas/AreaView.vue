@@ -127,8 +127,8 @@ const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
   }
 }
 
-const addReview = function (review: any) {
-  router.go()
+const addReview = function () {
+  // router.go()
   newReview.value = false
 }
 

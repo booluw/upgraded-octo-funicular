@@ -45,7 +45,7 @@ const getProfile = async function () {
   try {
     const { data, error } = await supabase.from('profile').select('*').eq('id', user.user.id)
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     user.setUser(data[0])
   } catch (error) {
@@ -68,7 +68,7 @@ const saveProfile = async function () {
           .eq('id', user.user.id)
           .select()
 
-        if (error) throw Error(error as any)
+        if (error) throw Error(error.message as any)
 
         user.setUser(data[0] as User)
       })
@@ -79,7 +79,7 @@ const saveProfile = async function () {
         .eq('id', user.user.id)
         .select()
 
-      if (error) throw Error(error as any)
+      if (error) throw Error(error.message as any)
 
       user.setUser(data[0] as User)
     }

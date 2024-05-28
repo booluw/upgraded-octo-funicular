@@ -35,7 +35,7 @@ const goToPage = async function (pageNumber: number) {
 const fetchAreaCount = async function () {
   try {
     const { count, error } = await supabase.from('areas').select('', { count: 'exact', head: true })
-    if (error as any) throw Error(error as any)
+    if (error as any) throw Error(error.message as any)
     area.value = count as number
   } catch (error) {
     err.value = true
@@ -48,7 +48,7 @@ const fetchUserCount = async function () {
     const { count, error } = await supabase
       .from('profile')
       .select('', { count: 'exact', head: true })
-    if (error as any) throw Error(error as any)
+    if (error as any) throw Error(error.message as any)
     users.value = count as number
   } catch (error) {
     err.value = true
@@ -61,7 +61,7 @@ const fetchReviews = async function () {
     const { count, error } = await supabase
       .from('reviews')
       .select('*', { count: 'exact', head: true })
-    if (error as any) throw Error(error as any)
+    if (error as any) throw Error(error.message as any)
     reviews.count = count as number
     // reviews.items = data as any
   } catch (error) {

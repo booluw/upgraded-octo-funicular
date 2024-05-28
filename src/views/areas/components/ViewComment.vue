@@ -33,11 +33,10 @@ const addNewComment = async function () {
       .from('comments')
       .insert({ profile_id: user.id, text: newComment.value, reviews_id: props.id })
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     newComment.value = ''
     await getReview()
-
   } catch (error) {
     console.log(error)
     notify({
@@ -60,7 +59,7 @@ const getReview = async function () {
       .select('*, profile(*)')
       .eq('id', toRef(props.id).value)
 
-    if (error) throw Error(error as any)
+    if (error) throw Error(error.message as any)
 
     const { data: comment, error: err } = await supabase
       .from('comments')

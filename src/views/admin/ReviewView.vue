@@ -48,7 +48,7 @@ const fetchReviews = async function () {
     const { count, error } = await supabase
       .from('reviews')
       .select('*', { count: 'exact', head: true })
-    if (error as any) throw Error(error as any)
+    if (error as any) throw Error(error.message as any)
     review.count = count as number
     // reviews.items = data as any
   } catch (err) {

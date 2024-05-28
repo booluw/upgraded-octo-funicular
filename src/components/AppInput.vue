@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-textarea-mustache -->
 <script lang="ts" setup>
 import { ref, useSlots, reactive } from 'vue'
 import { validation } from './validations'
@@ -89,7 +90,7 @@ const updateModel = function (e: any) {
           :pattern="pattern"
           @input="updateModel"
           @focus="updateModel"
-        ></textarea>
+        >{{ value }}</textarea>
         <input
           v-else
           class="w-full bg-transparent focus-within:outline-none outline-none"

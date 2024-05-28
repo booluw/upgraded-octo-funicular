@@ -5,7 +5,6 @@ import { useRoute } from 'vue-router'
 import { supabase } from '@/config/supabase'
 import { useTimeAgo } from '@vueuse/core'
 import { useUser } from '@/stores/user'
-import { isEmpty } from 'lodash'
 
 import AppLoader from '@/components/AppLoader.vue'
 import AppButton from '@/components/AppButton.vue'

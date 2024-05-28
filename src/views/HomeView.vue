@@ -2,11 +2,11 @@
 import { reactive, ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
+import { supabase } from '../config/supabase'
+
 import AppButton from '@/components/AppButton.vue'
 import AppCard from '@/components/AppCard.vue'
 import AppInput from '@/components/AppInput.vue'
-import { supabase } from '../config/supabase'
-import { isEmpty } from 'lodash'
 import AppLoader from '@/components/AppLoader.vue'
 
 const router = useRouter()

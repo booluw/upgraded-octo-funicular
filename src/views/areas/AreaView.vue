@@ -128,7 +128,11 @@ const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
 }
 
 const addReview = function () {
-  // router.go()
+  if (reviews.value !== null) {
+    reviews.value.getAllReviews()
+  } else {
+    router.go(0)
+  }
   newReview.value = false
 }
 
@@ -166,7 +170,7 @@ const getArea = async function () {
     const { count, error: review_error } = await supabase
       .from('reviews')
       .select('*, area(id)', { count: 'exact' })
-      .eq('area', route.params.name)
+      .or(`and(area.eq.${route.params.name}, approved.eq.APPROVED)`)
 
     reviewCount.value = count as unknown as number
 
@@ -448,6 +452,7 @@ onMounted(() => {
             <div
               class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black/20 dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
               :class="{ '!bg-primary/40 !border-primary': filter === null }"
+              @click="filter = null"
             >
               All
             </div>

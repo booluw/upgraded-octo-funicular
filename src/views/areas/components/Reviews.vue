@@ -2,8 +2,7 @@
 import { ref, onMounted, toRef, computed } from 'vue'
 import { supabase } from '@/config/supabase'
 import { useRoute } from 'vue-router'
-
-import { isEmpty } from 'lodash'
+import { useUser } from '@/stores/user'
 
 import AppError from '@/components/AppError.vue'
 import AppLoader from '@/components/AppLoader.vue'
@@ -16,16 +15,15 @@ const props = defineProps<{
 const emit = defineEmits(['clicked'])
 
 const route = useRoute()
+const user = useUser().user
 
 const loading = ref(false)
 const error = ref(false)
 const reviews = ref([])
 
-defineExpose({ reviews })
-
 const _review = computed(() => {
   if (reviews.value.length === 0) return []
-  else if (toRef(props.filter).value === null) return reviews.value
+  if (toRef(props.filter).value === null) return reviews.value
   return reviews.value.filter((item: any) => {
     if (item.amenities.includes(toRef(props.filter).value)) {
       return item
@@ -45,7 +43,19 @@ const getAllReviews = async function () {
       .order('likes', { ascending: false })
 
     if (error) throw Error(error.message ?? error)
-    reviews.value = data
+
+    reviews.value = data as unknown as any
+
+    if (user.id !== '') {
+      const { data, error } = await supabase
+        .from('reviews')
+        .select('*, profile(*)')
+        .or(`and(area.eq.${route.params.name}, profile_id.eq.${user.id})`)
+
+      if (error) throw Error(error.message)
+
+      reviews.value = [...reviews.value, ...data as unknown as any] as unknown as any
+    }
   } catch (err) {
     error.value = true
     console.log(err)
@@ -54,9 +64,11 @@ const getAllReviews = async function () {
   loading.value = false
 }
 
-const handleClick = function (id) {
+const handleClick = function (id: string) {
   emit('clicked', id)
 }
+
+defineExpose({ getAllReviews })
 
 onMounted(() => {
   getAllReviews()
@@ -83,7 +95,7 @@ onMounted(() => {
         />
       </template>
       <template v-else>
-        <div class="text-xl opacity-75" v-if="toRef(filter) !== null">
+        <div class="text-xl opacity-75" v-if="toRef(filter).value !== null">
           No reviews under {{ toRef(filter) }} yet.
         </div>
         <div class="text-xl opacity-75" v-else>No reviews yet, add one.</div>

@@ -128,6 +128,11 @@ const router = createRouter({
           path: 'amenities',
           name: 'AdminAmenities',
           component: () => import('../views/admin/AmenitiesView.vue')
+        },
+        {
+          path: 'sub-admin',
+          name: 'AdminAdmin',
+          component: () => import('../views/admin/SubAdminView.vue')
         }
       ]
     },

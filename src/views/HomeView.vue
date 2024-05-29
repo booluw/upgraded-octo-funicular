@@ -309,7 +309,7 @@ watch(
     </div>
     <div class="hidden h-full md:flex gap-[20px] overflow-hidden relative">
       <div
-        class="absolute z-[99] top-0 right-0 left-0 bg-gradient-to-b from-light dark:from-black to-transparent p-10 h-[50vh]"
+        class="absolute z-[9] top-0 right-0 left-0 bg-gradient-to-b from-light dark:from-black to-transparent p-10 h-[50vh]"
       />
       <div class="w-1/2 flex flex-col gap-[20px] animate-marqueen-infinite transition-transform ease-in-out">
         <AppCard v-for="(review, i) in reviews" :key="i" :review="review" />
@@ -318,7 +318,7 @@ watch(
         <AppCard v-for="(review, i) in reviews" :key="i" :review="review" />
       </div>
       <div
-        class="absolute z-[99] bottom-0 right-0 left-0 bg-gradient-to-t from-light dark:from-black to-transparent p-10 h-[50vh]"
+        class="absolute z-[9] bottom-0 right-0 left-0 bg-gradient-to-t from-light dark:from-black to-transparent p-10 h-[50vh]"
       />
     </div>
   </section>

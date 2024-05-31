@@ -165,7 +165,7 @@ onMounted(() => {
               CREATE REVIEW
             </AppButton>
             <form class="flex items-center gap-[5px]" @submit.prevent="searchReview()">
-              <AppInput v-model="query" type="search" placeholder="User Name" size="small" required>
+              <AppInput v-model="query" type="search" placeholder="Area name/ LGA/ State" size="small" required>
                 <template #icon>
                   <svg
                     width="16"

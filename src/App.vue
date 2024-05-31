@@ -85,7 +85,7 @@ onMounted(() => {
     </section>
     <RouterView v-else />
     <div
-      class="fixed top-0 right-0 bottom-0 left-0 bg-[#1D3045]/90 dark:bg-black/90 flex justify-center items-center"
+      class="fixed z-[999] top-0 right-0 bottom-0 left-0 bg-[#1D3045]/90 dark:bg-black/90 flex justify-center items-center"
       v-if="route.query.action === 'login'"
     >
       <AppLogin ref="target" />

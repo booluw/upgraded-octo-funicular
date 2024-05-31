@@ -15,6 +15,7 @@ import AppTable from '@/components/AppTable/Index.vue'
 import AppPagination from '@/components/AppPagination.vue'
 
 import AddNewReview from './components/AddNewReview.vue'
+import ViewReview from './components/ViewReview.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -48,9 +49,10 @@ const fetchReviews = async function () {
     const { count, error } = await supabase
       .from('reviews')
       .select('*', { count: 'exact', head: true })
+
     if (error as any) throw Error(error.message as any)
+
     review.count = count as number
-    // reviews.items = data as any
   } catch (err) {
     error.value = true
     console.log(err)
@@ -93,7 +95,6 @@ const searchReview = async function () {
 
     if (error) throw Error(error.message)
 
-    console.log(data)
     review.items = data
   } catch (error) {
     console.log(error)
@@ -107,7 +108,7 @@ const savedReview = function () {
   getReviews()
 }
 
-const action = async function (option: { action: 'approve' | 'decline' | 'delete'; data: any }) {
+const action = async function (option: { action: 'approve' |'view' |'decline' | 'delete'; data: any }) {
   try {
     loading.value = true
 
@@ -126,6 +127,9 @@ const action = async function (option: { action: 'approve' | 'decline' | 'delete
         await supabase.from('reviews').delete().eq('id', option.data.id)
         notify({ content: 'Review deleted', type: 'success', position: 'top-center' })
         break
+
+      case 'view':
+        router.push(`?action=view&id=${option.data.id}`)
     }
 
     await getReviews()
@@ -145,16 +149,15 @@ onMounted(() => {
   fetchReviews()
   getReviews()
 })
-
-// watch(query, () => {
-//   searchReview()
-// })
 </script>
 <template>
   <AppError v-if="error" />
   <section class="" v-else>
-    <section class="" v-if="isEmpty(route.query)">
-      <section class="" v-if="isEmpty(route.query)">
+    <section class="flex justify-center" v-if="route.query.action === 'add'">
+      <AddNewReview @close="router.push(route.path)" @done="savedReview()" />
+    </section>
+    <section class="" v-else>
+      <section class="">
         <div class="flex items-center justify-between">
           <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">All Reviews Created</h1>
           <div class="flex items-center gap-[20px]">
@@ -208,7 +211,7 @@ onMounted(() => {
               { title: 'Status', field: 'approved', status: true }
             ]"
             :data="reviews"
-            :actions="['approve', 'decline', 'delete']"
+            :actions="['view', 'approve', 'decline', 'delete']"
             @on="action"
           />
 
@@ -221,8 +224,6 @@ onMounted(() => {
         </template>
       </section>
     </section>
-    <section class="flex justify-center" v-else-if="route.query.action === 'add'">
-      <AddNewReview @close="router.push(route.path)" @done="savedReview()" />
-    </section>
   </section>
+  <ViewReview @close="router.push(route.path)" @done="savedReview()" v-if="route.query.action === 'view'" />
 </template>

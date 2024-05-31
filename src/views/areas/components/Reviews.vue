@@ -50,7 +50,7 @@ const getAllReviews = async function () {
       const { data, error } = await supabase
         .from('reviews')
         .select('*, profile(*)')
-        .or(`and(area.eq.${route.params.name}, profile_id.eq.${user.id})`)
+        .or(`and(area.eq.${route.params.name}, profile_id.eq.${user.id}, approved.eq.PENDING)`)
 
       if (error) throw Error(error.message)
 

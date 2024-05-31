@@ -13,6 +13,7 @@ import AppTable from '@/components/AppTable/Index.vue'
 
 import AddNewArea from './components/AddNewArea.vue'
 import ViewArea from './components/ViewArea.vue'
+import EditArea from './components/EditArea.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -111,7 +112,9 @@ watch(query, () => {
     <section class="flex justify-center" v-if="route.query.action === 'add'">
       <AddNewArea @back="router.push(route.path)" @done="savedArea()" />
     </section>
-    <section class="" v-else-if="route.query.action === 'edit'"></section>
+    <section class="" v-else-if="route.query.action === 'edit'">
+      <EditArea @back="router.go(-1)" @done="savedArea()" />
+    </section>
     <section class="" v-else>
       <div class="flex items-center justify-between">
         <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">All Areas Created</h1>

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, ref, computed } from 'vue';
+import { ref } from 'vue';
 import { onClickOutside } from '@vueuse/core'
 import { isEmpty } from 'lodash';
 
@@ -7,14 +7,14 @@ const target = ref(null)
 
 onClickOutside(target, () => (show.value = false))
 
-const props = defineProps<{
+defineProps<{
   options: string[] | { label: string, val: string }[]
   placeholder?: string
+  disabled?: boolean
 }>()
 
 const value = defineModel() as any
 const show = ref(false)
-const query = ref('')
 
 const updateModel = function (option: string) {
   value.value = option
@@ -24,8 +24,9 @@ const updateModel = function (option: string) {
 <template>
   <div class="" ref="target">
     <div
-      class="flex flex-col justify-center rounded-[6px] bg-[#F3F7FE] dark:bg-black-light text-black-light dark:text-[#F3F7FE] border dark:border-[#383B43] focus-within:border-primary transition-all ease-out group p-[12px] pb-[16px] cursor-pointer capitalize"
-      @click="show = true"
+      class="flex flex-col justify-center rounded-[6px] bg-[#F3F7FE] dark:bg-black-light text-black-light dark:text-[#F3F7FE] border dark:border-[#383B43] focus-within:border-primary transition-all ease-out group p-[12px] pb-[16px] capitalize"
+      :class="{ 'cursor-pointer' : !disabled }"
+      @click="disabled ? show = false : show = true"
     >
       <span
         class="text-[10px] !text-left"
@@ -37,7 +38,7 @@ const updateModel = function (option: string) {
       >
         {{ placeholder }}
       </span>
-      <div class="opacity-50" v-if="isEmpty(value)" @click="show = true">{{ placeholder }}</div>
+      <div class="opacity-50" v-if="isEmpty(value)" @click="disabled ? show = false : show = true">{{ placeholder }}</div>
       <span>{{ typeof value === 'string' ? value : value?.label }}</span>
     </div>
 

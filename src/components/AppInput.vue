@@ -11,6 +11,7 @@ const props = defineProps<{
   regex?: string
   size?: 'small' | 'large'
   "same-as"?: string
+  disabled?: boolean
 }>()
 
 const value = defineModel()
@@ -90,6 +91,7 @@ const updateModel = function (e: any) {
           :pattern="pattern"
           @input="updateModel"
           @focus="updateModel"
+          :disabled="disabled"
         >{{ value }}</textarea>
         <input
           v-else
@@ -107,7 +109,7 @@ const updateModel = function (e: any) {
           :required="rules?.includes('required')"
           @input="updateModel"
           @focus="updateModel"
-          v-lazy="value === 'search'"
+          :disabled="disabled"
         />
         <div v-if="type === 'password'">
           <svg

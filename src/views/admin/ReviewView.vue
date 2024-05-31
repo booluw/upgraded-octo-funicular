@@ -82,6 +82,26 @@ const getReviews = async function () {
   loading.value = false
 }
 
+const searchReview = async function () {
+  loading.value = true
+
+  try {
+    const { data, error } = await supabase
+      .from("reviews")
+      .select('*, area!inner(*), profile!inner(*)')
+      .like('area.id', `%${query.value.toLowerCase()}%`)
+
+    if (error) throw Error(error.message)
+
+    console.log(data)
+    review.items = data
+  } catch (error) {
+    console.log(error)
+  }
+
+  loading.value = false
+}
+
 const savedReview = function () {
   router.push(route.path)
   getReviews()
@@ -126,9 +146,9 @@ onMounted(() => {
   getReviews()
 })
 
-watch(query, () => {
-  searchArea()
-})
+// watch(query, () => {
+//   searchReview()
+// })
 </script>
 <template>
   <AppError v-if="error" />
@@ -167,7 +187,7 @@ watch(query, () => {
                   </svg>
                 </template>
               </AppInput>
-              <AppButton type="outline" mode="submit" size="small" class="uppercase"
+              <AppButton type="outline" mode="submit" size="small"
                 >Search</AppButton
               >
             </form>

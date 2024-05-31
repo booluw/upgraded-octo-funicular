@@ -12,6 +12,7 @@ import AppInput from '@/components/AppInput.vue'
 
 const error = ref(false)
 const loading = ref(false)
+const query = ref('')
 
 const profiles = reactive({
   items: [] as any[],
@@ -35,6 +36,23 @@ const users = computed(() => {
 const goToPage = async function (pageNumber: number) {
   profiles.currentPage = pageNumber
   getAllProfiles()
+}
+
+const action = async function (profile: any) {
+  loading.value = true
+
+  try {
+    const { error } = await supabase.from('profile').update({ role: 'ADMIN' }).eq('id', profile.data.id)
+    
+    if (error) throw Error(error.message)
+
+    await getAllProfiles()
+  } catch (err) {
+    console.log(err)
+    error.value = true
+  }
+
+  loading.value = false
 }
 
 const getAllProfiles = async function () {
@@ -65,6 +83,29 @@ const getAllProfiles = async function () {
   loading.value = false
 }
 
+const searchProfile = async function () {
+  loading.value = true
+  error.value = false
+
+  try {
+    const { data, error, count } = await supabase
+      .from('profile')
+      .select('*', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .like('email', `%${query.value}%`)
+
+    if (error) throw Error(error.message)
+
+    profiles.count = count
+    profiles.items = data
+  } catch (err) {
+    console.log(err)
+    error.value = true
+  }
+
+  loading.value = false
+}
+
 onMounted(() => {
   getAllProfiles()
 })
@@ -78,8 +119,8 @@ onMounted(() => {
     <div class="flex items-center justify-between">
       <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">All Users</h1>
       <div class="flex items-center gap-[20px]">
-        <form class="flex items-center gap-[5px]" @submit.prevent="searchArea()">
-          <AppInput v-model="query" type="search" placeholder="Username" size="small" required>
+        <form class="flex items-center gap-[5px]" @submit.prevent="searchProfile()">
+          <AppInput v-model="query" type="search" placeholder="User email" size="small" required>
             <template #icon>
               <svg
                 width="16"

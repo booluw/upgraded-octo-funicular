@@ -131,7 +131,7 @@ onMounted(async () => {
               View reviews
             </AppButton>
           </router-link>
-          <router-link :to="`?action=edit?id=${area.id}`" class="w-full">
+          <router-link :to="`?action=edit&id=${area.id}`" class="w-full">
             <AppButton type="outline" size="small" class="uppercase w-full font-semibold">
               Edit
             </AppButton>

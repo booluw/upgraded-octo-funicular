@@ -116,14 +116,12 @@ const searchReview = async function () {
   try {
     const { data, error } = await supabase
       .from("reviews")
-      .select('*, areas(*), profile(*)')
-      .textSearch('areas.name', `%${query.value}%`, {
-        type: 'websearch',
-        config: 'english'
-      })
+      .select('*, area!inner(*), profile!inner(*)')
+      .like('area.id', `%${query.value.toLowerCase()}%`)
 
     if (error) throw Error(error.message)
 
+    console.log(data)
     reviews.items = data
   } catch (error) {
     console.log(error)
@@ -233,7 +231,7 @@ onMounted(async () => {
       <div class="flex items-center justify-between">
         <h2 class="text-xl font-[500]">Recent Reviews</h2>
         <form class="flex items-center gap-[5px]" @submit.prevent="searchReview()">
-          <AppInput v-model="query" type="search" placeholder="User Name" size="small" required>
+          <AppInput v-model="query" type="search" placeholder="Area Name/State/LGA" size="small" required>
             <template #icon>
               <svg
                 width="16"
@@ -258,7 +256,7 @@ onMounted(async () => {
               </svg>
             </template>
           </AppInput>
-          <AppButton type="outline" mode="submit" size="small" class="uppercase">Search</AppButton>
+          <AppButton type="outline" mode="submit" size="small">Search</AppButton>
         </form>
       </div>
       <AppTable

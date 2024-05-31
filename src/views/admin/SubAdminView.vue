@@ -145,7 +145,7 @@ onMounted(() => {
               </svg>
             </template>
           </AppInput>
-          <AppButton type="outline" mode="submit" size="small" class="uppercase">Search</AppButton>
+          <AppButton type="outline" mode="submit" size="small">Search</AppButton>
         </form>
       </div>
     </div>

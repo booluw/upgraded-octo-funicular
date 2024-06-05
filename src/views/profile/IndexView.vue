@@ -19,7 +19,6 @@ const user = useUser()
 const loading = ref(false)
 const formLoading = ref(false)
 const err = ref(false)
-const errrror = ref({})
 
 const userData = ref({
   ...pick(user.user, ['firstName', 'lastName', 'username', 'location', 'phone_number', 'img'])
@@ -88,7 +87,6 @@ const saveProfile = async function () {
     notify({ content: 'Profile updated', type: 'success', position: 'top-center' })
   } catch (error: any) {
     console.log(error)
-    errrror.value = error
     notify({ content: error.message ?? error, type: 'error', position: 'top-center' })
   }
 
@@ -108,7 +106,6 @@ onMounted(() => {
   </section>
   <AppError v-else-if="err" />
   <section class="h-full flex flex-col items-center" v-else>
-    {{ errrror }}
     <div class="md:w-3/5">
       <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">User Profile</h1>
       <p class="">Update your personal details here</p>

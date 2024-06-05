@@ -166,12 +166,12 @@ const reviews = reactive([
 
 const area = reactive({ items: [] as any[] })
 
-const query = ref({ query: '', name: '', id: '' })
+var query = ref({ query: '', name: '', id: '' })
 const closeSuggestion = ref(true)
 const error = ref(false)
 const loading = ref(false)
 
-const params = ref({})
+var params = ref({})
 
 const param = computed({
   set(newVal) {

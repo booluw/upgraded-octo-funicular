@@ -246,8 +246,8 @@ watch(
       <form @submit.prevent="gotoArea()">
         <div class="text-sm text-red-500 mb-[2px] md:mb-[5px]" v-if="error">
           Please add a search query
-        </div>Booluw
-        {{ params }}
+        </div>
+        {{ query }}
         <div class="group relative">
           <AppInput
             v-model="param"
@@ -292,7 +292,7 @@ watch(
                 :class="item.area_name === query.name ? 'bg-primary rounded' : ''"
                 v-for="(item, index) in area.items"
                 :key="index"
-                @click="params = item"
+                @click="setPath(item)"
               >
                 {{ item.area_name }} {{ item.area_lga }}, {{ item.area_state }} state
               </button>

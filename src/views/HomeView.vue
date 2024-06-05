@@ -246,7 +246,7 @@ watch(
       <form @submit.prevent="gotoArea()">
         <div class="text-sm text-red-500 mb-[2px] md:mb-[5px]" v-if="error">
           Please add a search query
-        </div>
+        </div>Booluw
         {{ params }}
         <div class="group relative">
           <AppInput

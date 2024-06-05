@@ -171,6 +171,8 @@ const closeSuggestion = ref(true)
 const error = ref(false)
 const loading = ref(false)
 
+const params = ref({})
+
 const param = computed({
   set(newVal) {
     query.value.query = newVal as any
@@ -245,6 +247,7 @@ watch(
         <div class="text-sm text-red-500 mb-[2px] md:mb-[5px]" v-if="error">
           Please add a search query
         </div>
+        {{ params }}
         <div class="group relative">
           <AppInput
             v-model="param"
@@ -288,7 +291,7 @@ watch(
                 :class="item.area_name === query.name ? 'bg-primary rounded' : ''"
                 v-for="(item, index) in area.items"
                 :key="index"
-                @click.prevent="setPath(item)"
+                @click.prevent="params = item"
               >
                 {{ item.area_name }} {{ item.area_lga }}, {{ item.area_state }} state
               </button>

@@ -108,6 +108,7 @@ onMounted(() => {
   </section>
   <AppError v-else-if="err" />
   <section class="h-full flex flex-col items-center" v-else>
+    {{ errrror }}
     <div class="md:w-3/5">
       <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">User Profile</h1>
       <p class="">Update your personal details here</p>

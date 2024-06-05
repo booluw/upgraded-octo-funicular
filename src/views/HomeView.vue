@@ -287,6 +287,7 @@ watch(
           >
             <template v-if="area.items.length !== 0">
               <button
+                type="button"
                 class="block w-full text-left p-3 cursor-pointer hover:opacity-75 capitalize"
                 :class="item.area_name === query.name ? 'bg-primary rounded' : ''"
                 v-for="(item, index) in area.items"

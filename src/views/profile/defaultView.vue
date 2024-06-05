@@ -67,7 +67,7 @@ const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
           {{ link.title }}
         </router-link>
       </div>
-      <div class="w-full bg-white dark:bg-[#14161A] py-5 px-10 overflow-auto scrollbar dark:!scrollbar-track-text dark:scrollbar-thumb-black">
+      <div class="w-full bg-white dark:bg-[#14161A] py-5 px-10 overflow-auto scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:!scrollbar-track-text dark:scrollbar-thumb-black">
         <router-view />
       </div>
     </div>

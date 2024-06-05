@@ -173,7 +173,7 @@ const loading = ref(false)
 
 const param = computed({
   set(newVal) {
-    query.value.query = newVal
+    query.value.query = newVal as any
     closeSuggestion.value = true
   },
   get() {
@@ -284,7 +284,6 @@ watch(
           >
             <template v-if="area.items.length !== 0">
               <button
-                type="none"
                 class="block w-full text-left p-3 cursor-pointer hover:opacity-75 capitalize"
                 :class="item.area_name === query.name ? 'bg-primary rounded' : ''"
                 v-for="(item, index) in area.items"

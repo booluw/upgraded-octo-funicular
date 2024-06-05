@@ -291,7 +291,7 @@ watch(
                 :class="item.area_name === query.name ? 'bg-primary rounded' : ''"
                 v-for="(item, index) in area.items"
                 :key="index"
-                @click.prevent="params = item"
+                @click="params = item"
               >
                 {{ item.area_name }} {{ item.area_lga }}, {{ item.area_state }} state
               </button>

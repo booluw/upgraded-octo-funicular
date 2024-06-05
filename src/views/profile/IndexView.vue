@@ -19,6 +19,7 @@ const user = useUser()
 const loading = ref(false)
 const formLoading = ref(false)
 const err = ref(false)
+const errrror = ref({})
 
 const userData = ref({
   ...pick(user.user, ['firstName', 'lastName', 'username', 'location', 'phone_number', 'img'])
@@ -87,6 +88,7 @@ const saveProfile = async function () {
     notify({ content: 'Profile updated', type: 'success', position: 'top-center' })
   } catch (error: any) {
     console.log(error)
+    errrror.value = error
     notify({ content: error.message ?? error, type: 'error', position: 'top-center' })
   }
 

@@ -9,7 +9,10 @@ export const useUser = defineStore('user', () => {
     role: 'USER',
     email: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
+    location: "",
+    phone_number: "",
+    img: ""
   })
   // let user = user_.value
 
@@ -20,13 +23,15 @@ export const useUser = defineStore('user', () => {
   const setUserId = function (id: string) {
     user.value.id = id
   }
-
   const resetUser = function () {
     user.value = {
       id: '',
       username: '',
       role: 'USER',
       email: '',
+      location: '',
+      phone_number: '',
+      img: '',
       firstName: '',
       lastName: ''
     }

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, reactive, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
@@ -7,6 +8,7 @@ import AppInput from '@/components/AppInput.vue'
 import { notify } from '@/components/AppNotification'
 import { supabase } from '@/config/supabase'
 
+const router = useRouter()
 const loading = ref(false)
 const registered = ref(false)
 const auth = reactive({ email: '', password: '', username: '', firstName: '', lastName: '' })
@@ -62,6 +64,7 @@ const registerUser = async function () {
         .eq('id', data.user.id)
 
       if (error) throw Error(error.message)
+      router.push('/login')
       registered.value = true
     } else {
       throw Error('No user data available')

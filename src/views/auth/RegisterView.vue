@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
@@ -9,16 +9,39 @@ import { supabase } from '@/config/supabase'
 
 const loading = ref(false)
 const registered = ref(false)
-const auth = reactive({ email: '', password: '', username: '' })
-const validate = reactive({ email: false, password: false, username: false })
+const auth = reactive({ email: '', password: '', username: '', firstName: '', lastName: '' })
+const validate = reactive({
+  email: false,
+  password: false,
+  username: false,
+  firstName: false,
+  lastName: false
+})
+
+const usernames = ref([])
 
 const registerUser = async function () {
   if (!validate.email || !validate.password || !validate.username) return
+  const allUsers: string[] = usernames.value.filter((user: any) => {
+    if (user.username.replace(/"/g, '') === auth.username) {
+      notify({
+        content: `${auth.username} is already taken, choose another`,
+        position: 'top-center',
+        type: 'error'
+      })
+
+      return user.username
+    }
+  })
+
+  if (allUsers.length !== 0) {
+    return
+  }
 
   loading.value = true
 
   try {
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: auth.email,
       password: auth.password,
       options: {
@@ -32,11 +55,21 @@ const registerUser = async function () {
       throw Error(error.message as any)
     }
 
-    registered.value = true
+    if (data?.user?.id) {
+      const { error } = await supabase
+        .from('profile')
+        .update({ firstName: auth.firstName, lastName: auth.lastName, username: auth.username })
+        .eq('id', data.user.id)
+
+      if (error) throw Error(error.message)
+      registered.value = true
+    } else {
+      throw Error('No user data available')
+    }
   } catch (error: any) {
     console.log(error)
     notify({
-      content: error?.message ?? 'An error occurred',
+      content: error ?? 'An error occurred',
       position: 'top-center',
       type: 'error'
     })
@@ -44,22 +77,64 @@ const registerUser = async function () {
 
   loading.value = false
 }
+
+const getAllUserNames = async function () {
+  loading.value = true
+
+  try {
+    const { data, error } = await supabase.from('profile').select('username')
+
+    if (error) throw Error(error.message)
+
+    usernames.value = data as unknown as any
+  } catch (err) {
+    console.log(err)
+  }
+
+  loading.value = false
+}
+
+onMounted(() => {
+  getAllUserNames()
+})
 </script>
 <template>
-  <section class="bg-[#E5EDF5] dark:bg-black flex justify-center items-center h-screen">
+  <section class="bg-[#E5EDF5] dark:bg-black flex justify-center items-center min-h-[100vh]">
     <section
       v-if="!registered"
-      class="md:w-1/3 rounded bg-[#FBFCFE] dark:bg-black-light p-[24px] text-center text-text dark:text-text-dark"
+      class="md:w-1/3 rounded bg-[#FBFCFE] dark:bg-black-light py-[14px] px-[24px] text-center text-text dark:text-text-dark"
     >
       <h1 class="text-[20px] font-[500]">Sign Up</h1>
       <form class="my-[24px]" @submit.prevent="registerUser()">
+        <div class="flex flex-col md:flex-row md:gap-5">
+          <AppInput
+            type="text"
+            label="First Name"
+            v-model="auth.firstName"
+            rules="required"
+            placeholder="First Name"
+            class="mb-5"
+            @valid="validate.lastName = true"
+            @invalid="validate.firstName = false"
+          />
+          <AppInput
+            type="text"
+            label="Last Name"
+            v-model="auth.lastName"
+            rules="required"
+            placeholder="Last Name"
+            class="mb-5"
+            @valid="validate.lastName = true"
+            @invalid="validate.lastName = false"
+          />
+        </div>
         <AppInput
           type="text"
           label="Username"
           v-model="auth.username"
           rules="required"
-          regex="\b([A-Za-z]){1}(\w){7,29}\b"
-          placeholder="Username"
+          regex="\b([A-Za-z]){1}(\w){5,29}\b"
+          placeholder="Username (Minimum of 6 Characters)"
           class="mb-5"
           @valid="validate.username = true"
           @invalid="validate.username = false"
@@ -74,10 +149,11 @@ const registerUser = async function () {
         />
         <AppInput
           type="password"
+          label="Password"
           v-model="auth.password"
           rules="required"
-          regex="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{7,}$"
-          placeholder="Password"
+          regex="^[a-zA-Z0-9]{6,}$"
+          placeholder="Minimum of 7 characters"
           class="mt-5"
           @valid="validate.password = true"
           @invalid="validate.password = false"
@@ -85,7 +161,7 @@ const registerUser = async function () {
         <AppButton type="primary" mode="submit" class="w-full mt-5 uppercase" :loading="loading">
           Sign Up
         </AppButton>
-        <div class="mt-10">
+        <div class="mt-5">
           Already have an account?
           <router-link to="login" class="text-primary font-[500] underline">Log In</router-link>
         </div>

@@ -6,6 +6,7 @@ import { validation } from './validations'
 const emit = defineEmits(['valid', 'invalid'])
 const props = defineProps<{
   type: 'text' | 'textarea' | 'search' | 'email' | 'password'
+  label?: string
   placeholder?: string
   rules?: string
   regex?: string
@@ -35,7 +36,7 @@ const updateModel = function (e: any) {
 
     if (!isValid) {
       error.show = true
-      error.message = `${props.placeholder} is not valid`
+      error.message = `${props.label ?? props.placeholder} is not valid`
 
       return
     }

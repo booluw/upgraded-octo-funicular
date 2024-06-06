@@ -245,7 +245,7 @@ watch(
         <div class="text-sm text-red-500 mb-[2px] md:mb-[5px]" v-if="error">
           Please add a search query
         </div>
-        <div class="group relative">
+        <div class="relative">
           <AppInput
             v-model="param"
             type="search"
@@ -279,7 +279,7 @@ watch(
             </template>
           </AppInput>
           <div
-            class="hidden group-focus-within:block absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto"
+            class="absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto"
             v-if="closeSuggestion"
           >
             <template v-if="area.items.length !== 0">

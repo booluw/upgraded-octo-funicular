@@ -22,6 +22,7 @@ const updateModel = function (option: string) {
     selected.item.splice(selected.item.indexOf(option), 1)
   } else {
     selected.item.push(option)
+    show.value = false
   }
   value.value = selected.item
 }

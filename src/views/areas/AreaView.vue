@@ -38,6 +38,7 @@ const areas = reactive({ items: [] })
 const newReview = ref(false)
 const reviews = ref(null)
 const reviewCount = ref(0)
+const allReviews = ref(0)
 
 const comments = ref({
   id: '',
@@ -131,6 +132,7 @@ const addReview = function () {
   if (reviews.value !== null) {
     reviews.value.getAllReviews()
   } else {
+    getArea()
     router.go(0)
   }
   newReview.value = false
@@ -172,7 +174,13 @@ const getArea = async function () {
       .select('*, area(id)', { count: 'exact' })
       .or(`and(area.eq.${route.params.name}, approved.eq.APPROVED)`)
 
+    const { count: allCount } = await supabase
+      .from('reviews')
+      .select('*, area(id)', { count: 'exact' })
+      .or(`and(area.eq.${route.params.name})`)
+
     reviewCount.value = count as unknown as number
+    allReviews.value = allCount as unknown as number
 
     if (review_error) throw Error(error!.message ?? error)
     if (error) throw Error(error.message ?? error)
@@ -535,7 +543,7 @@ onMounted(() => {
         </div>
       </div>
     </div>
-    <template v-if="reviewCount > 0">
+    <template v-if="allReviews > 0">
       <div
         class="md:w-page px-[16px] md:px-0 flex gap-[16px] md:gap-[100px] flex-col md:flex-row justify-between"
       >

@@ -54,7 +54,12 @@ const getAllReviews = async function () {
 
       if (error) throw Error(error.message)
 
-      reviews.value = [...reviews.value, ...data as unknown as any] as unknown as any
+      reviews.value = [...data as unknown as any, ...reviews.value] as unknown as any
+
+      // See here: https://stackoverflow.com/a/10124053/5454933
+      reviews.value.sort(function(a,b){
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
     }
   } catch (err) {
     error.value = true

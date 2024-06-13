@@ -8,6 +8,7 @@ import { useShare } from '@vueuse/core'
 
 import { notify } from '@/components/AppNotification'
 import { supabase } from '@/config/supabase'
+import { onClickOutside, useTitle } from '@vueuse/core'
 
 import AppLogo from '@/components/AppLogo.vue'
 import AppInput from '@/components/AppInput.vue'
@@ -29,6 +30,8 @@ const loading = ref(false)
 const searchLoading = ref(false)
 const error = ref(false)
 const scroller = ref(null) as any
+const closeSuggestion = ref(false)
+const target = ref(null)
 
 const amenity: Ref<{ title: string }[]> = ref([])
 const filter: Ref<null|string> = ref(null)
@@ -39,6 +42,8 @@ const newReview = ref(false)
 const reviews = ref(null)
 const reviewCount = ref(0)
 const allReviews = ref(0)
+
+const title = useTitle()
 
 const comments = ref({
   id: '',
@@ -58,6 +63,7 @@ const amenities = computed(() => {
 const param = computed({
   set(newVal: string) {
     query.value.query = newVal
+    if (newVal !== '') closeSuggestion.value = true
   },
   get() {
     return query.value.name || query.value.query
@@ -84,6 +90,7 @@ const setPath = function (item: any) {
   query.value.id = item.area_id
   query.value.name = item.area_name
   query.value.query = ''
+  closeSuggestion.value = false
 
   router.push(`/areas/${query.value.id}`)
 }
@@ -185,6 +192,8 @@ const getArea = async function () {
     if (review_error) throw Error(error!.message ?? error)
     if (error) throw Error(error.message ?? error)
 
+    
+    title.value = data[0].name.charAt(0).toUpperCase() + data[0].name.slice(1) + ', ' + data[0].lga.charAt(0).toUpperCase() + data[0].lga.slice(1) + ' - SpottaNG'
     area.value = data[0]
     await getAllAmenities()
   } catch (err) {
@@ -214,6 +223,8 @@ watch(
 onMounted(() => {
   getArea()
 })
+
+onClickOutside(target, () => closeSuggestion.value = false)
 </script>
 <template>
   <section
@@ -239,6 +250,7 @@ onMounted(() => {
             <form @submit.prevent class="w-[670px] hidden md:block">
               <div class="group relative">
                 <AppInput
+                  ref="target"
                   v-model="param"
                   type="search"
                   placeholder="Search for a place"
@@ -271,7 +283,8 @@ onMounted(() => {
                 </AppInput>
 
                 <div
-                  class="hidden group-focus-within:block absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto"
+                  class="absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto"
+                  v-if="closeSuggestion"
                 >
                   <template v-if="areas.items.length !== 0">
                     <button

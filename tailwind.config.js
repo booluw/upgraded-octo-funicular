@@ -19,8 +19,7 @@ export default {
         page: '1240px'
       },
       fontFamily: {
-        sans: ['General Sans', 'sans-serif'],
-        serif: ['ClashDisplay', 'serif']
+        sans: ['Inter', 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: '8px'

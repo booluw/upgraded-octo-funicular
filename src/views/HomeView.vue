@@ -3,11 +3,15 @@ import { reactive, ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { supabase } from '../config/supabase'
+import { onClickOutside, useTitle } from '@vueuse/core'
 
 import AppButton from '@/components/AppButton.vue'
 import AppCard from '@/components/AppCard.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppLoader from '@/components/AppLoader.vue'
+
+const title = useTitle()
+title.value = 'SpottaNG | Find a place you will love to live!'
 
 const router = useRouter()
 
@@ -170,14 +174,21 @@ var query = ref({ query: '', name: '', id: '' })
 const closeSuggestion = ref(false)
 const error = ref(false)
 const loading = ref(false)
+const target = ref(null)
 
 const param = computed({
   set(newVal) {
     query.value.query = newVal as any
-    closeSuggestion.value = true
+    if (newVal !== '') closeSuggestion.value = true
   },
   get() {
-    return query.value.name || query.value.query
+    return query.value.name
+      ? query.value.name.charAt(0).toUpperCase() +
+          query.value.name.slice(1) +
+          ', ' +
+          query.value.id.split('-')[query.value.id.split('-').length - 1].charAt(0).toUpperCase() +
+          query.value.id.split('-')[query.value.id.split('-').length - 1].slice(1)
+      : '' || query.value.query
   }
 })
 
@@ -229,12 +240,14 @@ watch(
   },
   { deep: true }
 )
+
+onClickOutside(target, () => closeSuggestion.value = false)
 </script>
 
 <template>
   <section class="h-[90vh] flex gap-[100px] items-center justify-between overflow-hidden">
     <div class="md:w-1/3">
-      <h1 class="text-[52px] font-bold mb-[16px] md:mb-[40px]">
+      <h1 class="text-[54px] font-bold mb-[12px] md:mb-[16px]">
         Find a place you will love to live!
       </h1>
       <p class="mb-[24px] md:mb-[40px]">
@@ -247,6 +260,7 @@ watch(
         </div>
         <div class="relative">
           <AppInput
+            ref="target"
             v-model="param"
             type="search"
             placeholder="Enter street address"
@@ -279,7 +293,7 @@ watch(
             </template>
           </AppInput>
           <div
-            class="absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto"
+            class="absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto shadow-lg"
             v-if="closeSuggestion"
           >
             <template v-if="area.items.length !== 0">
@@ -311,10 +325,14 @@ watch(
       <div
         class="absolute z-[9] top-0 right-0 left-0 bg-gradient-to-b from-light dark:from-black to-transparent p-10 h-[50vh]"
       />
-      <div class="w-1/2 flex flex-col gap-[20px] animate-marqueen-infinite transition-transform ease-in-out">
+      <div
+        class="w-1/2 flex flex-col gap-[20px] animate-marqueen-infinite transition-transform ease-in-out"
+      >
         <AppCard v-for="(review, i) in reviews" :key="i" :review="review" />
       </div>
-      <div class="w-1/2 flex flex-col gap-[20px] -mt-[50px] animate-marquee-infinite transition-transform ease-in-out">
+      <div
+        class="w-1/2 flex flex-col gap-[20px] -mt-[50px] animate-marquee-infinite transition-transform ease-in-out"
+      >
         <AppCard v-for="(review, i) in reviews" :key="i" :review="review" />
       </div>
       <div

@@ -111,7 +111,7 @@ onMounted(() => {
       v-if="!registered"
       class="md:w-1/3 rounded bg-[#FBFCFE] dark:bg-black-light py-[14px] px-[24px] text-center text-text dark:text-text-dark relative"
     >
-      <a hre="#" @click.prevent="router.go(-1)" class="p-1 cursor-pointer absolute top-[20px] left-[24px] hover:text-primary border border-slate-200/20 rounded" title="Go Home">
+      <router-link to="/" class="p-1 cursor-pointer absolute top-[20px] left-[24px] hover:text-primary border border-slate-200/20 rounded" title="Go Home">
         <svg
           class="w-[24px]"
           viewBox="0 0 15 15"
@@ -125,7 +125,7 @@ onMounted(() => {
             clip-rule="evenodd"
           ></path>
         </svg>
-      </a>
+      </router-link>
       <h1 class="text-[20px] font-[500]">Sign Up</h1>
       <form class="my-[24px]" @submit.prevent="registerUser()">
         <div class="flex flex-col md:flex-row md:gap-5">

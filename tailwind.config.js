@@ -19,7 +19,7 @@ export default {
         page: '1240px'
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Figtree', 'sans-serif'],
       },
       borderRadius: {
         DEFAULT: '8px'

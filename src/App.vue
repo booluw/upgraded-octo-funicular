@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router'
 import { isEmpty } from 'lodash'
 import { supabase } from '@/config/supabase'
@@ -11,12 +11,14 @@ import { onClickOutside } from '@vueuse/core'
 import AppLogo from '@/components/AppLogo.vue'
 import AppLogin from './components/AppLogin.vue'
 import AppDropdown from '@/components/AppDropdown.vue'
+import { storeToRefs } from 'pinia';
 
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUser()
 const target = ref(null)
+const { theme } = storeToRefs(userStore)
 
 const user = computed(() => {
   return userStore.user
@@ -46,16 +48,24 @@ const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
 
 onMounted(() => {
   // Handle dark theme based on system preference
-  if (!window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.classList.remove('dark') // fix: when ready for prod
+  if (theme.value === 'dark') {
+    document.documentElement.classList.add('dark') // fix: when ready for prod
   } else {
     document.documentElement.classList.remove('dark')
   }
 })
+
+watch(theme, () => {
+  if (theme.value === 'dark') {
+    document.documentElement.classList.add('dark') // fix: when ready for prod
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
+}, { deep: true })
 </script>
 
 <template>
-  <section class="">
+  <section class="!transition-all !ease-in-out">
     <section
       class="min-h-[100vh] flex justify-center bg-light dark:bg-black text-text dark:text-text-dark"
       v-if="route.name === 'home'"

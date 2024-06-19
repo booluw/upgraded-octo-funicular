@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, type Ref } from "vue";
 import { defineStore } from "pinia";
 import type { User } from "@/interfaces/user";
 
@@ -14,8 +14,14 @@ export const useUser = defineStore('user', () => {
     phone_number: "",
     img: ""
   })
+
+  const theme: Ref<'dark' | 'light'> = ref('light')
   // let user = user_.value
 
+  const setTheme = function (payload: 'light' | 'dark') {
+    theme.value = payload
+  }
+  
   const setUser = async function (userData: User) {
     user.value = { ...userData, username: userData.username.replace(/"/g, "") }
   }
@@ -37,7 +43,7 @@ export const useUser = defineStore('user', () => {
     }
   }
 
-  return { user, setUser, setUserId, resetUser }
+  return { user, setUser, setUserId, resetUser, theme, setTheme }
 },
   {
   persist: true

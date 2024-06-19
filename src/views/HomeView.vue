@@ -247,7 +247,7 @@ onClickOutside(target, () => closeSuggestion.value = false)
 <template>
   <section class="h-[90vh] flex gap-[100px] items-center justify-between overflow-hidden">
     <div class="md:w-1/3">
-      <h1 class="text-[54px] font-bold mb-[12px] md:mb-[16px]">
+      <h1 class="text-[54px] font-bold mb-[12px] md:mb-[16px] leading-tight">
         Find a place you will love to live!
       </h1>
       <p class="mb-[24px] md:mb-[40px]">

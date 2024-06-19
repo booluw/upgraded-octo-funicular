@@ -4,7 +4,7 @@ import { onClickOutside } from '@vueuse/core'
 
 const target = ref(null)
 
-onClickOutside(target, () => show.value = false)
+onClickOutside(target, () => (show.value = false))
 
 defineProps<{
   options: string[]
@@ -30,7 +30,7 @@ const updateModel = function (option: string) {
 <template>
   <div class="" ref="target">
     <div
-      class="flex flex-col gap-[10px] rounded-[6px] py-[16px] px-[12px] bg-[#F3F7FE] dark:bg-black-light border dark:border-[#383b43] transition-all ease-out cursor-pointer"
+      class="flex flex-col gap-[10px] rounded-[6px] py-[12px] px-[12px] bg-[#F3F7FE] dark:bg-black-light border dark:border-[#383b43] transition-all ease-out cursor-pointer"
       :class="{ 'border-primary dark:border-black': show }"
       @click="show = !show"
     >
@@ -47,9 +47,42 @@ const updateModel = function (option: string) {
       <div class="opacity-55" v-if="selected.item.length == 0">
         {{ placeholder }}
       </div>
-      <div class="flex justify-start gap-2 overflow-hidden relative" v-else>
-        <span class="flex-shrink-0 bg-primary/5 text-sm p-1 rounded" v-for="(item, index) in selected.item.slice(0, 4)" :key="index">{{ item }}</span>
-        <span class="flex-shrink-0 bg-primary/5 text-sm py-1 px-2 rounded absolute top-auto right-5" v-if="selected.item.length > 4">+{{ selected.item.length - 4 }}</span>
+      <div class="flex justify-start gap-2 relative py-1 overflow-x-auto scrollbar-thin scrollbar-track-transparent" v-else>
+        <span
+          class="flex-shrink-0 bg-primary/5 text-sm py-1 px-3 rounded shadow flex items-center gap-2"
+          v-for="(item, index) in selected.item.slice(0, 4)"
+          :key="index"
+          @click="updateModel(item)"
+        >
+          {{ item }}
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 4L4 12"
+              stroke="#14161A"
+              stroke-width="1.33333"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <path
+              d="M4 4L12 12"
+              stroke="#14161A"
+              stroke-width="1.33333"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </span>
+        <!-- <span
+          class="flex-shrink-0 bg-primary text-sm py-1 px-2 rounded absolute z-[5] top-auto right-0"
+          v-if="selected.item.length > 4"
+          >+{{ selected.item.length - 4 }}</span
+        > -->
       </div>
     </div>
     <div
@@ -70,7 +103,7 @@ const updateModel = function (option: string) {
         >
           <div
             class="p-2 border rounded"
-            :class="{'bg-primary' : selected.item.includes(option) }"
+            :class="{ 'bg-primary': selected.item.includes(option) }"
           />
           {{ option }}
         </div>

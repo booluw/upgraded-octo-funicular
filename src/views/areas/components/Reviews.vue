@@ -88,7 +88,7 @@ onMounted(() => {
       <AppLoader />
     </section>
     <AppError v-else-if="error" />
-    <div class="md:w-full pr-5" v-else>
+    <div class="md:w-full md:pr-5" v-else>
       <template v-if="_review.length !== 0">
         <ReviewCard
           :type="type"

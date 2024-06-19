@@ -244,7 +244,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
     class="min-h-[100vh] md:flex flex-col items-center bg-[#FBFCFE] dark:bg-[#14161A] text-text dark:text-text-dark"
   >
     <div
-      class="md:w-[100vw] md:bg-light dark:bg-black flex flex-col items-center mb-[16px] md:mb-[32px] fixed z-10"
+      class="md:w-[100vw] bg-[#FAFCFD] md:bg-light dark:bg-black flex flex-col items-center mb-[16px] md:mb-[32px] md:fixed z-10"
     >
       <div class="w-full md:w-page px-[16px] md:px-0">
         <header class="py-[10.5px] flex justify-between items-center">
@@ -520,10 +520,10 @@ onClickOutside(target, () => (closeSuggestion.value = false))
             </div>
           </div>
         </div>
-        <div class="pb-[16px] flex justify-between items-center">
-          <div class="flex gap-[10px] overflow-x-auto scrollbar-none" ref="scroller">
+        <div class="pb-[16px] flex justify-between md:items-center w-[90vw] relative">
+          <div class="flex gap-[10px] scrollbar overflow-auto" ref="scroller">
             <div
-              class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] text-[#14161A] border-[#B2C1E6] dark:border-[#383B43] dark:text-[#FBFCFE] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
+              class="text-center text-[14px] py-[6px] px-[12px] border-[1.5px] text-[#14161A] border-[#B2C1E6] dark:border-[#383B43] dark:text-[#FBFCFE] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
               :class="{
                 '!bg-[#14161A] !border-[#B2C1E6] text-[#E5EDF5] dark:!bg-[#FBFCFE] dark:!border-[#383B43] dark:!text-[#212327]':
                   filter === null
@@ -546,7 +546,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
             </div>
           </div>
           <div
-            class="py-[6px] px-[9px] rounded-full bg-white dark:bg-black-light cursor-pointer hover:opacity-75"
+            class="py-[6px] px-[9px] rounded-full bg-white dark:bg-black-light cursor-pointer hover:opacity-75 flex items-center justify-center"
             @click="scroll()"
           >
             <svg
@@ -614,7 +614,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
         </div>
       </div>
     </div>
-    <div class="p-[160px] md:p-[120px]"></div>
+    <div class="md:p-[120px]"></div>
     <template v-if="allReviews > 0">
       <div
         class="md:w-page px-[16px] md:px-0 flex gap-[16px] md:gap-[100px] flex-col md:flex-row justify-between"

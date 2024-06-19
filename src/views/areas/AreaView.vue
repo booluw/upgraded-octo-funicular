@@ -34,7 +34,7 @@ const closeSuggestion = ref(false)
 const target = ref(null)
 
 const amenity: Ref<{ title: string }[]> = ref([])
-const filter: Ref<null|string> = ref(null)
+const filter: Ref<null | string> = ref(null)
 
 const area = ref({})
 const areas = reactive({ items: [] })
@@ -192,8 +192,13 @@ const getArea = async function () {
     if (review_error) throw Error(error!.message ?? error)
     if (error) throw Error(error.message ?? error)
 
-    
-    title.value = data[0].name.charAt(0).toUpperCase() + data[0].name.slice(1) + ', ' + data[0].lga.charAt(0).toUpperCase() + data[0].lga.slice(1) + ' - SpottaNG'
+    title.value =
+      data[0].name.charAt(0).toUpperCase() +
+      data[0].name.slice(1) +
+      ', ' +
+      data[0].lga.charAt(0).toUpperCase() +
+      data[0].lga.slice(1) +
+      ' - SpottaNG'
     area.value = data[0]
     await getAllAmenities()
   } catch (err) {
@@ -224,7 +229,7 @@ onMounted(() => {
   getArea()
 })
 
-onClickOutside(target, () => closeSuggestion.value = false)
+onClickOutside(target, () => (closeSuggestion.value = false))
 </script>
 <template>
   <section
@@ -239,7 +244,7 @@ onClickOutside(target, () => closeSuggestion.value = false)
     class="min-h-[100vh] md:flex flex-col items-center bg-[#FBFCFE] dark:bg-[#14161A] text-text dark:text-text-dark"
   >
     <div
-      class="md:w-[100vw] md:bg-light dark:bg-black flex flex-col items-center mb-[16px] md:mb-[32px]"
+      class="md:w-[100vw] md:bg-light dark:bg-black flex flex-col items-center mb-[16px] md:mb-[32px] fixed z-10"
     >
       <div class="w-full md:w-page px-[16px] md:px-0">
         <header class="py-[10.5px] flex justify-between items-center">
@@ -247,7 +252,7 @@ onClickOutside(target, () => closeSuggestion.value = false)
             <router-link to="/" class="text-text dark:text-text-dark">
               <AppLogo />
             </router-link>
-            <form @submit.prevent class="w-[670px] hidden md:block">
+            <form @submit.prevent class="w-[650px] hidden md:block">
               <div class="group relative">
                 <AppInput
                   ref="target"
@@ -319,7 +324,26 @@ onClickOutside(target, () => closeSuggestion.value = false)
                 <AppButton
                   type="outline"
                   size="small"
-                  class="!border-[#B2C1E6] dark:!border-[#383B43] !border-[1.5px] !rounded-[10px]"
+                  class="!border-[#B2C1E6] dark:!border-[#383B43] !border-[2px] !rounded-[10px]"
+                >
+                  <svg
+                    width="14"
+                    height="16"
+                    viewBox="0 0 14 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M2.20938 0C1.33301 0 0.609375 0.722079 0.609375 1.59844L0.601562 16L7.00156 13.6L13.4016 16V14.8453V1.6C13.4016 0.72555 12.676 0 11.8016 0H2.20938ZM2.20938 1.6H11.8016V13.6906L7.00156 11.8906L2.20312 13.6906L2.20938 1.6Z"
+                      class="fill-[#212327] dark:!fill-[#E5EDF5]"
+                    />
+                  </svg>
+                </AppButton>
+                <AppButton
+                  type="outline"
+                  size="small"
+                  class="!border-[#B2C1E6] dark:!border-[#383B43] !border-[2px] !rounded-[10px]"
+                  @click="userStore.setTheme(userStore.theme === 'light' ? 'dark' : 'light')"
                 >
                   <svg
                     width="24"
@@ -328,16 +352,44 @@ onClickOutside(target, () => closeSuggestion.value = false)
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
                   >
-                    <path
-                      d="M17.4297 19.4047L17.4282 19.4037L13.1301 16.4654C13.1299 16.4652 13.1296 16.4651 13.1294 16.4649C12.7969 16.2361 12.3854 16.1372 12 16.1372C11.6146 16.1372 11.2031 16.2361 10.8706 16.4649C10.8704 16.4651 10.8701 16.4652 10.8699 16.4654L6.57428 19.402C6.54731 19.4199 6.52251 19.4348 6.5 19.447V4.82982C6.5 4.81956 6.50652 4.7514 6.63451 4.66377C6.75912 4.57846 6.95765 4.51 7.1985 4.51H7.42322C7.45966 4.51 7.49186 4.50686 7.51946 4.50261C7.52489 4.50177 7.53016 4.50088 7.5351 4.5H16.4499C16.4549 4.50088 16.4601 4.50177 16.4656 4.50261C16.4932 4.50686 16.5254 4.51 16.5618 4.51H16.7865C17.0269 4.51 17.2264 4.57825 17.354 4.6649C17.4775 4.74873 17.4975 4.81938 17.5 4.84261V19.4487C17.4786 19.4368 17.4552 19.4223 17.4297 19.4047Z"
-                      class="dark:!stroke-[#FBFCFE] stroke-[#14161A]"
-                    />
+                    <g opacity="0.6">
+                      <g clip-path="url(#clip0_8434_2968)">
+                        <mask id="path-1-inside-1_8434_2968" fill="white">
+                          <path
+                            fill-rule="evenodd"
+                            clip-rule="evenodd"
+                            d="M11.832 18.1667L11.832 11.6667L11.832 5.16675C8.24218 5.16675 5.33203 8.0769 5.33203 11.6667C5.33203 15.2566 8.24218 18.1667 11.832 18.1667ZM11.832 3.66675C16.2503 3.66675 19.832 7.24847 19.832 11.6667C19.832 13.8759 18.9366 15.8759 17.4889 17.3236C16.0412 18.7713 14.0412 19.6667 11.832 19.6667C7.41375 19.6667 3.83203 16.085 3.83203 11.6667C3.83203 7.24847 7.41375 3.66675 11.832 3.66675Z"
+                          />
+                        </mask>
+                        <path
+                          fill-rule="evenodd"
+                          clip-rule="evenodd"
+                          d="M11.832 18.1667L11.832 11.6667L11.832 5.16675C8.24218 5.16675 5.33203 8.0769 5.33203 11.6667C5.33203 15.2566 8.24218 18.1667 11.832 18.1667ZM11.832 3.66675C16.2503 3.66675 19.832 7.24847 19.832 11.6667C19.832 13.8759 18.9366 15.8759 17.4889 17.3236C16.0412 18.7713 14.0412 19.6667 11.832 19.6667C7.41375 19.6667 3.83203 16.085 3.83203 11.6667C3.83203 7.24847 7.41375 3.66675 11.832 3.66675Z"
+                          class="fill-[#212327] dark:fill-[#E5EDF5]"
+                        />
+                        <path
+                          d="M11.832 11.6667H10.332H11.832ZM11.832 18.1667V19.6667H13.332V18.1667H11.832ZM11.832 5.16675L13.332 5.16675V3.66675H11.832V5.16675ZM17.4889 17.3236L18.5495 18.3843L17.4889 17.3236ZM10.332 11.6667L10.332 18.1667H13.332L13.332 11.6667H10.332ZM10.332 5.16675L10.332 11.6667H13.332L13.332 5.16675L10.332 5.16675ZM11.832 3.66675C7.41375 3.66675 3.83203 7.24847 3.83203 11.6667H6.83203C6.83203 8.90532 9.07061 6.66675 11.832 6.66675V3.66675ZM3.83203 11.6667C3.83203 16.085 7.41375 19.6667 11.832 19.6667V16.6667C9.07061 16.6667 6.83203 14.4282 6.83203 11.6667H3.83203ZM21.332 11.6667C21.332 6.42004 17.0787 2.16675 11.832 2.16675V5.16675C15.4219 5.16675 18.332 8.0769 18.332 11.6667H21.332ZM18.5495 18.3843C20.2671 16.6667 21.332 14.2897 21.332 11.6667H18.332C18.332 13.4621 17.6061 15.085 16.4282 16.2629L18.5495 18.3843ZM11.832 21.1667C14.455 21.1667 16.832 20.1018 18.5495 18.3843L16.4282 16.2629C15.2503 17.4409 13.6274 18.1667 11.832 18.1667V21.1667ZM2.33203 11.6667C2.33203 16.9135 6.58533 21.1667 11.832 21.1667V18.1667C8.24218 18.1667 5.33203 15.2566 5.33203 11.6667H2.33203ZM11.832 2.16675C6.58533 2.16675 2.33203 6.42004 2.33203 11.6667H5.33203C5.33203 8.0769 8.24218 5.16675 11.832 5.16675V2.16675Z"
+                          mask="url(#path-1-inside-1_8434_2968)"
+                          class="fill-[#212327] dark:fill-[#E5EDF5]"
+                        />
+                      </g>
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_8434_2968">
+                        <rect
+                          width="16"
+                          height="16"
+                          fill="white"
+                          transform="translate(3.83203 3.66675)"
+                        />
+                      </clipPath>
+                    </defs>
                   </svg>
                 </AppButton>
                 <AppButton
                   type="outline"
                   size="small"
-                  class="!border-[#B2C1E6] dark:!border-[#383B43] !border-[1.5px] !rounded-[10px]"
+                  class="!border-[#B2C1E6] dark:!border-[#383B43] !border-[2px] !rounded-[10px]"
                   @click="share()"
                 >
                   <svg
@@ -471,15 +523,21 @@ onClickOutside(target, () => closeSuggestion.value = false)
         <div class="pb-[16px] flex justify-between items-center">
           <div class="flex gap-[10px] overflow-x-auto scrollbar-none" ref="scroller">
             <div
-              class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black/20 dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
-              :class="{ '!bg-primary/40 !border-primary': filter === null }"
+              class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] text-[#14161A] border-[#B2C1E6] dark:border-[#383B43] dark:text-[#FBFCFE] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
+              :class="{
+                '!bg-[#14161A] !border-[#B2C1E6] text-[#E5EDF5] dark:!bg-[#FBFCFE] dark:!border-[#383B43] dark:!text-[#212327]':
+                  filter === null
+              }"
               @click="filter = null"
             >
               All
             </div>
             <div
-              class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] border-black/20 dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
-              :class="{ '!bg-primary/40 !border-primary': filter === item }"
+              class="flex-shrink-0 text-center text-[14px] py-[6px] px-[12px] border-[1.5px] text-[#14161A] border-[#B2C1E6] dark:border-[#383B43] dark:text-[#FBFCFE] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
+              :class="{
+                '!bg-[#14161A] !border-[#B2C1E6] text-[#E5EDF5] dark:!bg-[#FBFCFE] dark:!border-[#383B43] dark:!text-[#212327]':
+                  filter === item
+              }"
               v-for="(item, i) in amenities"
               @click="filter === item ? (filter = null) : (filter = item)"
               :key="i"
@@ -556,6 +614,7 @@ onClickOutside(target, () => closeSuggestion.value = false)
         </div>
       </div>
     </div>
+    <div class="p-[160px] md:p-[120px]"></div>
     <template v-if="allReviews > 0">
       <div
         class="md:w-page px-[16px] md:px-0 flex gap-[16px] md:gap-[100px] flex-col md:flex-row justify-between"

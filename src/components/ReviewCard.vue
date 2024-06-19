@@ -50,6 +50,12 @@ const addNewComment = async function () {
   loading.value = false
 }
 
+const formatTime = function (time: string) {
+  const formatted = useTimeAgo(time)
+
+  return formatted.value.replace(/"/g, '')
+}
+
 const like = async function (review: typeof props.review) {
   if (isEmpty(user.id)) {
     notify({ content: 'You need to login', type: 'info', position: 'top-center' })
@@ -208,21 +214,52 @@ onClickOutside(target, () => {
     "
   >
     <div class="flex justify-between">
-      <div class="flex items-center gap-[8px]">
+      <div class="flex md:items-center gap-[8px]">
         <img
           :src="review.profile.img"
-          class="w-[32px] h-[32px] rounded-full border-[2px] border-white dark:border-text"
+          class="w-[42px] h-[42px] rounded"
           v-if="review.profile.img && !review.anon"
         />
-        <img
-          src="@/assets/imgs/avataaars.png"
-          class="rounded-full w-[32px] h-[32px] border-[2px] border-white dark:border-text"
-          v-else
-        />
-        <div class="flex gap-[8px] text-[14px]">
-          {{ review.anon ? 'Annon User' : review.profile.username.replace(/"/g, '') }}
-          <b v-if="review.profile.role === 'ADMIN'">(Admin)</b>
-          <span class="opacity-60">{{ useTimeAgo(review.created_at) }}</span>
+        <img src="@/assets/imgs/avataaars.png" class="rounded w-[42px] h-[42px]" v-else />
+        <div class="flex flex-col gap-1">
+          <div class="flex gap-4">
+            {{ review.anon ? 'Annon User' : review.profile.username.replace(/"/g, '') }}
+            <b
+              class="text-[12px] text-[#3366FF] bg-[#3366FF]/10 border-2 border-[#3366FF] rounded py-[3px] px-[8px]"
+              v-if="review.profile.role === 'ADMIN'"
+            >
+              Admin
+            </b>
+          </div>
+          <div class="flex items-start md:gap-[8px] text-[14px]">
+            <div class="">
+              <div class="flex flex-col md:flex-row md:gap-3">
+                <span class="block text-[14px] opacity-60">{{
+                  formatTime(review.created_at)
+                }}</span>
+                <div
+                  class="text-[#E95F5F] text-sm flex items-center gap-1"
+                  v-if="review.approved === 'PENDING'"
+                >
+                  <svg
+                    class="w-[14px]"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M8.0005 5.33333V7.99999M8.0005 10.6667H8.00717M6.8605 1.90666L1.21384 11.3333C1.09741 11.5349 1.03581 11.7635 1.03516 11.9963C1.03451 12.2292 1.09483 12.4581 1.21012 12.6603C1.32541 12.8626 1.49165 13.0312 1.69231 13.1492C1.89296 13.2673 2.12104 13.3308 2.35384 13.3333H13.6472C13.88 13.3308 14.108 13.2673 14.3087 13.1492C14.5094 13.0312 14.6756 12.8626 14.7909 12.6603C14.9062 12.4581 14.9665 12.2292 14.9658 11.9963C14.9652 11.7635 14.9036 11.5349 14.7872 11.3333L9.1405 1.90666C9.02166 1.71073 8.85432 1.54874 8.65463 1.43632C8.45495 1.32389 8.22966 1.26483 8.0005 1.26483C7.77135 1.26483 7.54606 1.32389 7.34637 1.43632C7.14669 1.54874 6.97935 1.71073 6.8605 1.90666Z"
+                      stroke="#E95F5F"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  Post Not Yet Approved!
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div class="flex items-center gap-[4px] text-[14px]">
@@ -240,16 +277,9 @@ onClickOutside(target, () => {
     <p class="text-justify my-[8px] line-clamp-4">
       {{ review.review }}
     </p>
-    <div class="text-[#E95F5F] text-sm flex items-center gap-2 mt-2" v-if="review.approved === 'PENDING'">
-      <svg class="w-[14px]" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8.0005 5.33333V7.99999M8.0005 10.6667H8.00717M6.8605 1.90666L1.21384 11.3333C1.09741 11.5349 1.03581 11.7635 1.03516 11.9963C1.03451 12.2292 1.09483 12.4581 1.21012 12.6603C1.32541 12.8626 1.49165 13.0312 1.69231 13.1492C1.89296 13.2673 2.12104 13.3308 2.35384 13.3333H13.6472C13.88 13.3308 14.108 13.2673 14.3087 13.1492C14.5094 13.0312 14.6756 12.8626 14.7909 12.6603C14.9062 12.4581 14.9665 12.2292 14.9658 11.9963C14.9652 11.7635 14.9036 11.5349 14.7872 11.3333L9.1405 1.90666C9.02166 1.71073 8.85432 1.54874 8.65463 1.43632C8.45495 1.32389 8.22966 1.26483 8.0005 1.26483C7.77135 1.26483 7.54606 1.32389 7.34637 1.43632C7.14669 1.54874 6.97935 1.71073 6.8605 1.90666Z" stroke="#E95F5F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      Post Not Yet Approved
-    </div>
+
     <div class="mt-4" v-if="type === 'full'">
-      <div
-        class="flex gap-[10px] overflow-x-auto scrollbar-none"
-      >
+      <div class="flex gap-[10px] overflow-x-auto scrollbar-none">
         <div
           class="flex-shrink-0 text-center text-[10px] py-[3px] px-[10px] border-[1.5px] border-black dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
           v-for="(amenities, index) in review.amenities"

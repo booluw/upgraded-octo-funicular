@@ -15,6 +15,8 @@ const loading = ref(false)
 const auth = reactive({ email: '', password: '' })
 const validate = reactive({ email: false, password: false })
 
+const emit = defineEmits(['close'])
+
 const logUserIn = async function () {
   if (!validate.email || !validate.password) return
 
@@ -68,8 +70,37 @@ const logUserIn = async function () {
 </script>
 <template>
   <section
-    class="md:w-1/3 rounded bg-[#FBFCFE] dark:bg-black-light p-[24px] text-center text-text dark:text-text-dark"
+    class="md:w-1/3 rounded bg-[#FBFCFE] dark:bg-black-light p-[24px] text-center text-text dark:text-text-dark relative"
   >
+    <button
+      class="bg-transparent border border-[#E5EDF5] dark:border-[#212327] rounded p-[4px] absolute right-[24px]"
+      @click="emit('close')"
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g opacity="0.6">
+          <path
+            d="M18 6L6 18"
+            class="stroke-[#14161A] dark:stroke-[#FBFCFE]"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M6 6L18 18"
+            class="stroke-[#14161A] dark:stroke-[#FBFCFE]"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </g>
+      </svg>
+    </button>
     <h1 class="text-[20px] font-[500]">Welcome Back</h1>
     <form class="my-[24px]" @submit.prevent="logUserIn()">
       <AppInput

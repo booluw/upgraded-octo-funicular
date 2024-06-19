@@ -293,13 +293,13 @@ onClickOutside(target, () => closeSuggestion.value = false)
             </template>
           </AppInput>
           <div
-            class="absolute top-16 left-0 right-0 z-50 p-1 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto shadow-lg"
+            class="absolute top-16 left-0 right-0 z-50 bg-light dark:bg-icon text-text dark:text-text-dark rounded h-[25vh] overflow-y-auto scrollbar-thin dark:scrollbar-track-black/50 dark:scrollbar-thumb-slate-700/60 shadow-lg border border-black/5 dark:border-[#383B43]"
             v-if="closeSuggestion"
           >
             <template v-if="area.items.length !== 0">
               <button
                 type="button"
-                class="block w-full text-left p-3 cursor-pointer hover:opacity-75 capitalize"
+                class="block w-full text-left p-3 cursor-pointer hover:bg-[#3366FF]/30 capitalize border-b border-black/5 dark:border-[#383B43]"
                 :class="item.area_name === query.name ? 'bg-primary rounded' : ''"
                 v-for="(item, index) in area.items"
                 :key="index"

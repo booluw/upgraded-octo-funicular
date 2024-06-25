@@ -187,12 +187,6 @@ onMounted(() => {
           Already have an account?
           <router-link to="login" class="text-primary font-[500] underline">Log In</router-link>
         </div>
-        <div class="mt-3">
-          Forgot your password?
-          <router-link to="recover-pw" class="text-primary font-[500] underline"
-            >Reset it</router-link
-          >
-        </div>
       </form>
     </section>
     <section

@@ -66,7 +66,7 @@ onMounted(async () => {
           </div>
           <svg
             viewBox="0 0 16 16"
-            fill="none"
+            fill="none"c
             xmlns="http://www.w3.org/2000/svg"
             class="cursor-pointer w-[16px] flex-shrink-0"
             @click="emits('close')"

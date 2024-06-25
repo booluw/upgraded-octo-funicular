@@ -60,6 +60,10 @@ const recoverPassword = async function () {
           <AppButton type="primary" mode="submit" class="w-full mt-5" :loading="loading">
             GET RECOVERY LINK
           </AppButton>
+          <div class="mt-5">
+            Already have an account?
+            <router-link to="login" class="text-primary font-[500] underline">Log In</router-link>
+          </div>
         </form>
       </template>
       <template v-else>

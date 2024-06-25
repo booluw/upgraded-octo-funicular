@@ -207,7 +207,7 @@ onClickOutside(target, () => {
 </script>
 <template>
   <div
-    class="mb-[10px] p-[16px] hover:bg-[#E5EDF5] dark:hover:bg-[#212327] rounded"
+    class="mb-[10px] p-[16px] hover:bg-[#E5EDF5] dark:hover:bg-[#212327] border-b-[1px] dark:border-black/50"
     :class="
       ({ 'border-b border-primary/20 dark:border-[#212327] rounded-none': type === 'full' },
       { 'bg-[#212327]': Number(route.query.review) === review.id })
@@ -255,7 +255,7 @@ onClickOutside(target, () => {
                       stroke-linejoin="round"
                     />
                   </svg>
-                  Post Not Yet Approved!
+                  Pending Approval
                 </div>
               </div>
             </div>
@@ -278,7 +278,7 @@ onClickOutside(target, () => {
       {{ review.review }}
     </p>
 
-    <div class="mt-4" v-if="type === 'full'">
+    <!-- <div class="mt-4" v-if="type === 'full'">
       <div class="flex gap-[10px] overflow-x-auto scrollbar-none">
         <div
           class="flex-shrink-0 text-center text-[10px] py-[3px] px-[10px] border-[1.5px] border-black dark:border-[#383B43] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
@@ -346,8 +346,8 @@ onClickOutside(target, () => {
           </svg>
           {{ review.comments }}
         </div> -->
-      </div>
-    </div>
+      <!-- </div> -->
+    <!-- </div> -->
     <!-- <div class="w-full" v-if="comment" ref="target">
       <form
         @submit.prevent="addNewComment()"

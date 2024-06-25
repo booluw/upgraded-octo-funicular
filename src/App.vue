@@ -4,18 +4,21 @@ import { RouterView, useRoute, useRouter } from 'vue-router'
 import { isEmpty } from 'lodash'
 import { supabase } from '@/config/supabase'
 import { useUser } from '@/stores/user'
+import { storeToRefs } from 'pinia'
 
 import { onClickOutside } from '@vueuse/core'
 
 import AppLogo from '@/components/AppLogo.vue'
 import AppLogin from './components/AppLogin.vue'
 import AppDropdown from '@/components/AppDropdown.vue'
-import { storeToRefs } from 'pinia'
+import AppButton from './components/AppButton.vue'
+import AddReviewModal from '@/views/areas/components/AddReviewModal.vue'
 
 const route = useRoute()
 const router = useRouter()
 const userStore = useUser()
 const target = ref(null)
+const addReview = ref(false)
 const { theme } = storeToRefs(userStore)
 
 const user = computed(() => {
@@ -75,7 +78,7 @@ watch(
             <AppButton
               type="outline"
               size="small"
-              class="p-[8px] !border-[#B2C1E6] dark:!border-[#383B43] !border-[2px] !rounded-[10px]"
+              class="p-[8px] !border-[#B2C1E6] dark:!border-[#383B43] !border-[2px] !rounded-[10px] cursor-pointer"
               @click="userStore.setTheme(userStore.theme === 'light' ? 'dark' : 'light')"
             >
               <svg
@@ -122,6 +125,9 @@ watch(
 
             <div class="pr-1 border-r-[2px] !border-[#B2C1E6] dark:!border-[#383B43] text-transparent">.</div>
 
+            <div class="hidden md:block" v-if="!isEmpty(user.id)" @click="addReview = true">
+              <AppButton type="outline" size="small" class="font-semibold uppercase border-[2px] mr-2">Submit Review</AppButton>
+            </div>
             <AppDropdown
               :menu="['profile', 'reviews', 'logout']"
               position="bottom"
@@ -161,5 +167,6 @@ watch(
     >
       <AppLogin ref="target" @close="router.push(route.path)" />
     </div>
+    <AddReviewModal v-if="addReview" @close="addReview = false" />
   </section>
 </template>

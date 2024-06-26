@@ -425,7 +425,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
             <div class="flex items-center gap-[13px]">
               <img
                 :src="user.img"
-                class="w-[32px] h-[32px] rounded-full border-[2px] border-white dark:border-text"
+                class="w-[40px] h-[40px] rounded-[8px] border-[2px] border-white dark:border-text"
                 v-if="user.img"
               />
               <img

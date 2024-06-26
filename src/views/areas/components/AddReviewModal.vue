@@ -30,7 +30,6 @@ const review = reactive({
   rating: 0,
   review: '',
   anon: false,
-  area: query.value.id,
   profile_id: user.user.id
 })
 
@@ -107,7 +106,7 @@ const getAllAmenities = async function () {
 }
 
 const submitReview = async function () {
-  if (review.area === '') {
+  if (query.value.id === '') {
     notify({
       content: 'Choose a location to review',
       position: 'top-center',
@@ -115,7 +114,7 @@ const submitReview = async function () {
     })
     return
   }
-  
+
   if (review.rating === 0) {
     notify({
       content: 'How many stars will you rate this location?',
@@ -139,7 +138,7 @@ const submitReview = async function () {
 
     const { data, error } = await supabase
       .from('reviews')
-      .insert({ ...review })
+      .insert({ ...review, area: query.value.id })
       .select('*, profile(*)')
 
     if (error) throw Error(error.message ?? error)

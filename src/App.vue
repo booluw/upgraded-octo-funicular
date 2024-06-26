@@ -138,7 +138,7 @@ watch(
                 <span class="hidden md:block">{{ user.username ?? user.email }}</span>
                 <img
                   :src="user.img"
-                  class="w-[32px] rounded-full border-[2px] border-white dark:border-text"
+                  class="w-[40px] rounded-[8px] border-[2px] border-white dark:border-text"
                   v-if="user.img"
                 />
                 <img

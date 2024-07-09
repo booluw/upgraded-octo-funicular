@@ -252,7 +252,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
             <router-link to="/" class="text-text dark:text-text-dark">
               <AppLogo />
             </router-link>
-            <form @submit.prevent class="w-[650px] hidden md:block">
+            <form @submit.prevent class="w-[600px] hidden md:block">
               <div class="group relative">
                 <AppInput
                   ref="target"
@@ -507,19 +507,6 @@ onClickOutside(target, () => (closeSuggestion.value = false))
           </div>
         </form>
 
-        <div class="mb-[16px]">
-          <div class="flex justify-between items-center">
-            <div class="md:w-[60%]">
-              <h1 class="text-[24px] capitalize">
-                {{ area.name }}, {{ area.lga }}, {{ area.state }}
-              </h1>
-              <h2 class="text-[12px] md:text-[16px]">
-                <b>“{{ reviewCount }}” Review{{ reviewCount > 1 ? 's' : '' }}</b>
-                (People are raving about the selected location)
-              </h2>
-            </div>
-          </div>
-        </div>
         <div class="pb-[16px] flex justify-between md:items-center w-[90vw] relative">
           <div class="flex gap-[10px] scrollbar overflow-auto" ref="scroller">
             <div
@@ -614,7 +601,15 @@ onClickOutside(target, () => (closeSuggestion.value = false))
         </div>
       </div>
     </div>
-    <div class="md:p-[120px]"></div>
+    <div class="md:pt-[130px] px-[16px] w-full flex items-center justify-center">
+      <div class="md:w-page py-5">
+        <h1 class="text-[24px] capitalize">{{ area.name }}, {{ area.lga }}, {{ area.state }}</h1>
+        <h2 class="text-[12px] md:text-[16px]">
+          <b>“{{ reviewCount }}” Review{{ reviewCount > 1 ? 's' : '' }}</b>
+          (People are raving about the selected location)
+        </h2>
+      </div>
+    </div>
     <template v-if="allReviews > 0">
       <div
         class="md:w-page px-[16px] md:px-0 flex gap-[16px] md:gap-[100px] flex-col md:flex-row justify-between"

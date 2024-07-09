@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, watch, computed } from 'vue'
+import { reactive, ref, watch, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router'
 
 import { supabase } from '../config/supabase'
@@ -176,6 +176,8 @@ const error = ref(false)
 const loading = ref(false)
 const target = ref(null)
 
+const numberOfReviews = reactive({ count: 0, imgs: [] as any })
+
 const param = computed({
   set(newVal) {
     query.value.query = newVal as any
@@ -233,28 +235,46 @@ const gotoArea = function () {
   router.push(`/areas/${query.value.id}`)
 }
 
+const getNumberOfReviews = async function () {
+  try {
+    const { count } = await supabase.from('reviews').select('', { count: 'exact' });
+    const { data } = await supabase.from('profile').select('img').not('img', 'is', 'null').limit(20)
+
+    data?.map((item) => {
+        numberOfReviews.imgs.push(item.img);
+    })
+
+    numberOfReviews.count = count as unknown as number
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 watch(
   query,
   async () => {
     await search()
   },
-  { deep: true }
-)
+  { deep: true })
 
-onClickOutside(target, () => closeSuggestion.value = false)
+onMounted(() => {
+  getNumberOfReviews()
+})
+
+onClickOutside(target, () => (closeSuggestion.value = false))
 </script>
 
 <template>
   <section class="h-[90vh] flex gap-[100px] items-center justify-between overflow-hidden">
-    <div class="md:w-1/3">
+    <div class="md:w-[calc(100%/2.5)]">
       <h1 class="text-[54px] font-bold mb-[12px] md:mb-[16px] leading-tight">
         Find a place you will love to live!
       </h1>
-      <p class="mb-[24px] md:mb-[40px]">
+      <p class="md:w-2/3 mb-[24px] md:mb-[40px]">
         See through the lenses of people who have lived or visited the neighbourhood you might have
         in mind.
       </p>
-      <form @submit.prevent="gotoArea()">
+      <form @submit.prevent="gotoArea()" class="mb-[24px] md:w-5/6">
         <div class="text-sm text-red-500 mb-[2px] md:mb-[5px]" v-if="error">
           Please add a search query
         </div>
@@ -318,8 +338,36 @@ onClickOutside(target, () => closeSuggestion.value = false)
             </template>
           </div>
         </div>
-        <AppButton type="primary" class="uppercase">Explore Area</AppButton>
+        <AppButton type="primary" class="uppercase w-full md:w-auto">Explore Area</AppButton>
       </form>
+      <div class="flex gap-5">
+        <div class="flex items-center gap-1">
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <g opacity="0.6">
+              <path
+                d="M9.77364 17.2316C9.54253 17.2316 9.31164 17.142 9.13741 16.9634C8.79475 16.612 8.80141 16.0491 9.15275 15.7065L12.9556 11.9958L9.16141 8.29359C8.81008 7.95093 8.80341 7.38804 9.14608 7.0367C9.48919 6.68515 10.0519 6.67848 10.4032 7.02137L14.8494 11.3596C15.0207 11.5267 15.1174 11.7563 15.1174 11.9958C15.1174 12.2354 15.0207 12.4647 14.8494 12.632L10.3945 16.9787C10.2214 17.1476 9.99741 17.2316 9.77364 17.2316Z"
+                fill="#FBFCFE"
+              />
+            </g>
+          </svg>
+          <p class="text-primary font-[600]">{{ numberOfReviews.count }} Reviews so far!</p>
+        </div>
+        <div class="flex">
+          <img
+            :src="img"
+            class="w-[30px] h-auto rounded bg-text-dark dark:bg-black-light border-2 border-light dark:border-black"
+            :class="{ '-ml-2' : index !== 0 }"
+            v-for="(img, index) in numberOfReviews.imgs"
+            :key="index"
+          />
+        </div>
+      </div>
     </div>
     <div class="hidden h-full md:flex gap-[20px] overflow-hidden relative">
       <div

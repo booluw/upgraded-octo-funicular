@@ -36,10 +36,14 @@ const getAllReviews = async function () {
   error.value = false
 
   try {
-    const { data, error } = await supabase
-      .from('reviews')
-      .select('*, profile(*)')
-      .or(`and(area.eq.${route.params.name}, approved.eq.APPROVED)`)
+    // const { data, error } = await supabase
+    //   .from('reviews')
+    //   .select('*, profile(*)')
+    //   .or(`and(area.eq.${route.params.name}, approved.eq.APPROVED)`)
+    //   .order('likes', { ascending: false })
+
+    const { data, error } = await supabase.rpc('get_reviews_and_profiles').select('*')
+      .or(`and(area_id.eq.${route.params.name}, approved.eq.APPROVED)`)
       .order('likes', { ascending: false })
 
     if (error) throw Error(error.message ?? error)

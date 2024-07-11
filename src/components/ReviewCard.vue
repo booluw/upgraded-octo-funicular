@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
 import { useUser } from '@/stores/user'
 import { isEmpty } from 'lodash'
@@ -23,9 +23,21 @@ const route = useRoute()
 
 const comment = ref(false)
 const newComment = ref('')
+const seeReplies = ref(false)
 const loading = ref(false)
 
 const target = ref(null)
+
+const commentImages = computed(() => {
+  if (props.review.comments_count === 0) return []
+  else
+    return props.review.comments.map((item: any) => {
+      if (item.profile_img) {
+        return item.profile_img
+      } else
+        return 'https://res.cloudinary.com/domingo-bucket/image/upload/v1720696031/AreaFinder/u7xe8hxb4ci93qhoz7xd.png'
+    })
+})
 
 const addNewComment = async function () {
   loading.value = true
@@ -33,7 +45,7 @@ const addNewComment = async function () {
   try {
     const { error } = await supabase
       .from('comments')
-      .insert({ profile_id: user.id, text: newComment.value, reviews_id: props.review.id })
+      .insert({ profile_id: user.id, text: newComment.value, reviews_id: props.review.review_id })
 
     if (error) throw Error(error.message as any)
 
@@ -74,7 +86,7 @@ const like = async function (review: typeof props.review) {
             }
           })
         })
-        .eq('id', review.id)
+        .eq('id', review.review_id)
         .select('dislikes')
 
       if (error) throw Error(error.message as any)
@@ -98,7 +110,7 @@ const like = async function (review: typeof props.review) {
             }
           })
         })
-        .eq('id', review.id)
+        .eq('id', review.review_id)
         .select('likes')
 
       if (error) throw Error(error.message as any)
@@ -116,7 +128,7 @@ const like = async function (review: typeof props.review) {
     const { data, error } = await supabase
       .from('reviews')
       .update({ likes: [...review.likes, user.id] })
-      .eq('id', review.id)
+      .eq('id', review.review_id)
       .select('likes')
 
     if (error) throw Error(error.message as any)
@@ -146,7 +158,7 @@ const dislike = async function (review: typeof props.review) {
             }
           })
         })
-        .eq('id', review.id)
+        .eq('id', review.review_id)
         .select('likes')
 
       if (error) throw Error(error.message as any)
@@ -170,7 +182,7 @@ const dislike = async function (review: typeof props.review) {
             }
           })
         })
-        .eq('id', review.id)
+        .eq('id', review.review_id)
         .select('dislikes')
 
       if (error) throw Error(error.message as any)
@@ -188,7 +200,7 @@ const dislike = async function (review: typeof props.review) {
     const { data, error } = await supabase
       .from('reviews')
       .update({ dislikes: [...review.dislikes, user.id] })
-      .eq('id', review.id)
+      .eq('id', review.review_id)
       .select('dislikes')
 
     if (error) throw Error(error.message as any)
@@ -208,26 +220,30 @@ onClickOutside(target, () => {
 </script>
 <template>
   <div
-    class="mb-[10px] p-[16px] hover:bg-[#E5EDF5] dark:hover:bg-[#212327] border-b-[1px] dark:border-black/50"
+    class="mb-[10px] py-[16px]"
     :class="
-      ({ 'border-b border-primary/20 dark:border-[#212327] rounded-none': type === 'full' },
-      { 'bg-[#212327]': Number(route.query.review) === review.id })
+      ({ 'rounded-none': type === 'full' },
+      { 'bg-[#212327]': Number(route.query.review) === review.review_id })
     "
   >
     <div class="flex justify-between">
       <div class="flex md:items-center gap-[8px]">
         <img
           :src="review.profile.img"
-          class="w-[42px] h-[42px] rounded"
-          v-if="review.profile.img && !review.anon"
+          class="w-[42px] h-[42px] border-4 border-[#E5EDF5] dark:border-[#212327] rounded"
+          v-if="review.profile_img && !review.anon"
         />
-        <img src="@/assets/imgs/avataaars.png" class="rounded w-[42px] h-[42px]" v-else />
+        <img
+          src="@/assets/imgs/avataaars.png"
+          class="w-[42px] h-[42px] border-4 border-[#E5EDF5] dark:border-[#212327] rounded"
+          v-else
+        />
         <div class="flex flex-col gap-1">
           <div class="flex gap-4">
-            {{ review.anon ? 'Annon User' : review.profile.username.replace(/"/g, '') }}
+            {{ review.anon ? 'Annon User' : review.profile_username.replace(/"/g, '') }}
             <b
               class="text-[12px] text-[#3366FF] bg-[#3366FF]/10 border-2 border-[#3366FF] rounded py-[3px] px-[8px]"
-              v-if="review.profile.role === 'ADMIN'"
+              v-if="review.profile_role === 'ADMIN'"
             >
               Admin
             </b>
@@ -236,7 +252,7 @@ onClickOutside(target, () => {
             <div class="">
               <div class="flex flex-col md:flex-row md:gap-3">
                 <span class="block text-[14px] opacity-60">{{
-                  formatTime(review.created_at)
+                  formatTime(review.review_created_at)
                 }}</span>
                 <div
                   class="text-[#E95F5F] text-sm flex items-center gap-1"
@@ -276,7 +292,7 @@ onClickOutside(target, () => {
       </div>
     </div>
     <p class="text-justify my-[8px] line-clamp-4">
-      {{ review.review }}
+      {{ review.review_text }}
     </p>
 
     <div class="flex gap-5">
@@ -347,8 +363,9 @@ onClickOutside(target, () => {
         </svg>
       </div>
 
-      <div
+      <button
         class="rounded border border-[#B2C1E6] dark:border-[#383B43] p-1 pr-3 text-sm flex gap-3 items-center cursor-pointer"
+        @click="comment = !comment"
       >
         <svg
           width="24"
@@ -360,64 +377,104 @@ onClickOutside(target, () => {
           <g opacity="0.6">
             <path
               d="M11.9038 7.22424C16.927 7.88049 20.9038 11.7644 20.9038 16.1556C20.9038 19.1207 20.2727 20.6241 19.0288 20.6241C16.492 20.6241 19.315 14.7021 11.9038 13.945C11.9038 13.945 11.9038 15.2312 11.9038 15.9182C11.9038 17.4681 10.0551 18.1514 9.0336 17.1299C8.0121 16.1084 4.3056 12.4019 3.5916 11.6879C2.8776 10.9739 2.99085 9.91074 3.5916 9.30999C4.1331 8.76849 8.00497 4.89699 9.0336 3.86836C10.0622 2.83974 11.9038 3.51211 11.9038 5.05749C11.9038 6.53911 11.9038 7.22424 11.9038 7.22424ZM19.1485 18.6396C19.2298 18.6396 19.4038 17.407 19.4038 16.1552C19.4038 12.4067 15.8335 9.09924 11.2877 8.66499C10.7871 8.61774 10.4038 8.38036 10.4038 7.71961C10.4038 7.38961 10.4038 5.23261 10.4038 5.05711C10.4038 4.88161 10.1998 4.82274 10.0941 4.92886C9.98835 5.03461 4.73985 10.2831 4.6521 10.3705C4.56435 10.4582 4.59922 10.5741 4.65247 10.6274C4.70572 10.6806 9.97672 15.952 10.0941 16.069C10.2115 16.186 10.4038 16.1061 10.4038 15.9407C10.4038 15.7949 10.4038 13.6994 10.4038 13.1282C10.4038 12.5571 10.6937 12.3764 11.1861 12.3921C18.94 12.6385 18.9591 18.6396 19.1485 18.6396Z"
-              fill="#FBFCFE"
+              fill="currentColor"
             />
           </g>
         </svg>
 
         Reply
-      </div>
+      </button>
     </div>
 
-    <!-- <div class="mt-4" v-if="type === 'full'">
-      <div class="flex items-center justify-start gap-5 mt-4 opacity-60">
-        <div class="flex items-center gap-1 cursor-pointer" @click="like(review)">     
-        review.likes.includes(user.id)
-          ? 'fill-primary'
-          : 'fill-[#0D2159] dark:fill-primary-light'
-      
-          {{ review.likes.length }}
-        </div>
-        <div class="flex items-center gap-1" @click="dislike(review)">
-            
-          :class="
-            review.dislikes.includes(user.id)
-              ? 'fill-primary'
-              : 'fill-[#0D2159] dark:fill-primary-light'
-          "
-        </div>
-        <div class="flex items-center gap-1" @click="comment = !comment">
-          <svg
-            width="24"
-            height="25"
-            viewBox="0 0 24 25"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M6.6 16.7H7.1V16.2H6.6V16.7ZM8.652 21.152L9.00555 21.5056L9.00603 21.5051L8.652 21.152ZM13.092 16.7V16.2H12.8845L12.738 16.3469L13.092 16.7ZM19.8 3H4.2V4H19.8V3ZM4.2 3C3.26386 3 2.5 3.76386 2.5 4.7H3.5C3.5 4.31614 3.81614 4 4.2 4V3ZM2.5 4.7V15.5H3.5V4.7H2.5ZM2.5 15.5C2.5 16.4361 3.26386 17.2 4.2 17.2V16.2C3.81614 16.2 3.5 15.8839 3.5 15.5H2.5ZM4.2 17.2H6.6V16.2H4.2V17.2ZM6.1 16.7V20.3H7.1V16.7H6.1ZM6.1 20.3C6.1 21.2361 6.86386 22 7.8 22V21C7.41614 21 7.1 20.6839 7.1 20.3H6.1ZM7.8 22C8.27011 22 8.69686 21.8143 9.00555 21.5056L8.29845 20.7984C8.17515 20.9217 8.00189 21 7.8 21V22ZM9.00603 21.5051L13.446 17.0531L12.738 16.3469L8.29797 20.7989L9.00603 21.5051ZM13.092 17.2H19.8V16.2H13.092V17.2ZM19.8 17.2C20.7361 17.2 21.5 16.4361 21.5 15.5H20.5C20.5 15.8839 20.1839 16.2 19.8 16.2V17.2ZM21.5 15.5V4.7H20.5V15.5H21.5ZM21.5 4.7C21.5 3.76386 20.7361 3 19.8 3V4C20.1839 4 20.5 4.31614 20.5 4.7H21.5Z"
-              class="fill-[#0D2159] dark:fill-primary-light"
-            />
-          </svg>
-          {{ review.comments }}
-        </div> -->
-    <!-- </div> -->
-    <!-- </div> -->
-    <!-- <div class="w-full" v-if="comment" ref="target">
-      <form
-        @submit.prevent="addNewComment()"
-        class="flex gap-5 pt-5 w-full"
-        v-if="!isEmpty(user.id)"
-      >
-        <input
-          class="text-black dark:text-white bg-primary-light/5 focus:outline-none rounded px-5 w-2/3"
-          type="text"
+    <div class="w-full" v-show="comment" ref="target">
+      <form @submit.prevent="addNewComment()" class="pt-5 w-full" v-if="!isEmpty(user.id)">
+        <textarea
+          class="text-black dark:text-white bg-primary/10 dark:bg-primary-light/5 border border-primary focus:outline-none rounded p-5 w-full"
           v-model="newComment"
-          placeholder="Add a comment"
+          placeholder="Leave a reply"
           required
         />
-        <AppButton type="primary" size="small" :loading="loading">Post</AppButton>
+        <div class="flex gap-5 justify-end">
+          <AppButton type="outline" size="small" class="uppercase" @click="comment = !comment"
+            >cancel</AppButton
+          >
+          <AppButton type="primary" size="small" class="uppercase" :loading="loading"
+            >Reply</AppButton
+          >
+        </div>
       </form>
-    </div> -->
+    </div>
+
+    <template v-if="review.comments_count > 0">
+      <div class="my-2 flex items-center gap-10">
+        <div class="flex items-center text-primary cursor-pointer" @click="seeReplies = !seeReplies">
+          <svg
+            class="transition ease-in-out"
+            :class="{ 'rotate-90': seeReplies }"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <g opacity="0.6">
+              <path
+                d="M9.77266 17.2316C9.54155 17.2316 9.31066 17.142 9.13644 16.9634C8.79377 16.612 8.80044 16.0491 9.15177 15.7065L12.9547 11.9958L9.16044 8.29359C8.8091 7.95093 8.80244 7.38804 9.1451 7.0367C9.48822 6.68515 10.0509 6.67848 10.4022 7.02137L14.8484 11.3596C15.0198 11.5267 15.1164 11.7563 15.1164 11.9958C15.1164 12.2354 15.0198 12.4647 14.8484 12.632L10.3935 16.9787C10.2204 17.1476 9.99644 17.2316 9.77266 17.2316Z"
+                class="fill-[#14161A] dark:fill-text-dark"
+              />
+            </g>
+          </svg>
+          {{ seeReplies ? 'Hide' : 'Show' }} Replies
+        </div>
+        <div class="transition ease-in-out" v-show="!seeReplies">
+          <img
+            :src="img"
+            class="w-[26px] h-auto inline-block -ml-2 border border-[#E5EDF5] dark:border-[#212327] rounded"
+            v-for="(img, index) in commentImages"
+            :key="index"
+          />
+        </div>
+      </div>
+
+      <div
+        class="flex flex-col gap-5 border-l border-[#B2C1E6] dark:border-[#383B43] ml-3 p-3 transition-all ease-in-out"
+        v-show="seeReplies"
+      >
+        <div
+          class="border-b border-[#B2C1E6] dark:border-[#383B43] pb-2"
+          v-for="(item, index) in review.comments"
+          :key="index"
+        >
+          <div class="flex items-center justify-between">
+            <div class="flex md:items-center gap-[8px]">
+              <img
+                :src="item.profile_img"
+                class="w-[24px] h-[24px] p-1 bg-[#E5EDF5] dark:bg-[#212327] rounded"
+                v-if="item.profile_img && !review.anon"
+              />
+              <img
+                src="@/assets/imgs/avataaars.png"
+                class="w-[24px] h-[24px] p-1 bg-[#E5EDF5] dark:bg-[#212327] rounded"
+                v-else
+              />
+              <div class="flex flex-col gap-1">
+                <div class="flex gap-4">
+                  {{ item.profile_username.replace(/"/g, '') }}
+                </div>
+              </div>
+            </div>
+
+            <div class="flex items-start md:gap-[8px] text-[14px]">
+              <div class="">
+                <div class="flex flex-col md:flex-row md:gap-3">
+                  <span class="block text-[14px] opacity-60">{{
+                    formatTime(item.created_at)
+                  }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="my-2">{{ item.text }}</p>
+        </div>
+      </div>
+    </template>
   </div>
 </template>

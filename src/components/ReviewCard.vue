@@ -10,7 +10,6 @@ import { notify } from '@/components/AppNotification'
 import { supabase } from '@/config/supabase'
 
 import AppButton from '@/components/AppButton.vue'
-import { useRoute } from 'vue-router'
 
 const props = defineProps<{
   review: any
@@ -19,7 +18,6 @@ const props = defineProps<{
 
 const emit = defineEmits(['clicked', 'reload'])
 const user = useUser().user
-const route = useRoute()
 
 const comment = ref(false)
 const newComment = ref('')
@@ -75,7 +73,6 @@ const like = async function (review: typeof props.review) {
   }
 
   if (review.dislikes.includes(user.id)) {
-    notify({ content: 'Disliked already', type: 'info', position: 'top-center' })
     try {
       const { data, error } = await supabase
         .from('reviews')
@@ -221,15 +218,12 @@ onClickOutside(target, () => {
 <template>
   <div
     class="mb-[10px] py-[16px]"
-    :class="
-      ({ 'rounded-none': type === 'full' },
-      { 'bg-[#212327]': Number(route.query.review) === review.review_id })
-    "
+    :class="{ 'rounded-none': type === 'full' }"
   >
     <div class="flex justify-between">
       <div class="flex md:items-center gap-[8px]">
         <img
-          :src="review.profile.img"
+          :src="review.profile_img"
           class="w-[42px] h-[42px] border-4 border-[#E5EDF5] dark:border-[#212327] rounded"
           v-if="review.profile_img && !review.anon"
         />
@@ -251,7 +245,7 @@ onClickOutside(target, () => {
           <div class="flex items-start md:gap-[8px] text-[14px]">
             <div class="">
               <div class="flex flex-col md:flex-row md:gap-3">
-                <span class="block text-[14px] opacity-60">{{
+                <span class="block text-[14px] opacity-60 capitalize">{{
                   formatTime(review.review_created_at)
                 }}</span>
                 <div
@@ -465,7 +459,7 @@ onClickOutside(target, () => {
             <div class="flex items-start md:gap-[8px] text-[14px]">
               <div class="">
                 <div class="flex flex-col md:flex-row md:gap-3">
-                  <span class="block text-[14px] opacity-60">{{
+                  <span class="block text-[14px] opacity-60 capitalize">{{
                     formatTime(item.created_at)
                   }}</span>
                 </div>

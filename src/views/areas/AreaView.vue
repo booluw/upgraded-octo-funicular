@@ -16,6 +16,7 @@ import AppButton from '@/components/AppButton.vue'
 import AppError from '@/components/AppError.vue'
 import AppLoader from '@/components/AppLoader.vue'
 import AppDropdown from '@/components/AppDropdown.vue'
+import ImageModal from '@/components/ImageModal.vue'
 
 import AddReview from './components/AddReviewModal.vue'
 import Reviews from './components/Reviews.vue'
@@ -33,10 +34,14 @@ const scroller = ref(null) as any
 const closeSuggestion = ref(false)
 const target = ref(null)
 
+const showImage = ref(false)
+
 const amenity: Ref<{ title: string }[]> = ref([])
 const filter: Ref<null | string> = ref(null)
+const counter = reactive({})
+const rating = ref(0)
 
-const area = ref({})
+const area: Ref<any> = ref({})
 const areas = reactive({ items: [] })
 const newReview = ref(false)
 const reviews = ref(null)
@@ -69,22 +74,6 @@ const param = computed({
     return query.value.name || query.value.query
   }
 })
-
-const getAllAmenities = async function () {
-  try {
-    const { data, error } = await supabase.from('amenities').select('title')
-
-    if (error) throw Error(error.message ?? error)
-    amenity.value = data
-  } catch (err) {
-    console.log(err)
-    notify({
-      content: err ?? `We couldn't fetch Amenities, please reload`,
-      type: 'error',
-      position: 'top-center'
-    })
-  }
-}
 
 const setPath = function (item: any) {
   query.value.id = item.area_id
@@ -166,6 +155,43 @@ const share = function () {
   })
 }
 
+const getAllAmenities = async function () {
+  try {
+    const { data, error } = await supabase.from('amenities').select('title')
+
+    if (error) throw Error(error.message ?? error)
+    amenity.value = data
+  } catch (err) {
+    console.log(err)
+    notify({
+      content: err ?? `We couldn't fetch Amenities, please reload`,
+      type: 'error',
+      position: 'top-center'
+    })
+  }
+}
+
+const getAreaAmenities = async function () {
+  try {
+    const { data, error } = await supabase
+      .from('reviews')
+      .select('amenities, rating')
+      .or(`and(area.eq.${route.params.name}, approved.eq.APPROVED)`)
+
+    if (error) throw error
+
+    data.forEach((item) => {
+      item.amenities.forEach((amenity: string) => {
+        counter[amenity] = (counter[amenity] || 0) + 1
+      })
+
+      rating.value = rating.value + item.rating
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 const getArea = async function () {
   loading.value = true
 
@@ -201,6 +227,7 @@ const getArea = async function () {
       ' - SpottaNG'
     area.value = data[0]
     await getAllAmenities()
+    await getAreaAmenities()
   } catch (err) {
     notify({ content: err, position: 'top-center', type: 'error' })
     error.value = true
@@ -244,7 +271,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
     class="min-h-[100vh] md:flex flex-col items-center bg-[#FBFCFE] dark:bg-[#14161A] text-text dark:text-text-dark"
   >
     <div
-      class="md:w-[100vw] bg-[#FAFCFD] md:bg-light dark:bg-black flex flex-col items-center mb-[16px] md:mb-[32px] md:fixed z-10"
+      class="md:w-[100vw] bg-light dark:bg-black flex flex-col items-center mb-[16px] md:mb-[32px] md:fixed z-10"
     >
       <div class="w-full md:w-page px-[16px] md:px-0">
         <header class="py-[10.5px] flex gap-[10px] md:gap-0 justify-between items-center">
@@ -446,8 +473,10 @@ onClickOutside(target, () => (closeSuggestion.value = false))
           </AppButton>
         </header>
 
-        <div class="py-[16px] flex justify-between md:items-center w-[90vw] relative">
-          <div class="flex gap-[10px] scrollbar overflow-auto" ref="scroller">
+        <div
+          class="md:py-[16px] flex justify-between items-start md:items-center w-[90vw] relative"
+        >
+          <div class="pb-2 flex gap-[10px] scrollbar overflow-auto" ref="scroller">
             <div
               class="text-center text-[14px] py-[6px] px-[12px] border-[1.5px] text-[#14161A] border-[#B2C1E6] dark:border-[#383B43] dark:text-[#FBFCFE] bg-transparent rounded-[4px] cursor-pointer hover:opacity-75"
               :class="{
@@ -468,11 +497,11 @@ onClickOutside(target, () => (closeSuggestion.value = false))
               @click="filter === item ? (filter = null) : (filter = item)"
               :key="i"
             >
-              {{ item }}
+              {{ item }} &nbsp; {{ counter[item as unknown] ?? 0 }}
             </div>
           </div>
           <div
-            class="py-[6px] px-[9px] rounded-full bg-white dark:bg-black-light cursor-pointer hover:opacity-75 flex items-center justify-center"
+            class="mt-1 py-[6px] px-[9px] rounded-full bg-white dark:bg-black-light cursor-pointer hover:opacity-75 flex items-center justify-center"
             @click="scroll()"
           >
             <svg
@@ -493,9 +522,71 @@ onClickOutside(target, () => (closeSuggestion.value = false))
         </div>
       </div>
     </div>
-    <div class="md:pt-[130px] px-[16px] w-full flex items-center justify-center">
+
+    <div
+      class="md:hidden md:w-[686px] md:order-2 overflow-x-auto md:overflow-hidden md:!sticky top-0"
+      v-if="area.imgs"
+    >
+      <div
+        class="w-[150vw] md:w-auto grid grid-cols-3 md:grid-cols-2 md:grid-rows-2 gap-[10px] cursor-pointer"
+        v-if="area.imgs.length !== 0"
+        @click="showImage = true"
+      >
+        <img :src="area.imgs[0]" class="row-span-1 h-full w-auto rounded-[8px]" />
+        <img :src="area.imgs[1]" class="row-span-1 rounded-[8px]" v-if="area.imgs[1]" />
+        <div class="row-span-1 rounded-[8px] overflow-hidden relative">
+          <div
+            class="absolute top-0 right-0 bottom-0 left-0 bg-black/30 text-white md:flex items-center justify-center hidden cursor-pointer"
+          >
+            VIEW MORE
+          </div>
+          <img :src="area.imgs[2]" v-if="area.imgs[2]" />
+        </div>
+        <img :src="area.imgs[3]" class="row-span-1 rounded-[8px] md:hidden" v-if="area.imgs[3]" />
+        <img :src="area.imgs[4]" class="row-span-1 rounded-[8px] md:hidden" v-if="area.imgs[4]" />
+      </div>
+      <div class="text-xl opacity-50 text-center" v-else>
+        <svg
+          class="block my-4 mx-auto"
+          width="43"
+          height="36"
+          viewBox="0 0 43 36"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            opacity="0.6"
+            d="M10.5234 0.0235375C10.3909 0.0216635 10.2594 0.0461448 10.1364 0.0955585C10.0134 0.144972 9.90151 0.218333 9.80714 0.311377C9.71277 0.404422 9.63783 0.515294 9.58668 0.637552C9.53553 0.759809 9.5092 0.891012 9.5092 1.02354C9.5092 1.15606 9.53553 1.28727 9.58668 1.40952C9.63783 1.53178 9.71277 1.64265 9.80714 1.7357C9.90151 1.82874 10.0134 1.9021 10.1364 1.95152C10.2594 2.00093 10.3909 2.02541 10.5234 2.02354H39.5078C40.0708 2.02354 40.5078 2.4606 40.5078 3.02354V26.0509C40.5059 26.1834 40.5304 26.315 40.5798 26.4379C40.6292 26.5609 40.7026 26.6728 40.7957 26.7672C40.8887 26.8616 40.9996 26.9365 41.1218 26.9876C41.2441 27.0388 41.3753 27.0651 41.5078 27.0651C41.6403 27.0651 41.7715 27.0388 41.8938 26.9876C42.0161 26.9365 42.1269 26.8616 42.22 26.7672C42.313 26.6728 42.3864 26.5609 42.4358 26.4379C42.4852 26.315 42.5097 26.1834 42.5078 26.0509V3.02354C42.5078 1.37847 41.1529 0.0235375 39.5078 0.0235375H10.5234ZM4.5 6.0001C2.29 6.0001 0.5 7.7901 0.5 10.0001V32.0001C0.5 34.2101 2.29 36.0001 4.5 36.0001H32.5C34.71 36.0001 36.5 34.2101 36.5 32.0001V10.0001C36.5 7.7901 34.71 6.0001 32.5 6.0001H4.5ZM4.5 8.0001H32.5C33.602 8.0001 34.5 8.8981 34.5 10.0001V30.7696L26.6211 22.8907C26.0393 22.3089 25.2701 22.0157 24.5 22.0157C23.7299 22.0158 22.9599 22.3082 22.3789 22.8907L20.5117 24.7579L16.6211 20.9024C16.0393 20.3207 15.2701 20.0313 14.5 20.0313C13.7299 20.0314 12.9599 20.3199 12.3789 20.9024L2.5 30.7813V10.0001C2.5 8.8981 3.398 8.0001 4.5 8.0001ZM28.5 12.0001C27.9696 12.0001 27.4609 12.2108 27.0858 12.5859C26.7107 12.961 26.5 13.4697 26.5 14.0001C26.5 14.5305 26.7107 15.0392 27.0858 15.4143C27.4609 15.7894 27.9696 16.0001 28.5 16.0001C29.0304 16.0001 29.5391 15.7894 29.9142 15.4143C30.2893 15.0392 30.5 14.5305 30.5 14.0001C30.5 13.4697 30.2893 12.961 29.9142 12.5859C29.5391 12.2108 29.0304 12.0001 28.5 12.0001ZM14.5 22.0157C14.7537 22.0155 15.0068 22.1163 15.207 22.3165L15.2109 22.3204L19.6055 26.672C19.7012 26.8493 19.8482 26.9937 20.0273 27.086L22.6289 29.6642C22.7216 29.7595 22.8324 29.8354 22.9548 29.8874C23.0772 29.9394 23.2087 29.9665 23.3417 29.9671C23.4747 29.9677 23.6064 29.9417 23.7293 29.8907C23.8521 29.8398 23.9635 29.7648 24.057 29.6703C24.1505 29.5757 24.2243 29.4635 24.2739 29.3401C24.3235 29.2167 24.348 29.0846 24.3459 28.9517C24.3439 28.8187 24.3154 28.6875 24.262 28.5657C24.2086 28.4439 24.1315 28.3339 24.0352 28.2423L21.9336 26.1642L23.793 24.3048V24.3009C24.1909 23.9019 24.8066 23.9043 25.207 24.3048L34.0781 33.1759C33.713 33.6643 33.1548 34.0001 32.5 34.0001H4.5C3.84797 34.0001 3.29513 33.6648 2.92969 33.1798L13.793 22.3165C13.9919 22.117 14.2463 22.0159 14.5 22.0157Z"
+            fill="currentColor"
+          />
+        </svg>
+
+        No images uploaded for "<span class="capitalize">{{ area.name }}</span
+        >" yet.
+      </div>
+    </div>
+
+    <div class="md:pt-[150px] px-[16px] w-full flex items-center md:justify-center">
       <div class="md:w-page py-5">
-        <h1 class="text-[24px] capitalize">{{ area.name }}, {{ area.lga }}, {{ area.state }}</h1>
+        <div class="flex items-center justify-between md:justify-start gap-20">
+          <h1 class="text-[24px] capitalize">{{ area.name }}, {{ area.lga }}, {{ area.state }}</h1>
+          <div class="flex items-start gap-[4px]">
+            <svg
+              class="w-[18px]"
+              viewBox="0 0 12 12"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M6 0L7.875 3.975L12 4.575L9 7.65L9.675 12L6 9.975L2.325 12L3 7.65L0 4.575L4.125 3.975L6 0Z"
+                fill="#FABB07"
+              />
+            </svg>
+            {{ Math.abs(rating / reviewCount).toFixed(1) }}
+          </div>
+        </div>
         <h2 class="text-[12px] md:text-[16px]">
           <b>“{{ reviewCount }}” Review{{ reviewCount > 1 ? 's' : '' }}</b>
           (People are raving about the selected location)
@@ -506,16 +597,19 @@ onClickOutside(target, () => (closeSuggestion.value = false))
       <div
         class="md:w-page px-[16px] md:px-0 flex gap-[16px] md:gap-[100px] flex-col md:flex-row justify-between"
       >
-        <div class="md:w-[686px] md:order-2 overflow-x-auto md:overflow-hidden md:!sticky top-0">
+        <div
+          class="hidden md:block md:w-[686px] md:order-2 overflow-x-auto md:overflow-hidden md:!sticky top-0"
+        >
           <div
-            class="w-[150vw] md:w-auto grid grid-cols-3 md:grid-cols-2 grid-rows-2 gap-[10px]"
+            class="w-[150vw] md:w-auto grid grid-cols-3 md:grid-cols-2 md:grid-rows-2 gap-[10px] cursor-pointer"
             v-if="area.imgs.length !== 0"
+            @click="showImage = true"
           >
             <img :src="area.imgs[0]" class="row-span-1 h-full w-auto rounded-[8px]" />
             <img :src="area.imgs[1]" class="row-span-1 rounded-[8px]" v-if="area.imgs[1]" />
             <div class="row-span-1 rounded-[8px] overflow-hidden relative">
               <div
-                class="absolute top-0 right-0 bottom-0 left-0 bg-black/30 text-white md:flex items-center justify-center hidden"
+                class="absolute top-0 right-0 bottom-0 left-0 bg-black/30 text-white md:flex items-center justify-center hidden cursor-pointer"
               >
                 VIEW MORE
               </div>
@@ -532,7 +626,21 @@ onClickOutside(target, () => (closeSuggestion.value = false))
               v-if="area.imgs[4]"
             />
           </div>
-          <div class="text-xl opacity-50" v-else>
+          <div class="text-xl opacity-50 text-center" v-else>
+            <svg
+              class="block my-4 mx-auto"
+              width="43"
+              height="36"
+              viewBox="0 0 43 36"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                opacity="0.6"
+                d="M10.5234 0.0235375C10.3909 0.0216635 10.2594 0.0461448 10.1364 0.0955585C10.0134 0.144972 9.90151 0.218333 9.80714 0.311377C9.71277 0.404422 9.63783 0.515294 9.58668 0.637552C9.53553 0.759809 9.5092 0.891012 9.5092 1.02354C9.5092 1.15606 9.53553 1.28727 9.58668 1.40952C9.63783 1.53178 9.71277 1.64265 9.80714 1.7357C9.90151 1.82874 10.0134 1.9021 10.1364 1.95152C10.2594 2.00093 10.3909 2.02541 10.5234 2.02354H39.5078C40.0708 2.02354 40.5078 2.4606 40.5078 3.02354V26.0509C40.5059 26.1834 40.5304 26.315 40.5798 26.4379C40.6292 26.5609 40.7026 26.6728 40.7957 26.7672C40.8887 26.8616 40.9996 26.9365 41.1218 26.9876C41.2441 27.0388 41.3753 27.0651 41.5078 27.0651C41.6403 27.0651 41.7715 27.0388 41.8938 26.9876C42.0161 26.9365 42.1269 26.8616 42.22 26.7672C42.313 26.6728 42.3864 26.5609 42.4358 26.4379C42.4852 26.315 42.5097 26.1834 42.5078 26.0509V3.02354C42.5078 1.37847 41.1529 0.0235375 39.5078 0.0235375H10.5234ZM4.5 6.0001C2.29 6.0001 0.5 7.7901 0.5 10.0001V32.0001C0.5 34.2101 2.29 36.0001 4.5 36.0001H32.5C34.71 36.0001 36.5 34.2101 36.5 32.0001V10.0001C36.5 7.7901 34.71 6.0001 32.5 6.0001H4.5ZM4.5 8.0001H32.5C33.602 8.0001 34.5 8.8981 34.5 10.0001V30.7696L26.6211 22.8907C26.0393 22.3089 25.2701 22.0157 24.5 22.0157C23.7299 22.0158 22.9599 22.3082 22.3789 22.8907L20.5117 24.7579L16.6211 20.9024C16.0393 20.3207 15.2701 20.0313 14.5 20.0313C13.7299 20.0314 12.9599 20.3199 12.3789 20.9024L2.5 30.7813V10.0001C2.5 8.8981 3.398 8.0001 4.5 8.0001ZM28.5 12.0001C27.9696 12.0001 27.4609 12.2108 27.0858 12.5859C26.7107 12.961 26.5 13.4697 26.5 14.0001C26.5 14.5305 26.7107 15.0392 27.0858 15.4143C27.4609 15.7894 27.9696 16.0001 28.5 16.0001C29.0304 16.0001 29.5391 15.7894 29.9142 15.4143C30.2893 15.0392 30.5 14.5305 30.5 14.0001C30.5 13.4697 30.2893 12.961 29.9142 12.5859C29.5391 12.2108 29.0304 12.0001 28.5 12.0001ZM14.5 22.0157C14.7537 22.0155 15.0068 22.1163 15.207 22.3165L15.2109 22.3204L19.6055 26.672C19.7012 26.8493 19.8482 26.9937 20.0273 27.086L22.6289 29.6642C22.7216 29.7595 22.8324 29.8354 22.9548 29.8874C23.0772 29.9394 23.2087 29.9665 23.3417 29.9671C23.4747 29.9677 23.6064 29.9417 23.7293 29.8907C23.8521 29.8398 23.9635 29.7648 24.057 29.6703C24.1505 29.5757 24.2243 29.4635 24.2739 29.3401C24.3235 29.2167 24.348 29.0846 24.3459 28.9517C24.3439 28.8187 24.3154 28.6875 24.262 28.5657C24.2086 28.4439 24.1315 28.3339 24.0352 28.2423L21.9336 26.1642L23.793 24.3048V24.3009C24.1909 23.9019 24.8066 23.9043 25.207 24.3048L34.0781 33.1759C33.713 33.6643 33.1548 34.0001 32.5 34.0001H4.5C3.84797 34.0001 3.29513 33.6648 2.92969 33.1798L13.793 22.3165C13.9919 22.117 14.2463 22.0159 14.5 22.0157Z"
+                fill="currentColor"
+              />
+            </svg>
             No images uploaded for "<span class="capitalize">{{ area.name }}</span
             >" yet.
           </div>
@@ -557,4 +665,5 @@ onClickOutside(target, () => (closeSuggestion.value = false))
     </div>
     <AddReview v-if="newReview" @close="newReview = false" @done="addReview" />
   </section>
+  <ImageModal v-if="showImage" :img="area.imgs" @close="showImage = false" />
 </template>

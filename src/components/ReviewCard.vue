@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
+import { ref, computed, type Ref } from 'vue'
 import { useTimeAgo } from '@vueuse/core'
 import { useUser } from '@/stores/user'
 import { isEmpty } from 'lodash'
@@ -20,6 +20,8 @@ const emit = defineEmits(['clicked', 'reload'])
 const user = useUser().user
 
 const comment = ref(false)
+const replyComment = ref(false)
+const commentToReply: Ref<number | null> = ref(null)
 const newComment = ref('')
 const seeReplies = ref(false)
 const loading = ref(false)
@@ -34,7 +36,7 @@ const commentImages = computed(() => {
         return item.profile_img
       } else
         return 'https://res.cloudinary.com/domingo-bucket/image/upload/v1720696031/AreaFinder/u7xe8hxb4ci93qhoz7xd.png'
-    })
+    }).splice(0,4)
 })
 
 const addNewComment = async function () {
@@ -211,15 +213,159 @@ const dislike = async function (review: typeof props.review) {
   }
 }
 
+const likeComment = async function (item: any) {
+  if (isEmpty(user.id)) {
+    notify({ content: 'You need to login', type: 'info', position: 'top-center' })
+    return
+  }
+
+  if (item.dislikes.includes(user.id)) {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .update({
+          dislikes: item.dislikes.filter((id: string) => {
+            if (id !== user.id) {
+              return id
+            }
+          })
+        })
+        .eq('id', item.id)
+        .select('dislikes')
+
+      if (error) throw Error(error.message as any)
+
+      item.dislikes = [...data[0].dislikes]
+    } catch (error) {
+      console.log(error)
+      notify({ content: 'Please try again', type: 'error', position: 'top-center' })
+      return
+    }
+  }
+
+  if (item.likes.includes(user.id)) {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .update({
+          likes: item.likes.filter((id: string) => {
+            if (id !== user.id) {
+              return id
+            }
+          })
+        })
+        .eq('id', item.id)
+        .select('likes')
+
+      if (error) throw Error(error.message as any)
+
+      notify({ content: 'Comment unliked', type: 'success', position: 'top-center' })
+      item.likes = [...data[0].likes]
+    } catch (error) {
+      console.log(error)
+      notify({ content: 'Please try again', type: 'error', position: 'top-center' })
+    }
+    return
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('comments')
+      .update({ likes: [...item.likes, user.id] })
+      .eq('id', item.id)
+      .select('likes')
+
+    if (error) throw Error(error.message as any)
+
+    notify({ content: 'Comment liked', type: 'success', position: 'top-center' })
+
+    console.log(item.likes)
+    item.likes = [...data[0].likes]
+  } catch (error) {
+    console.log(error)
+    notify({ content: 'Please try again', type: 'error', position: 'top-center' })
+  }
+}
+
+const dislikeComment = async function (item: any) {
+  if (isEmpty(user.id)) {
+    notify({ content: 'You need to login', type: 'info', position: 'top-center' })
+    return
+  }
+
+  if (item.likes.includes(user.id)) {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .update({
+          likes: item.likes.filter((id: string) => {
+            if (id !== user.id) {
+              return id
+            }
+          })
+        })
+        .eq('id', item.id)
+        .select('likes')
+
+      if (error) throw Error(error.message as any)
+
+      item.likes = [...data[0].likes]
+    } catch (error) {
+      console.log(error)
+      notify({ content: 'Please try again', type: 'error', position: 'top-center' })
+      return
+    }
+  }
+
+  if (item.dislikes.includes(user.id)) {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .update({
+          dislikes: item.dislikes.filter((id: string) => {
+            if (id !== user.id) {
+              return id
+            }
+          })
+        })
+        .eq('id', item.id)
+        .select('dislikes')
+
+      if (error) throw Error(error.message as any)
+
+      notify({ content: 'Comment undisliked', type: 'success', position: 'top-center' })
+      item.dislikes = [...data[0].dislikes]
+    } catch (error) {
+      console.log(error)
+      notify({ content: 'Please try again', type: 'error', position: 'top-center' })
+    }
+    return
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('comments')
+      .update({ dislikes: [...item.dislikes, user.id] })
+      .eq('id', item.id)
+      .select('dislikes')
+
+    if (error) throw Error(error.message as any)
+
+    notify({ content: 'Comment disliked', type: 'success', position: 'top-center' })
+
+    item.dislikes = [...data[0].dislikes]
+  } catch (error) {
+    console.log(error)
+    notify({ content: 'Please try again', type: 'error', position: 'top-center' })
+  }
+}
+
 onClickOutside(target, () => {
   comment.value = false
 })
 </script>
 <template>
-  <div
-    class="mb-[10px] py-[16px]"
-    :class="{ 'rounded-none': type === 'full' }"
-  >
+  <div class="mb-[10px] py-[16px]" :class="{ 'rounded-none': type === 'full' }">
     <div class="flex justify-between">
       <div class="flex md:items-center gap-[8px]">
         <img
@@ -389,7 +535,7 @@ onClickOutside(target, () => {
           required
         />
         <div class="flex gap-5 justify-end">
-          <AppButton type="outline" size="small" class="uppercase" @click="comment = !comment"
+          <AppButton type="outline" size="small" class="uppercase" mode="button" @click="comment = !comment"
             >cancel</AppButton
           >
           <AppButton type="primary" size="small" class="uppercase" :loading="loading"
@@ -401,7 +547,10 @@ onClickOutside(target, () => {
 
     <template v-if="review.comments_count > 0">
       <div class="my-2 flex items-center gap-10">
-        <div class="flex items-center text-primary cursor-pointer" @click="seeReplies = !seeReplies">
+        <div
+          class="flex items-center text-primary cursor-pointer"
+          @click="seeReplies = !seeReplies"
+        >
           <svg
             class="transition ease-in-out"
             :class="{ 'rotate-90': seeReplies }"
@@ -467,6 +616,116 @@ onClickOutside(target, () => {
             </div>
           </div>
           <p class="my-2">{{ item.text }}</p>
+
+          <div class="flex gap-5">
+            <div
+              class="rounded border border-[#B2C1E6] dark:border-[#383B43] p-1 flex items-center gap-3"
+              :class="{ 'bg-primary/10 dark:bg-[#212327]': item.likes.includes(user.id) }"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                v-if="item.likes.includes(user.id)"
+                @click="likeComment(item)"
+                class="cursor-pointer"
+              >
+                <path
+                  d="M22 12C22 17.5227 17.5227 22 12 22C6.47727 22 2 17.5227 2 12C2 6.47727 6.47727 2 12 2C17.5227 2 22 6.47727 22 12ZM11.0909 16.2536C11.0909 16.7555 11.4982 17.1627 12 17.1627C12.5018 17.1627 12.9091 16.7555 12.9091 16.2536V9.89182L14.5495 11.48C14.91 11.8295 15.4859 11.82 15.835 11.4595C16.1845 11.0982 16.1755 10.5223 15.8141 10.1741L12.6323 7.09318C12.28 6.75182 11.72 6.75182 11.3677 7.09318L8.18591 10.1741C8.00182 10.3523 7.90909 10.5895 7.90909 10.8273C7.90909 11.055 7.99409 11.2832 8.165 11.46C8.51455 11.8205 9.09 11.8295 9.45046 11.4805L11.0909 9.89182V16.2536Z"
+                  fill="#3366FF"
+                />
+              </svg>
+
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                class="cursor-pointer"
+                @click="likeComment(item)"
+                v-else
+              >
+                <g opacity="0.6">
+                  <path
+                    d="M12 2C6.47727 2 2 6.47727 2 12C2 17.5227 6.47727 22 12 22C17.5227 22 22 17.5227 22 12C22 6.47727 17.5227 2 12 2ZM12 3.81818C16.5186 3.81818 20.1818 7.48136 20.1818 12C20.1818 16.5186 16.5186 20.1818 12 20.1818C7.48136 20.1818 3.81818 16.5186 3.81818 12C3.81818 7.48136 7.48136 3.81818 12 3.81818ZM12 6.83754C11.7719 6.83754 11.544 6.92254 11.3679 7.09322L8.18608 10.1738C8.00199 10.352 7.90909 10.59 7.90909 10.8272C7.90909 11.055 7.99386 11.2834 8.16477 11.4602C8.51386 11.8207 9.08983 11.8302 9.45028 11.4806L11.0909 9.8924V16.2534C11.0909 16.7556 11.4982 17.1625 12 17.1625C12.5018 17.1625 12.9091 16.7552 12.9091 16.2534V9.89151L14.5497 11.4798C14.9102 11.8288 15.4857 11.8198 15.8352 11.4593C16.1843 11.098 16.1748 10.5225 15.8139 10.1738L12.6321 7.09322C12.456 6.92254 12.2281 6.83754 12 6.83754Z"
+                    fill="currentColor"
+                  />
+                </g>
+              </svg>
+
+              {{ item.likes.length }}
+
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                class="cursor-pointer"
+                @click="dislikeComment(item)"
+                v-if="!item.dislikes.includes(user.id)"
+              >
+                <g opacity="0.6">
+                  <path
+                    d="M12 2C6.47727 2 2 6.47727 2 12C2 17.5227 6.47727 22 12 22C17.5227 22 22 17.5227 22 12C22 6.47727 17.5227 2 12 2ZM12 3.81818C16.5186 3.81818 20.1818 7.48136 20.1818 12C20.1818 16.5186 16.5186 20.1818 12 20.1818C7.48136 20.1818 3.81818 16.5186 3.81818 12C3.81818 7.48136 7.48136 3.81818 12 3.81818ZM12 6.83754C11.4982 6.83754 11.0909 7.24481 11.0909 7.74663V14.1085L9.45028 12.5202C9.08983 12.1712 8.51432 12.1802 8.16477 12.5407C7.81568 12.902 7.82517 13.4775 8.18608 13.8262L11.3679 16.9068C11.7202 17.2481 12.2798 17.2481 12.6321 16.9068L15.8139 13.8262C15.998 13.648 16.0909 13.41 16.0909 13.1728C16.0909 12.945 16.0061 12.7166 15.8352 12.5398C15.4861 12.1793 14.9102 12.1698 14.5497 12.5194L12.9091 14.1076V7.74663C12.9091 7.24435 12.5023 6.83754 12 6.83754Z"
+                    fill="currentColor"
+                  />
+                </g>
+              </svg>
+
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                v-else
+                @click="dislikeComment(item)"
+                class="cursor-pointer rotate-180"
+              >
+                <path
+                  d="M22 12C22 17.5227 17.5227 22 12 22C6.47727 22 2 17.5227 2 12C2 6.47727 6.47727 2 12 2C17.5227 2 22 6.47727 22 12ZM11.0909 16.2536C11.0909 16.7555 11.4982 17.1627 12 17.1627C12.5018 17.1627 12.9091 16.7555 12.9091 16.2536V9.89182L14.5495 11.48C14.91 11.8295 15.4859 11.82 15.835 11.4595C16.1845 11.0982 16.1755 10.5223 15.8141 10.1741L12.6323 7.09318C12.28 6.75182 11.72 6.75182 11.3677 7.09318L8.18591 10.1741C8.00182 10.3523 7.90909 10.5895 7.90909 10.8273C7.90909 11.055 7.99409 11.2832 8.165 11.46C8.51455 11.8205 9.09 11.8295 9.45046 11.4805L11.0909 9.89182V16.2536Z"
+                  fill="#3366FF"
+                />
+              </svg>
+            </div>
+
+            <button
+              class="rounded border border-[#B2C1E6] dark:border-[#383B43] p-1 pr-3 text-sm flex gap-3 items-center cursor-pointer"
+              @click="replyComment = true; commentToReply = index; newComment = '@' + item.profile_username.replace(/''/g, '')"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g opacity="0.6">
+                  <path
+                    d="M11.9038 7.22424C16.927 7.88049 20.9038 11.7644 20.9038 16.1556C20.9038 19.1207 20.2727 20.6241 19.0288 20.6241C16.492 20.6241 19.315 14.7021 11.9038 13.945C11.9038 13.945 11.9038 15.2312 11.9038 15.9182C11.9038 17.4681 10.0551 18.1514 9.0336 17.1299C8.0121 16.1084 4.3056 12.4019 3.5916 11.6879C2.8776 10.9739 2.99085 9.91074 3.5916 9.30999C4.1331 8.76849 8.00497 4.89699 9.0336 3.86836C10.0622 2.83974 11.9038 3.51211 11.9038 5.05749C11.9038 6.53911 11.9038 7.22424 11.9038 7.22424ZM19.1485 18.6396C19.2298 18.6396 19.4038 17.407 19.4038 16.1552C19.4038 12.4067 15.8335 9.09924 11.2877 8.66499C10.7871 8.61774 10.4038 8.38036 10.4038 7.71961C10.4038 7.38961 10.4038 5.23261 10.4038 5.05711C10.4038 4.88161 10.1998 4.82274 10.0941 4.92886C9.98835 5.03461 4.73985 10.2831 4.6521 10.3705C4.56435 10.4582 4.59922 10.5741 4.65247 10.6274C4.70572 10.6806 9.97672 15.952 10.0941 16.069C10.2115 16.186 10.4038 16.1061 10.4038 15.9407C10.4038 15.7949 10.4038 13.6994 10.4038 13.1282C10.4038 12.5571 10.6937 12.3764 11.1861 12.3921C18.94 12.6385 18.9591 18.6396 19.1485 18.6396Z"
+                    fill="currentColor"
+                  />
+                </g>
+              </svg>
+
+              Reply
+            </button>
+          </div>
+
+          <div class="w-full" v-show="replyComment && commentToReply === index" ref="target">
+            <form @submit.prevent="addNewComment()" class="pt-5 w-full" v-if="!isEmpty(user.id)">
+              <textarea
+                class="text-black dark:text-white bg-primary/10 dark:bg-primary-light/5 border border-primary focus:outline-none rounded p-5 w-full"
+                v-model="newComment"
+                placeholder="Leave a reply"
+                required
+              />
+              <div class="flex gap-5 justify-end">
+                <AppButton type="outline" size="small" class="uppercase" mode="button" @click="replyComment = false; newComment = ''"
+                  >cancel</AppButton
+                >
+                <AppButton type="primary" size="small" class="uppercase" :loading="loading"
+                  >Reply</AppButton
+                >
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </template>

@@ -26,7 +26,6 @@ const area = ref({
 const imgs = ref([]) as any
 
 const images = computed(() => {
-  if (area.value.imgs.length === 0) return []
   return imgs.value.map((img: any) => {
     return URL.createObjectURL(img)
   })

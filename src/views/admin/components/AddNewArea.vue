@@ -20,7 +20,7 @@ const loading = ref(false)
 const area = reactive({
   name: '',
   state: '',
-  lga: '',
+  lga: '', 
   imgs: [] as any[]
 })
 const imgs = reactive([]) as any[]

@@ -9,8 +9,11 @@ import { storeToRefs } from 'pinia'
 import { onClickOutside } from '@vueuse/core'
 
 import AppLogo from '@/components/AppLogo.vue'
-import AppLogin from './components/AppLogin.vue'
 import AppDropdown from '@/components/AppDropdown.vue'
+import IconProfile from '@/components/icons/IconProfile.vue'
+import IconLike from '@/components/icons/IconLike.vue'
+import IconBookmark from '@/components/icons/IconBookmark.vue'
+import AppLogin from './components/AppLogin.vue'
 import AppButton from './components/AppButton.vue'
 import AddReviewModal from '@/views/areas/components/AddReviewModal.vue'
 
@@ -123,13 +126,27 @@ watch(
               </svg>
             </AppButton>
 
-            <div class="pr-1 border-r-[2px] !border-[#B2C1E6] dark:!border-[#383B43] text-transparent">.</div>
+            <div
+              class="pr-1 border-r-[2px] !border-[#B2C1E6] dark:!border-[#383B43] text-transparent"
+            >
+              .
+            </div>
 
             <div class="hidden md:block" v-if="!isEmpty(user.id)" @click="addReview = true">
-              <AppButton type="outline" size="small" class="font-semibold uppercase border-[2px] mr-2">Submit Review</AppButton>
+              <AppButton
+                type="outline"
+                size="small"
+                class="font-semibold uppercase border-[2px] mr-2"
+                >Submit Review</AppButton
+              >
             </div>
             <AppDropdown
-              :menu="['profile', 'reviews', 'logout']"
+              :menu="[
+                { text: 'profile', icon: IconProfile },
+                { text: 'bookmarks', icon: IconBookmark },
+                { text: 'reviews', icon: IconLike },
+                'logout'
+              ]"
               position="bottom"
               @action="handleAction"
               v-if="!isEmpty(user.id)"

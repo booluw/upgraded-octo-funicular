@@ -32,7 +32,7 @@ onClickOutside(target, () => {
   router.push(route.path)
 })
 
-const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
+const handleAction = async function (action: 'logout' | 'profile' | 'my reviews') {
   if (action === 'logout') {
     await supabase.auth.signOut()
     userStore.resetUser()
@@ -142,9 +142,9 @@ watch(
             </div>
             <AppDropdown
               :menu="[
-                { text: 'profile', icon: IconProfile },
+                { text: 'my reviews', icon: IconLike },
                 { text: 'bookmarks', icon: IconBookmark },
-                { text: 'reviews', icon: IconLike },
+                { text: 'profile', icon: IconProfile },
                 'logout'
               ]"
               position="bottom"

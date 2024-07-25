@@ -8,10 +8,12 @@ import { useUser } from '@/stores/user'
 import AppError from '@/components/AppError.vue'
 import AppLoader from '@/components/AppLoader.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
+import { isEmpty } from 'lodash'
 
 const props = defineProps<{
   type?: 'full' | 'minimized'
   filter?: any
+  hideComment?: boolean
 }>()
 const emit = defineEmits(['clicked'])
 
@@ -43,16 +45,14 @@ const getAllReviews = async function () {
   error.value = false
 
   try {
-    // const { data, error } = await supabase
-    //   .from('reviews')
-    //   .select('*, profile(*)')
-    //   .or(`and(area.eq.${route.params.name}, approved.eq.APPROVED)`)
-    //   .order('likes', { ascending: false })
+    const query = !isEmpty(route.params.name)
+      ? `and(area_id.eq.${route.params.name}, approved.eq.APPROVED)`
+      : `and(approved.eq.APPROVED)`
 
     const { data, error } = await supabase
       .rpc('get_reviews_and_profiles')
       .select('*')
-      .or(`and(area_id.eq.${route.params.name}, approved.eq.APPROVED)`)
+      .or(`${query}`)
       .order('likes', { ascending: false })
 
     if (error) throw Error(error.message ?? error)
@@ -105,6 +105,7 @@ onMounted(() => {
       <template v-if="_review.length !== 0">
         <template v-for="(review, i) in _review.flat()" :key="i">
           <ReviewCard
+            :hideComment
             :type="type"
             :review="review"
             @clicked="handleClick"

@@ -50,11 +50,6 @@ const allReviews = ref(0)
 
 const title = useTitle()
 
-const comments = ref({
-  id: '',
-  comments: [] as any[]
-})
-
 const query = ref({ query: '', name: '', id: '' })
 
 const amenities = computed(() => {
@@ -106,10 +101,6 @@ const search = async function () {
   }
 
   searchLoading.value = false
-}
-
-const handleClick = function (id: string) {
-  comments.value.id = id
 }
 
 const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
@@ -637,8 +628,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
           </div>
         </div>
         <div class="md:order-1 w-full overflow-y-auto scrollbar-none">
-          <ViewComment :id="comments.id" v-if="comments.id !== ''" @close="comments.id = ''" />
-          <Reviews :filter="filter" type="full" ref="reviews" @clicked="handleClick" v-else />
+          <Reviews :filter="filter" type="full" ref="reviews" />
         </div>
       </div>
     </template>

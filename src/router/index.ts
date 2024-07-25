@@ -35,6 +35,11 @@ const router = createRouter({
       component: HomeView
     },
     {
+      path: '/all-reviews',
+      name: 'reviews',
+      component: () => import('../views/AllReviews.vue')
+    },
+    {
       path: '/profile/',
       name: 'UserProfile',
       component: () => import('../views/profile/defaultView.vue'),

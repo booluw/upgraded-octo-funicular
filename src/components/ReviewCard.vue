@@ -14,6 +14,7 @@ import AppButton from '@/components/AppButton.vue'
 const props = defineProps<{
   review: any
   type?: 'full' | 'minimized'
+  hideComment?: boolean
 }>()
 
 const emit = defineEmits(['clicked', 'reload'])
@@ -365,7 +366,7 @@ onClickOutside(target, () => {
 })
 </script>
 <template>
-  <div class="mb-[10px] py-[16px]" :class="{ 'rounded-none': type === 'full' }">
+  <div class="mb-[10px] py-[16px]" :class="hideComment ? 'cursor-pointer' : ''" @click="hideComment ? emit('clicked', review) : ''">
     <div class="flex justify-between">
       <div class="flex md:items-center gap-[8px]">
         <img
@@ -549,7 +550,7 @@ onClickOutside(target, () => {
       <div class="my-2 flex items-center gap-10">
         <div
           class="flex items-center text-primary cursor-pointer"
-          @click="seeReplies = !seeReplies"
+          @click="hideComment ? '' : seeReplies = !seeReplies"
         >
           <svg
             class="transition ease-in-out"

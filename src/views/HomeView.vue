@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, watch, computed, onMounted } from 'vue';
+import { reactive, ref, watch, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { supabase } from '../config/supabase'
@@ -237,16 +237,19 @@ const gotoArea = function () {
 
 const getNumberOfReviews = async function () {
   try {
-    const { count } = await supabase.from('reviews').select('', { count: 'exact' });
+    const { count } = await supabase
+      .from('reviews')
+      .select('', { count: 'exact' })
+      .or(`and(approved.eq.APPROVED)`)
     const { data } = await supabase.from('profile').select('img').not('img', 'is', 'null').limit(20)
 
     data?.map((item) => {
-        numberOfReviews.imgs.push(item.img);
+      numberOfReviews.imgs.push(item.img)
     })
 
     numberOfReviews.count = count as unknown as number
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
 }
 
@@ -255,7 +258,8 @@ watch(
   async () => {
     await search()
   },
-  { deep: true })
+  { deep: true }
+)
 
 onMounted(() => {
   getNumberOfReviews()
@@ -340,7 +344,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
         </div>
         <AppButton type="primary" class="uppercase w-full md:w-auto">Explore Area</AppButton>
       </form>
-      <div class="flex items-center gap-5">
+      <router-link to="/all-reviews" class="inline-flex items-center gap-5">
         <div class="flex items-center gap-1">
           <svg
             width="24"
@@ -362,12 +366,12 @@ onClickOutside(target, () => (closeSuggestion.value = false))
           <img
             :src="img"
             class="w-[32px] h-[32px] rounded bg-text-dark dark:bg-black-light border-2 border-light dark:border-black"
-            :class="{ '-ml-2' : index !== 0 }"
+            :class="{ '-ml-2': index !== 0 }"
             v-for="(img, index) in numberOfReviews.imgs"
             :key="index"
           />
         </div>
-      </div>
+      </router-link>
     </div>
     <div class="hidden h-full md:flex gap-[20px] overflow-hidden relative">
       <div

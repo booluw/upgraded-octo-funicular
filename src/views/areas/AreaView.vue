@@ -271,7 +271,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
     class="min-h-[100vh] md:flex flex-col items-center bg-[#FBFCFE] dark:bg-[#14161A] text-text dark:text-text-dark"
   >
     <div
-      class="md:w-[100vw] bg-light dark:bg-black flex flex-col items-center mb-[16px] md:mb-[32px] md:fixed z-10"
+      class="md:w-[100vw] bg-light dark:bg-black flex flex-col items-center mb-[16px] md:mb-[32px] fixed right-0 left-0 z-10"
     >
       <div class="w-full md:w-page px-[16px] md:px-0">
         <header class="py-[10.5px] flex gap-[10px] md:gap-0 justify-between items-center">
@@ -523,27 +523,18 @@ onClickOutside(target, () => (closeSuggestion.value = false))
       </div>
     </div>
 
-    <div
-      class="md:hidden md:w-[686px] md:order-2 overflow-x-auto md:overflow-hidden md:!sticky top-0"
-      v-if="area.imgs"
-    >
+    <div class="md:hidden overflow-x-auto pt-[150px]" v-if="area.imgs">
       <div
-        class="w-[150vw] md:w-auto grid grid-cols-3 md:grid-cols-2 md:grid-rows-2 gap-[10px] cursor-pointer"
+        class="p-5 pt-0 flex gap-[10px] cursor-pointer"
         v-if="area.imgs.length !== 0"
         @click="showImage = true"
       >
-        <img :src="area.imgs[0]" class="row-span-1 h-full w-auto rounded-[8px]" />
-        <img :src="area.imgs[1]" class="row-span-1 rounded-[8px]" v-if="area.imgs[1]" />
-        <div class="row-span-1 rounded-[8px] overflow-hidden relative">
-          <div
-            class="absolute top-0 right-0 bottom-0 left-0 bg-black/30 text-white md:flex items-center justify-center hidden cursor-pointer"
-          >
-            VIEW MORE
-          </div>
-          <img :src="area.imgs[2]" v-if="area.imgs[2]" />
-        </div>
-        <img :src="area.imgs[3]" class="row-span-1 rounded-[8px] md:hidden" v-if="area.imgs[3]" />
-        <img :src="area.imgs[4]" class="row-span-1 rounded-[8px] md:hidden" v-if="area.imgs[4]" />
+        <img
+          :src="img"
+          v-for="(img, index) in area.imgs"
+          :key="index"
+          class="rounded w-[calc(100%/2.5)]"
+        />
       </div>
       <div class="text-xl opacity-50 text-center" v-else>
         <svg
@@ -663,7 +654,28 @@ onClickOutside(target, () => (closeSuggestion.value = false))
         >leave a review</AppButton
       >
     </div>
-    <AddReview v-if="newReview" @close="newReview = false" @done="addReview" />
+    <AppButton
+      type="primary"
+      class="uppercase font-[500] !py-5 !px-6 md:hidden fixed bottom-5 right-5"
+      size="small"
+      @click="newReview = true"
+      :disabled="isEmpty(user.username)"
+    >
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 20 20"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M10 0C9.448 0 9 0.448 9 1V9H1C0.448 9 0 9.448 0 10C0 10.552 0.448 11 1 11H9V19C9 19.552 9.448 20 10 20C10.552 20 11 19.552 11 19V11H19C19.552 11 20 10.552 20 10C20 9.448 19.552 9 19 9H11V1C11 0.448 10.552 0 10 0Z"
+          fill="#FBFCFE"
+        />
+      </svg>
+    </AppButton>
   </section>
+
+  <AddReview v-if="newReview" @close="newReview = false" @done="addReview" />
   <ImageModal v-if="showImage" :img="area.imgs" @close="showImage = false" />
 </template>

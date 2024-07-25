@@ -340,7 +340,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
         </div>
         <AppButton type="primary" class="uppercase w-full md:w-auto">Explore Area</AppButton>
       </form>
-      <div class="flex gap-5">
+      <div class="flex items-center gap-5">
         <div class="flex items-center gap-1">
           <svg
             width="24"
@@ -361,7 +361,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
         <div class="flex">
           <img
             :src="img"
-            class="w-[30px] h-auto rounded bg-text-dark dark:bg-black-light border-2 border-light dark:border-black"
+            class="w-[32px] h-[32px] rounded bg-text-dark dark:bg-black-light border-2 border-light dark:border-black"
             :class="{ '-ml-2' : index !== 0 }"
             v-for="(img, index) in numberOfReviews.imgs"
             :key="index"

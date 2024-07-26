@@ -19,7 +19,7 @@ onClickOutside(target, () => emits('close'))
 
 <template>
   <section
-    class="fixed top-0 right-0 bottom-0 left-0 bg-[#FBFCFE]/50 dark:bg-black/50 flex justify-center items-center backdrop-blur"
+    class="fixed top-0 right-0 bottom-0 left-0 bg-[#FBFCFE]/50 dark:bg-black/50 flex justify-center items-center backdrop-blur z-[99]"
   >
     <div
       class="mx-5 w-full md:mx-0 md:!w-[500px] rounded-[6px] p-[24px] bg-[#FBFCFE] dark:bg-black text-black dark:text-text-dark overflow-x-auto"
@@ -44,13 +44,21 @@ onClickOutside(target, () => emits('close'))
       </div>
       <p class="my-5">{{ text }}</p>
       <div class="flex gap-5">
-        <AppButton type="outline" size="small" @click="emits('close')" class="w-1/3">Close</AppButton>
+        <AppButton type="outline" size="small" @click="emits('close')" class="w-1/3"
+          >Close</AppButton
+        >
         <AppButton
           type="primary"
           size="small"
           @click="emits('done')"
           class="w-2/3"
-          :class="type === 'error' ? 'bg-[#D14343] !border-[#D14343]' : type === 'success' ? 'bg-primary' : 'bg-orange-500 border-orange-500'"
+          :class="
+            type === 'error'
+              ? '!bg-[#D14343] !border-[#D14343]'
+              : type === 'success'
+                ? 'bg-primary'
+                : 'bg-orange-500 border-orange-500'
+          "
         >
           {{ confirmButtonText }}
         </AppButton>

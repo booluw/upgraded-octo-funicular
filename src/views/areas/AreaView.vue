@@ -20,7 +20,6 @@ import ImageModal from '@/components/ImageModal.vue'
 
 import AddReview from './components/AddReviewModal.vue'
 import Reviews from './components/Reviews.vue'
-import ViewComment from './components/ViewComment.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -270,14 +269,14 @@ onClickOutside(target, () => (closeSuggestion.value = false))
             <router-link to="/" class="text-text dark:text-text-dark">
               <AppLogo />
             </router-link>
-            <form @submit.prevent class="md:w-[600px] block">
+            <form @submit.prevent class="md:w-[700px] block">
               <div class="group relative">
                 <AppInput
                   ref="target"
                   v-model="param"
                   type="search"
                   placeholder="Search for a place"
-                  class="!bg-white dark:!bg-black-light"
+                  class="!bg-white dark:!bg-black-light rounded"
                   required
                 >
                   <template #icon>
@@ -339,24 +338,6 @@ onClickOutside(target, () => (closeSuggestion.value = false))
               <div
                 class="flex gap-[8px] pr-[16px] border-r-[2px] !border-[#B2C1E6] dark:!border-[#383B43]"
               >
-                <AppButton
-                  type="outline"
-                  size="small"
-                  class="!border-[#B2C1E6] dark:!border-[#383B43] !border-[2px] !rounded-[10px]"
-                >
-                  <svg
-                    width="14"
-                    height="16"
-                    viewBox="0 0 14 16"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M2.20938 0C1.33301 0 0.609375 0.722079 0.609375 1.59844L0.601562 16L7.00156 13.6L13.4016 16V14.8453V1.6C13.4016 0.72555 12.676 0 11.8016 0H2.20938ZM2.20938 1.6H11.8016V13.6906L7.00156 11.8906L2.20312 13.6906L2.20938 1.6Z"
-                      class="fill-[#212327] dark:!fill-[#E5EDF5]"
-                    />
-                  </svg>
-                </AppButton>
                 <AppButton
                   type="outline"
                   size="small"

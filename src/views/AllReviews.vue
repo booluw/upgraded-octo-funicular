@@ -229,7 +229,7 @@ onMounted(() => {
           </div>
         </header>
 
-        <div class="pt-4 flex gap-10 justify-between items-start w-[90vw] relative">
+        <div class="pt-4 flex gap-10 justify-between md:justify-start items-start w-[90vw] relative">
           <div class="fixed bottom-5 right-0 left-0 z-[90] md:relative flex items-center md:mt-5">
             <div
               class="my-0 mx-auto !bg-primary-light dark:!bg-[#14161A] md:bg-transparent text-center text-[14px] px-6 py-3 md:py-[6px] md:px-[12px] border-[1.5px] text-[#14161A] border-[#B2C1E6] dark:border-[#383B43] dark:text-[#FBFCFE] rounded-[4px] cursor-pointer hover:opacity-75 flex items-center gap-3"
@@ -320,7 +320,7 @@ onMounted(() => {
           </section>
           <AppError v-else-if="error" />
           <div class="" v-else>
-            <div class="" v-if="_review.length !== 0">
+            <div class="mt-10" v-if="_review.length !== 0">
               <ReviewCard
                 :class="{
                   'bg-primary/10 dark:bg-black/50 px-2': review.review_id! === comments.review_id

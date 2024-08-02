@@ -20,11 +20,6 @@ export const USER_ROUTES = [
     icon: IconReviews,
     path: 'reviews',
     title: 'Reviews'
-  },
-  {
-    icon: IconSettings,
-    path: 'settings',
-    title: 'Settings'
   }
 ]
 

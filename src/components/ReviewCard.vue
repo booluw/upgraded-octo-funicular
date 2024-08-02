@@ -407,19 +407,26 @@ onClickOutside(target, (event) => {
     :class="hideComment ? 'cursor-pointer' : ''"
     @click="hideComment ? emit('clicked', review) : ''"
   >
+    <div class="mb-2" v-if="hideComment">
+      <h1 class="text-xl capitalize">
+        {{ review.area_name }}, {{ review.area_lga }}
+      </h1>
+    </div>
     <div class="flex justify-between">
       <div class="flex md:items-center gap-[8px]">
         <img
           :src="review.profile_img"
           class="w-[42px] h-[42px] border-4 border-[#E5EDF5] dark:border-[#212327] rounded"
+          :class="{ '!w-[32px] !h-[32px]' : hideComment }"
           v-if="review.profile_img && !review.anon"
         />
         <img
           src="@/assets/imgs/avataaars.png"
           class="w-[42px] h-[42px] border-4 border-[#E5EDF5] dark:border-[#212327] rounded"
+          :class="{ '!w-[32px] !h-[32px]' : hideComment }"
           v-else
         />
-        <div class="flex flex-col gap-1">
+        <div class="flex flex-col gap-1" :class="{ '!flex-row !items-center !gap-4' : hideComment }">
           <div class="flex gap-4">
             {{ review.anon ? 'Annon User' : review.profile_username.replace(/"/g, '') }}
             <b
@@ -475,7 +482,7 @@ onClickOutside(target, (event) => {
     <p class="text-justify my-[8px] line-clamp-4">
       {{ review.review_text }}
     </p>
-    <div class="flex gap-5">
+    <div class="flex gap-5" v-if="!hideComment">
       <div
         class="rounded border border-[#B2C1E6] dark:border-[#383B43] p-2 flex items-center gap-3"
         :class="{ 'bg-primary/10 dark:bg-[#212327]': review.likes.includes(user.id) }"
@@ -637,7 +644,7 @@ onClickOutside(target, (event) => {
         <div class="transition ease-in-out" v-show="!seeReplies">
           <img
             :src="img"
-            class="w-[26px] h-auto inline-block -ml-2 border border-[#E5EDF5] dark:border-[#212327] rounded"
+            class="w-[26px] h-[26px] inline-block -ml-2 border border-[#E5EDF5] dark:border-[#212327] rounded"
             v-for="(img, index) in commentImages"
             :key="index"
           />

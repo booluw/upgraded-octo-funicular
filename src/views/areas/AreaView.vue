@@ -21,6 +21,10 @@ import ImageModal from '@/components/ImageModal.vue'
 import AddReview from './components/AddReviewModal.vue'
 import Reviews from './components/Reviews.vue'
 
+import IconProfile from '@/components/icons/IconProfile.vue'
+import IconLike from '@/components/icons/IconLike.vue'
+import IconBookmark from '@/components/icons/IconBookmark.vue'
+
 const route = useRoute()
 const router = useRouter()
 const user = useUser().user
@@ -416,7 +420,12 @@ onClickOutside(target, () => (closeSuggestion.value = false))
             </div>
           </div>
           <AppDropdown
-            :menu="['profile', 'reviews', 'logout']"
+            :menu="[
+              { text: 'my reviews', icon: IconLike },
+              { text: 'bookmarks', icon: IconBookmark },
+              { text: 'profile', icon: IconProfile },
+              'logout'
+            ]"
             position="bottom"
             @action="handleAction"
             v-if="!isEmpty(user.id)"

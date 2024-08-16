@@ -152,7 +152,7 @@ watch(
               v-if="!isEmpty(user.id)"
             >
               <div class="mt-2 flex items-center gap-[13px]">
-                <span class="hidden md:block">{{ user.username ?? user.email }}</span>
+                <span class="hidden md:block">{{ user?.username ?? user.email }}</span>
                 <img
                   :src="user.img"
                   class="w-[40px] rounded-[8px] border-[2px] border-white dark:border-text"

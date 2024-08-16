@@ -12,15 +12,15 @@ export const AMENITY_CATEGORY = ['Recreational Favilities', 'Educational Facilit
 
 export const USER_ROUTES = [
   {
+    icon: IconReviews,
+    path: 'reviews',
+    title: 'Reviews'
+  },
+  {
     icon: IconUser,
     path: '',
     title: 'Profile'
   },
-  {
-    icon: IconReviews,
-    path: 'reviews',
-    title: 'Reviews'
-  }
 ]
 
 export const ADMIN_ROUTES = [

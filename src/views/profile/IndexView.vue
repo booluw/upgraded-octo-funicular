@@ -106,63 +106,106 @@ onMounted(() => {
   </section>
   <AppError v-else-if="err" />
   <section class="h-full flex flex-col items-center" v-else>
-    <div class="md:w-3/5">
-      <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">User Profile</h1>
-      <p class="">Update your personal details here</p>
+    <div class="md:w-page">
+      <h1 class="text-icon dark:text-primary-light font-[600] text-2xl">Profile Information</h1>
       <form
-        class="mt-5 shadow p-5 bg-primary-light dark:bg-black rounded mb-10"
+        class="mt-5 rounded mb-10"
         @submit.prevent="saveProfile()"
       >
-        <div class="flex justify-between items-start gap-5">
-          <img :src="img" class="w-[64px] md:w-[80px] h-auto rounded-full" v-if="!isEmpty(img)" />
-          <AppUpload accept="image/*" @file="addImage" />
+        <div class="flex flex-col md:flex-row md:justify-between gap-10 border-b-2 border-[#F3F7FE] dark:border-light/20 pb-5">
+          <div class="">
+            <h3 class="font-[500]">Your Photo*</h3>
+            <p class="">This will be displayed on your profile.</p>
+          </div>
+          <div class="flex justify-between gap-5 md:w-2/3">
+            <div class="border-2 border-[#F3F7FE] dark:border-black-light bg-[#F3F7FE] dark:bg-light/10 flex items-center justify-center text-center px-7 rounded">
+              <img :src="img" class="w-[64px] h-auto rounded" v-if="isEmpty(img)" />
+              <div class="w-[64px] text-3xl font-[500]" v-else>
+                {{ userData.firstName.split('')[0] }} {{ userData.lastName.split('')[0] }}
+              </div>
+            </div>
+            <AppUpload accept="image/*" @file="addImage" />
+          </div>
         </div>
-        <div class="md:flex gap-5 my-5">
+
+        <div class="flex flex-col md:flex-row md:justify-between gap-10 border-b-2 border-[#F3F7FE] dark:border-light/20 py-5">
+          <div class="">
+            <h3 class="font-[500]">Name</h3>
+          </div>
+          <div class="flex flex-col md:flex-row gap-3 md:gap-5 my-5 md:w-2/3">
+            <AppInput
+              type="text"
+              v-model="userData.firstName"
+              size="large"
+              placeholder="First Name"
+              class="w-full"
+            />
+            <AppInput
+              type="text"
+              v-model="userData.lastName"
+              size="large"
+              placeholder="Last Name"
+              class="w-full"
+            />
+          </div>
+        </div>
+        
+        <div class="flex flex-col md:flex-row md:justify-between gap-10 border-b-2 border-[#F3F7FE] dark:border-light/20 py-5">
+          <div class="">
+            <h3 class="font-[500]">Username</h3>
+          </div>
           <AppInput
             type="text"
-            v-model="userData.firstName"
+            v-model="userData.username"
             size="large"
-            placeholder="First Name"
-            class="w-full"
-          />
-          <AppInput
-            type="text"
-            v-model="userData.lastName"
-            size="large"
-            placeholder="Last Name"
-            class="w-full"
+            class="md:w-2/3"
           />
         </div>
-        <AppInput
-          type="text"
-          v-model="userData.username"
-          size="large"
-          placeholder="Username"
-          class="w-full"
-        />
-        <AppInput
-          type="text"
-          v-model="userData.phone_number"
-          size="large"
-          placeholder="Phone Number"
-          class="w-full my-5"
-        />
-        <AppInput
-          type="text"
-          v-model="userData.location"
-          size="large"
-          placeholder="Location"
-          class="w-full"
-        />
-        <AppButton
-          type="primary"
-          size="small"
-          class="uppercase w-full mt-5"
-          mode="submit"
-          :loading="formLoading"
-        >
-          save changes
-        </AppButton>
+
+        <div class="flex flex-col md:flex-row md:justify-between gap-10 border-b-2 border-[#F3F7FE] dark:border-light/20 py-5">
+          <div class="">
+            <h3 class="font-[500]">Phone Number</h3>
+          </div>
+          <AppInput
+            type="text"
+            v-model="userData.phone_number"
+            size="large"
+            class="md:w-2/3"
+          />
+        </div>
+
+        <div class="flex flex-col md:flex-row md:justify-between gap-10 border-b-2 border-[#F3F7FE] dark:border-light/20 py-5">
+          <div class="">
+            <h3 class="font-[500]">Location</h3>
+          </div>
+          <AppInput
+            type="text"
+            v-model="userData.location"
+            size="large"
+            class="md:w-2/3"
+          />
+        </div>
+
+        <div class="flex gap-5 justify-end mt-5">
+          <AppButton
+            type="outline"
+            size="small"
+            class="uppercase"
+            mode="button"
+            :loading="formLoading"
+          >
+            cancel
+          </AppButton>
+          <AppButton
+            type="primary"
+            size="small"
+            class="uppercase"
+            mode="submit"
+            :loading="formLoading"
+          >
+            save changes
+          </AppButton>
+        </div>
       </form>
     </div>
   </section>

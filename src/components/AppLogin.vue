@@ -45,7 +45,7 @@ const logUserIn = async function () {
     }
 
     notify({
-      content: `Welcome back, ${profile[0].username}`,
+      content: `Welcome back, ${profile[0]?.username}`,
       position: 'top-center',
       type: 'success'
     })

@@ -31,14 +31,14 @@ const updateModel = function (e: any) {
 }
 </script>
 <template>
-  <label class="group py-2 w-full" for="upload">
+  <label class="group w-full" for="upload">
     <div
-      class="group rounded-xl border-[2px] border-primary/30 dark:border-gray-50/30 transition-all ease-in-out w-full p-5 text-center cursor-pointer flex flex-col items-center justify-center"
+      class="group rounded-xl border-dashed border-[2px] border-primary/30 dark:border-gray-50/30 bg-[#F3F7FE] dark:bg-light/10 transition-all ease-in-out w-full p-10 text-center cursor-pointer flex flex-col items-center justify-center"
       :class="error.show ? 'border-red-500/70' : 'border-secondary/40 hover:border-secondary/75'"
       @drop="dragUpdateModel"
       @dragover.prevent="placeholder = 'Image recieved 😁'"
     >
-      <svg
+      <!-- <svg
         width="46"
         height="46"
         viewBox="0 0 46 46"
@@ -61,7 +61,7 @@ const updateModel = function (e: any) {
             <rect width="20" height="20" fill="white" transform="translate(13 13)" />
           </clipPath>
         </defs>
-      </svg>
+      </svg> -->
       <span class="opacity-50 group-hover:opacity-75" v-if="placeholder">
         {{ placeholder }}
       </span>

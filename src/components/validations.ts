@@ -26,7 +26,7 @@ export function length({ min, max }: { min: number, max: number }, label: string
 }
 
 export const email: Rule = (value: string, label: string = value): Status => {
-  const regex = /^\w+@[a-zA-Z_0-9]+?\.[a-zA-Z]{2,6}$/
+  const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
   const isValid = regex.test(value);
   return {
     valid: isValid,

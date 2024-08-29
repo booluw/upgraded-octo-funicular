@@ -69,7 +69,7 @@ const registerUser = async function () {
 
       if (error) throw Error(error.message)
       router.push('/login')
-      registered.value = true
+      // registered.value = true
     } else {
       throw Error('No user data available')
     }
@@ -174,7 +174,7 @@ onMounted(() => {
           label="Password"
           v-model="auth.password"
           rules="required"
-          regex="(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{7}"
+          regex="((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W]).{7,64})"
           placeholder="Minimum of 7 characters(uppercase, number and symbol)"
           class="mt-5"
           @valid="validate.password = true"
@@ -245,7 +245,7 @@ onMounted(() => {
       </svg>
       <h2 class="text-primary mt-4">Verify E-Mail Address</h2>
       <p class="my-5">
-        Thank you for signing up on AreaFinder. In order to keep your account safe and secure, we'll
+        Thank you for signing up on Spotta. In order to keep your account safe and secure, we'll
         need you to verify your e-mail address by clicking the verification link sent to your mail
         box. Thank you!
       </p>

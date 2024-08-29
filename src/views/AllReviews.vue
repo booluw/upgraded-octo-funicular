@@ -16,6 +16,7 @@ import AppDropdown from '@/components/AppDropdown.vue'
 import IconProfile from '@/components/icons/IconProfile.vue'
 import IconLike from '@/components/icons/IconLike.vue'
 import IconBookmark from '@/components/icons/IconBookmark.vue'
+import IconLock from '@/components/icons/IconLock.vue'
 
 import AddReviewModal from '@/views/areas/components/AddReviewModal.vue'
 import ReviewCard from '@/components/ReviewCard.vue'
@@ -53,6 +54,23 @@ const _review = computed(() => {
   })
 })
 
+const menuItems = computed(() => {
+  const response = [
+    { text: 'my reviews', icon: IconLike },
+    { text: 'bookmarks', icon: IconBookmark },
+    { text: 'profile', icon: IconProfile },
+    'logout'
+  ]
+
+  if (user.role === 'ADMIN') {
+    response.unshift({
+      icon: IconLock,
+      text: 'dashboard'
+    })
+  }
+  return response
+})
+
 const scroll = function () {
   scroller.value.scrollLeft += 430
 }
@@ -61,13 +79,15 @@ const handleClick = function (review: any) {
   comments.value = review
 }
 
-const handleAction = async function (action: 'logout' | 'profile' | 'my reviews') {
+const handleAction = async function (action: 'logout' | 'profile' | 'reviews'|'dashboard') {
   if (action === 'logout') {
     await supabase.auth.signOut()
     userStore.resetUser()
     router.push('/')
   } else if (action === 'profile') {
     router.push('/profile')
+  } else if (action === 'dashboard') {
+    router.push('/admin')
   } else {
     router.push('/profile/reviews')
   }
@@ -193,12 +213,7 @@ onMounted(() => {
               >
 
               <AppDropdown
-                :menu="[
-                  { text: 'my reviews', icon: IconLike },
-                  { text: 'bookmarks', icon: IconBookmark },
-                  { text: 'profile', icon: IconProfile },
-                  'logout'
-                ]"
+                :menu="menuItems"
                 position="bottom"
                 @action="handleAction"
                 v-if="!isEmpty(user.id)"

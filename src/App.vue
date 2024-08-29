@@ -10,12 +10,14 @@ import { onClickOutside } from '@vueuse/core'
 
 import AppLogo from '@/components/AppLogo.vue'
 import AppDropdown from '@/components/AppDropdown.vue'
-import IconProfile from '@/components/icons/IconProfile.vue'
-import IconLike from '@/components/icons/IconLike.vue'
-import IconBookmark from '@/components/icons/IconBookmark.vue'
 import AppLogin from './components/AppLogin.vue'
 import AppButton from './components/AppButton.vue'
 import AddReviewModal from '@/views/areas/components/AddReviewModal.vue'
+
+import IconBookmark from '@/components/icons/IconBookmark.vue'
+import IconLock from '@/components/icons/IconLock.vue'
+import IconProfile from '@/components/icons/IconProfile.vue'
+import IconLike from '@/components/icons/IconLike.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -32,13 +34,32 @@ onClickOutside(target, () => {
   router.push(route.path)
 })
 
-const handleAction = async function (action: 'logout' | 'profile' | 'my reviews') {
+const menuItems = computed(() => {
+  const response = [
+    { text: 'my reviews', icon: IconLike },
+    { text: 'bookmarks', icon: IconBookmark },
+    { text: 'profile', icon: IconProfile },
+    'logout'
+  ]
+
+  if (user.value.role === 'ADMIN') {
+    response.unshift({
+      icon: IconLock,
+      text: 'dashboard'
+    })
+  }
+  return response
+})
+
+const handleAction = async function (action: 'logout' | 'profile' | 'reviews'|'dashboard') {
   if (action === 'logout') {
     await supabase.auth.signOut()
     userStore.resetUser()
     router.push('/')
   } else if (action === 'profile') {
     router.push('/profile')
+  } else if (action === 'dashboard') {
+    router.push('/admin')
   } else {
     router.push('/profile/reviews')
   }
@@ -141,12 +162,7 @@ watch(
               >
             </div>
             <AppDropdown
-              :menu="[
-                { text: 'my reviews', icon: IconLike },
-                { text: 'bookmarks', icon: IconBookmark },
-                { text: 'profile', icon: IconProfile },
-                'logout'
-              ]"
+              :menu="menuItems"
               position="bottom"
               @action="handleAction"
               v-if="!isEmpty(user.id)"

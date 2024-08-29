@@ -17,6 +17,7 @@ import AppLoader from '@/components/AppLoader.vue'
 import IconProfile from '@/components/icons/IconProfile.vue'
 import IconLike from '@/components/icons/IconLike.vue'
 import IconBookmark from '@/components/icons/IconBookmark.vue'
+import IconLock from '@/components/icons/IconLock.vue'
 
 import AddReview from '@/views/areas/components/AddReviewModal.vue'
 
@@ -33,6 +34,23 @@ const newReview = ref(false)
 
 const user = computed(() => {
   return userStore.user
+})
+
+const menuItems = computed(() => {
+  const response = [
+    { text: 'my reviews', icon: IconLike },
+    { text: 'bookmarks', icon: IconBookmark },
+    { text: 'profile', icon: IconProfile },
+    'logout'
+  ]
+
+  if (user.value.role === 'ADMIN') {
+    response.unshift({
+      icon: IconLock,
+      text: 'dashboard'
+    })
+  }
+  return response
 })
 
 const param = computed({
@@ -82,16 +100,17 @@ const search = async function () {
   searchLoading.value = false
 }
 
-const handleAction = async function (action: 'logout' | 'profile' | 'reviews') {
+const handleAction = async function (action: 'logout' | 'profile' | 'reviews'|'dashboard') {
   if (action === 'logout') {
     await supabase.auth.signOut()
     userStore.resetUser()
-
     router.push('/')
-  } else if (action === 'reviews') {
-    router.push('/profile/reviews')
-  } else {
+  } else if (action === 'profile') {
     router.push('/profile')
+  } else if (action === 'dashboard') {
+    router.push('/admin')
+  } else {
+    router.push('/profile/reviews')
   }
 }
 
@@ -244,12 +263,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
             </div>
           </div>
           <AppDropdown
-            :menu="[
-              { text: 'my reviews', icon: IconLike },
-              { text: 'bookmarks', icon: IconBookmark },
-              { text: 'profile', icon: IconProfile },
-              'logout'
-            ]"
+            :menu="menuItems"
             position="bottom"
             @action="handleAction"
             v-if="!isEmpty(user.id)"

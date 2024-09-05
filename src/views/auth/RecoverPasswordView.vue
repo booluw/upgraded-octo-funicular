@@ -23,7 +23,7 @@ const recoverPassword = async function () {
 
   try {
     const { error } = await supabase.auth.resetPasswordForEmail(email.value, {
-      redirectTo: 'https://spotta-ng.netlify.app//update-pw'
+      redirectTo: `https://${import.meta.env.VITE_APP_URL}/update-pw`
     })
 
     if (error) {

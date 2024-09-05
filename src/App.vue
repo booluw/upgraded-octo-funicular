@@ -72,6 +72,12 @@ onMounted(() => {
   } else {
     document.documentElement.classList.remove('dark')
   }
+
+  supabase.auth.onAuthStateChange((event) => {
+    if (event == 'PASSWORD_RECOVERY') {
+      router.push('/update-pw')
+    }
+  })
 })
 
 watch(

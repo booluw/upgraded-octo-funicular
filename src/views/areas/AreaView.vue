@@ -112,7 +112,7 @@ const search = async function () {
 
   try {
     const { data, error } = await supabase
-      .rpc('search_areas', { search_name: query.value.query })
+      .rpc('search_areas', { search_name: query.value.query.replace(/\d+/g, '').replace(' ', '') })
       .order('area_created_at', { ascending: false })
 
     if (error) throw Error(error.message ?? error)
@@ -139,13 +139,17 @@ const handleAction = async function (action: 'logout' | 'profile' | 'reviews'|'d
 }
 
 const addReview = function () {
+  newReview.value = false
+
   if (reviews.value !== null) {
     reviews.value.getAllReviews()
   } else {
     getArea()
     router.go(0)
   }
-  newReview.value = false
+
+  getArea()
+  router.go(0)
 }
 
 const scroll = function () {
@@ -293,7 +297,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
             <router-link to="/" class="text-text dark:text-text-dark">
               <AppLogo />
             </router-link>
-            <form @submit.prevent class="md:w-[700px] block">
+            <form @submit.prevent class="md:w-[650px] block">
               <div class="group relative">
                 <AppInput
                   ref="target"
@@ -571,7 +575,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
                 fill="#FABB07"
               />
             </svg>
-            {{ Math.abs(rating / reviewCount).toFixed(1) }}
+            {{ Math.abs(rating / reviewCount).toFixed(1) || 0 }}
           </div>
         </div>
         <h2 class="text-[12px] md:text-[16px]">

@@ -7,6 +7,7 @@ import { useUser } from '@/stores/user'
 
 import AppButton from '@/components/AppButton.vue'
 import AppInput from '@/components/AppInput.vue'
+import AppLogo from '@/components/AppLogo.vue'
 
 const userStore = useUser()
 
@@ -22,7 +23,14 @@ const validate = reactive({
 })
 
 const resetPassword = async function () {
-  if (!validate.password || !validate.password2) return
+  if (!validate.password || !validate.password2) {
+    notify({
+      content: 'Check password validation',
+      position: 'top-center',
+      type: 'warning'
+    })
+    return
+  }
 
   loading.value = true
 
@@ -128,7 +136,7 @@ const resetPassword = async function () {
             @valid="validate.password2 = true"
             @invalid="validate.password2 = false"
           />
-          <AppButton type="primary" mode="submit" class="w-full mt-5 uppercase" :loading="loading">
+          <AppButton type="primary" mode="submit" class="w-full mt-5 uppercase" :loading="loading" @submit.prevent="resetPassword()">
             reset password
           </AppButton>
         </form>

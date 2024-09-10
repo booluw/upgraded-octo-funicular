@@ -213,7 +213,7 @@ const search = async function () {
 
   try {
     const { data, error } = await supabase
-      .rpc('search_areas', { search_name: query.value.query })
+      .rpc('search_areas', { search_name: query.value.query.replace(/\d+/g, '').replace(' ', '') })
       .order('area_created_at', { ascending: true })
 
     if (error) throw Error(error.message ?? error)

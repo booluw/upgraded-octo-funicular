@@ -575,7 +575,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
                 fill="#FABB07"
               />
             </svg>
-            {{ Math.abs(rating / reviewCount).toFixed(1) || 0 }}
+            {{ +Math.abs(rating / reviewCount).toFixed(1) || 0 }}
           </div>
         </div>
         <h2 class="text-[12px] md:text-[16px]">

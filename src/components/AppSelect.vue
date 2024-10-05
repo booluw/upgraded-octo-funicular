@@ -13,7 +13,7 @@ const target = ref(null)
 const input = ref<HTMLInputElement | null>(null)
 const value = defineModel() as any
 const show = ref(false)
-const searchString = ref('')
+const searchString = ref(value.value || '')
 
 const filteredOptions = computed(() => {
   if (searchString.value === '') return props.options

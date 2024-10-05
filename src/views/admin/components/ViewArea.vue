@@ -15,6 +15,7 @@ const route = useRoute()
 const router = useRouter()
 
 const loading = ref(false)
+const btnLoading = ref(false)
 const area = ref({}) as any
 const reviews = ref([]) as any
 const target = ref(null)
@@ -25,8 +26,8 @@ const amenities = computed(() => {
   if (reviews.value.length == 0) return {}
 
   reviews.value.forEach((review: any) => {
-    review.amenities.forEach((amenity: any[]) => {
-      result[amenity as unknown as string] = (result[amenity as unknown as string] || 0) + 1
+    review.amenities.forEach((amenity: string) => {
+      result[amenity] = (result[amenity] || 0) + 1
     })
   })
 
@@ -55,6 +56,27 @@ const getArea = async function () {
   }
 
   loading.value = false
+}
+
+const deleteArea = async function () {
+  try {
+    const { error } = await supabase.from('areas').delete().eq('id', area.value.id)
+    if (error) throw error
+    emits('close')
+    notify({
+      content: 'Area deleted',
+      type: 'success',
+      position: 'top-center'
+    })
+    router.go(0)
+  } catch (err) {
+    console.log(err)
+    notify({
+      content: 'An Error occurred',
+      type: 'error',
+      position: 'top-center'
+    })
+  }
 }
 
 onMounted(async () => {
@@ -131,11 +153,23 @@ onMounted(async () => {
               View reviews
             </AppButton>
           </router-link>
-          <router-link :to="`?action=edit&id=${area.id}`" class="w-full">
-            <AppButton type="outline" size="small" class="uppercase w-full font-semibold">
-              Edit
+          <div class="flex gap-2">
+            <AppButton
+              v-if="reviews.length < 1"
+              type="primary"
+              size="small"
+              class="bg-red-100 border-red-100 !text-red-500"
+              @click="deleteArea()"
+              :loading="btnLoading"
+            >
+              Delete
             </AppButton>
-          </router-link>
+            <router-link :to="`?action=edit&id=${area.id}`" class="w-full">
+              <AppButton type="outline" size="small" class="uppercase w-full font-semibold">
+                Edit
+              </AppButton>
+            </router-link>
+          </div>
         </div>
       </template>
     </div>

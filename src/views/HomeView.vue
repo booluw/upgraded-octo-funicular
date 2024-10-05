@@ -272,11 +272,10 @@ onClickOutside(target, () => (closeSuggestion.value = false))
   <section class="h-[90vh] flex gap-[100px] items-center justify-between overflow-hidden">
     <div class="md:w-[calc(100%/2.5)]">
       <h1 class="text-[54px] font-bold mb-[12px] md:mb-[16px] leading-tight">
-        Find a place you will love to live!
+        Find your ideal neighborhood
       </h1>
       <p class="md:w-2/3 mb-[24px] md:mb-[40px]">
-        See through the lenses of people who have lived or visited the neighbourhood you might have
-        in mind.
+        Get authrntic insights from locals and visitors to help you find the place that feels like home.
       </p>
       <form @submit.prevent="gotoArea()" class="mb-[24px] md:w-5/6">
         <div class="text-sm text-red-500 mb-[2px] md:mb-[5px]" v-if="error">

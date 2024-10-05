@@ -150,14 +150,14 @@ watch(
         :options="
           STATES_AND_LGA.map((item) => {
             return item.state
-          })
+          }).sort()
         "
         placeholder="State"
         v-model="area.state"
         class="mb-5"
       />
       <AppSelect
-        :options="lgas"
+        :options="lgas.sort()"
         placeholder="Local Government Area"
         v-model="area.lga"
         class="mb-5"

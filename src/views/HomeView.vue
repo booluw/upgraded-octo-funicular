@@ -277,8 +277,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
         Find your ideal neighborhood
       </h1>
       <p class="md:w-2/3 mb-[24px] md:mb-[40px]">
-        Get authrntic insights from locals and visitors to help you find the place that feels like
-        home.
+        Get authentic insights from locals and visitors to help you find the place that feels like home.
       </p>
       <form @submit.prevent="gotoArea()" class="mb-[24px] md:w-5/6">
         <div class="text-sm text-red-500 mb-[2px] md:mb-[5px]" v-if="error">

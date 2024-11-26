@@ -9,6 +9,7 @@ import AppButton from '@/components/AppButton.vue'
 import AppCard from '@/components/AppCard.vue'
 import AppInput from '@/components/AppInput.vue'
 import AppLoader from '@/components/AppLoader.vue'
+import AddNewAddressModal from '@/components/AddNewAddressModal.vue'
 
 const title = useTitle()
 title.value = 'SpottaNG | Find a place you will love to live!'
@@ -175,6 +176,7 @@ const closeSuggestion = ref(false)
 const error = ref(false)
 const loading = ref(false)
 const target = ref(null)
+const addAddressModal = ref(false)
 
 const numberOfReviews = reactive({ count: 0, imgs: [] as any })
 
@@ -275,7 +277,8 @@ onClickOutside(target, () => (closeSuggestion.value = false))
         Find your ideal neighborhood
       </h1>
       <p class="md:w-2/3 mb-[24px] md:mb-[40px]">
-        Get authrntic insights from locals and visitors to help you find the place that feels like home.
+        Get authrntic insights from locals and visitors to help you find the place that feels like
+        home.
       </p>
       <form @submit.prevent="gotoArea()" class="mb-[24px] md:w-5/6">
         <div class="text-sm text-red-500 mb-[2px] md:mb-[5px]" v-if="error">
@@ -352,10 +355,10 @@ onClickOutside(target, () => (closeSuggestion.value = false))
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <g opacity="0.6">
+            <g>
               <path
                 d="M9.77364 17.2316C9.54253 17.2316 9.31164 17.142 9.13741 16.9634C8.79475 16.612 8.80141 16.0491 9.15275 15.7065L12.9556 11.9958L9.16141 8.29359C8.81008 7.95093 8.80341 7.38804 9.14608 7.0367C9.48919 6.68515 10.0519 6.67848 10.4032 7.02137L14.8494 11.3596C15.0207 11.5267 15.1174 11.7563 15.1174 11.9958C15.1174 12.2354 15.0207 12.4647 14.8494 12.632L10.3945 16.9787C10.2214 17.1476 9.99741 17.2316 9.77364 17.2316Z"
-                fill="#FBFCFE"
+                class="fill-[#14161A] dark:fill-[#FBFCFE]"
               />
             </g>
           </svg>
@@ -371,6 +374,27 @@ onClickOutside(target, () => (closeSuggestion.value = false))
           />
         </div>
       </router-link>
+      <a
+        href="#add-place"
+        @click.prevent="addAddressModal = true"
+        class="mt-2 flex items-center gap-1 text-primary font-[600]"
+      >
+        <svg
+          width="16"
+          height="17"
+          viewBox="0 0 16 17"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M9.00022 3.81097C9.00022 3.25868 8.55251 2.81096 8.00022 2.81097C7.44794 2.81097 7.00022 3.25868 7.00022 3.81097L7.00022 7.6665L3.14468 7.6665C2.5924 7.6665 2.14468 8.11422 2.14468 8.6665C2.14468 9.21879 2.5924 9.6665 3.14468 9.6665L7.00022 9.6665L7.00022 13.522C7.00022 14.0743 7.44794 14.522 8.00022 14.522C8.55251 14.522 9.00022 14.0743 9.00022 13.522L9.00022 9.6665L12.8558 9.6665C13.408 9.6665 13.8558 9.21879 13.8558 8.6665C13.8558 8.11422 13.408 7.6665 12.8558 7.6665L9.00022 7.6665L9.00022 3.81097Z"
+            class="fill-[#14161A] dark:fill-[#FBFCFE]"
+          />
+        </svg>
+        Can't find your address?
+      </a>
     </div>
     <div class="hidden h-full md:flex gap-[20px] overflow-hidden relative">
       <div
@@ -390,5 +414,7 @@ onClickOutside(target, () => (closeSuggestion.value = false))
         class="absolute z-[9] bottom-0 right-0 left-0 bg-gradient-to-t from-light dark:from-black to-transparent p-10 h-[50vh]"
       />
     </div>
+
+    <AddNewAddressModal v-if="addAddressModal" @close="addAddressModal = false" @done="router.go(0)" />
   </section>
 </template>

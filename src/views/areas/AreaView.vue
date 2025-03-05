@@ -42,7 +42,7 @@ const showImage = ref(false)
 
 const amenity: Ref<{ title: string }[]> = ref([])
 const filter: Ref<null | string> = ref(null)
-const counter = reactive({})
+const counter = ref({})
 const rating = ref(0)
 
 const area: Ref<any> = ref({})
@@ -190,6 +190,8 @@ const getAllAmenities = async function () {
 }
 
 const getAreaAmenities = async function () {
+  counter.value = {}
+  
   try {
     const { data, error } = await supabase
       .from('reviews')
@@ -200,7 +202,7 @@ const getAreaAmenities = async function () {
 
     data.forEach((item) => {
       item.amenities.forEach((amenity: string) => {
-        counter[amenity] = (counter[amenity] || 0) + 1
+        counter.value[amenity] = (counter.value[amenity] || 0) + 1
       })
 
       rating.value = rating.value + item.rating
@@ -499,25 +501,6 @@ onClickOutside(target, () => (closeSuggestion.value = false))
             >
               {{ item }} &nbsp; {{ counter[item as unknown] ?? 0 }}
             </div>
-          </div>
-          <div
-            class="mt-1 py-[6px] px-[9px] rounded-full bg-white dark:bg-black-light cursor-pointer hover:opacity-75 flex items-center justify-center"
-            @click="scroll()"
-          >
-            <svg
-              width="8"
-              height="14"
-              viewBox="0 0 8 14"
-              fill="none"
-              class="stroke-black dark:stroke-text-dark"
-            >
-              <path
-                d="M1 13L7 7L1 1"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
           </div>
         </div>
       </div>

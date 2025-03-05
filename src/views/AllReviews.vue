@@ -342,25 +342,6 @@ onMounted(() => {
               {{ item }} &nbsp; {{ i }}
             </div>
           </div>
-          <div
-            class="mt-1 py-[6px] px-[9px] rounded-full bg-white dark:bg-black-light cursor-pointer hover:opacity-75 flex items-center justify-center"
-            @click="scroll()"
-          >
-            <svg
-              width="8"
-              height="14"
-              viewBox="0 0 8 14"
-              fill="none"
-              class="stroke-black dark:stroke-text-dark"
-            >
-              <path
-                d="M1 13L7 7L1 1"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
-          </div>
         </div>
       </div>
     </div>

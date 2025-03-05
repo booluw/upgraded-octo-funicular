@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, computed, type Ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useTimeAgo } from '@vueuse/core'
 import { useUser } from '@/stores/user'
 import { isEmpty } from 'lodash'
@@ -20,6 +21,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['clicked', 'reload'])
 const user = useUser().user
+const router = useRouter()
 
 const comment = ref(false)
 const replyComment = ref(false)
@@ -104,6 +106,7 @@ const deleteReview = async function () {
 
 const like = async function (review: typeof props.review) {
   if (isEmpty(user.id)) {
+    router.push({ query: { action: 'login'} })
     notify({ content: 'You need to login', type: 'info', position: 'top-center' })
     return
   }
@@ -176,6 +179,7 @@ const like = async function (review: typeof props.review) {
 }
 const dislike = async function (review: typeof props.review) {
   if (isEmpty(user.id)) {
+    router.push({ query: { action: 'login'} })
     notify({ content: 'You need to login', type: 'info', position: 'top-center' })
     return
   }
@@ -249,6 +253,7 @@ const dislike = async function (review: typeof props.review) {
 
 const likeComment = async function (item: any) {
   if (isEmpty(user.id)) {
+    router.push({ query: { action: 'login'} })
     notify({ content: 'You need to login', type: 'info', position: 'top-center' })
     return
   }
@@ -323,6 +328,7 @@ const likeComment = async function (item: any) {
 
 const dislikeComment = async function (item: any) {
   if (isEmpty(user.id)) {
+    router.push({ query: { action: 'login'} })
     notify({ content: 'You need to login', type: 'info', position: 'top-center' })
     return
   }
